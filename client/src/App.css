@@ -1,0 +1,58 @@
+.app {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+header h1 {
+  margin: 0 0 0.25rem;
+  font-size: 2rem;
+}
+
+header p {
+  margin: 0 0 2rem;
+  color: #5a6072;
+}
+
+section {
+  margin-bottom: 2rem;
+}
+
+.status .ok {
+  color: #0f7b4a;
+  font-weight: 600;
+}
+
+.error {
+  color: #b42318;
+}
+
+.element-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.element-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: #fff;
+  border: 1px solid #e4e7ef;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.element-list span {
+  color: #5a6072;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+code {
+  background: #eef1f7;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
