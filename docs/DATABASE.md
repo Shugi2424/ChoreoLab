@@ -257,7 +257,6 @@ enum Apparatus {
   BALL = "ball",
   CLUBS = "clubs",
   RIBBON = "ribbon",
-  ROPE = "rope",
 }
 
 enum AgeCategory {

@@ -19,6 +19,12 @@ export class UserInputError extends GraphQLError {
   }
 }
 
+export class NotFoundError extends GraphQLError {
+  constructor(message = "Not found") {
+    super(message, { extensions: { code: "NOT_FOUND" } });
+  }
+}
+
 export function requireAuth(context: GraphQLContext): string {
   if (!context.coachId) {
     throw new AuthenticationError();

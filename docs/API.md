@@ -63,7 +63,6 @@ enum Apparatus {
   ball
   clubs
   ribbon
-  rope
 }
 
 enum AgeCategory {
@@ -451,6 +450,8 @@ Every routine mutation recalculates `dbScore`, `daScore`, and `validation` befor
 | `signUp` / `login` / `me`                  | ✅ Implemented      |
 | `forgotPassword` / `resetPassword`         | ✅ Implemented      |
 | `updateProfile` / `changePassword`           | ✅ Implemented      |
+| `routines` / `routine`                     | ✅ Implemented (coach-scoped) |
+| `createRoutine` / `deleteRoutine`          | ✅ Implemented (coach-scoped) |
 | `bodyElements` / `bodyElement`             | ✅ Implemented (auth required) |
 | `requirements`                             | ✅ Implemented      |
 | `bases` / `base`                           | ✅ Implemented      |
@@ -458,10 +459,7 @@ Every routine mutation recalculates `dbScore`, `daScore`, and `validation` befor
 | `rotations` / `rotation`                   | ✅ Implemented      |
 | `artistryComponents` / `artistryComponent` | ✅ Implemented      |
 | `daCriteria` / `daCriterion`               | ✅ Implemented      |
-| All auth operations (M1)                   | ✅ Implemented      |
-| All routine operations                     | ❌ Not implemented  |
-| Reference data queries                     | ❌ Not implemented  |
-| Mutations                                  | ❌ None implemented |
+| Timeline / scoring / validation mutations  | ❌ Not implemented (M5+) |
 
 ---
 

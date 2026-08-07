@@ -4,7 +4,6 @@ export const enumTypeDefs = `#graphql
     ball
     clubs
     ribbon
-    rope
   }
 
   enum BodyCategory {

@@ -5,6 +5,10 @@ import {
   type SignUpInput,
 } from "../services/authService.js";
 import { coachService, type UpdateProfileInput } from "../services/coachService.js";
+import {
+  routineService,
+  type CreateRoutineInput,
+} from "../services/routineService.js";
 import type { GraphQLContext } from "../types/context.js";
 import { requireAuth } from "../utils/errors.js";
 
@@ -45,4 +49,13 @@ export const mutationResolvers = {
     context: GraphQLContext,
   ) =>
     coachService.changePassword(requireAuth(context), currentPassword, newPassword),
+
+  createRoutine: (
+    _: unknown,
+    { input }: { input: CreateRoutineInput },
+    context: GraphQLContext,
+  ) => routineService.create(requireAuth(context), input),
+
+  deleteRoutine: (_: unknown, { id }: { id: string }, context: GraphQLContext) =>
+    routineService.delete(requireAuth(context), id),
 };

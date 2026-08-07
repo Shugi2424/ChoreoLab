@@ -15,5 +15,7 @@ export const queryTypeDefs = `#graphql
     rotation(id: ID!): Rotation
     artistryComponents(type: ArtistryType): [ArtistryComponent!]!
     artistryComponent(id: ID!): ArtistryComponent
+    routines: [Routine!]!
+    routine(id: ID!): Routine
   }
 `;

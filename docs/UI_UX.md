@@ -137,9 +137,12 @@ The most important screen. Three-panel layout on desktop:
 - Vertical ordered list of routine items
 - Each item shows: order number, type icon, name/code
 - Click to select → populates editing panel
-- Drag handle for reorder (or up/down buttons as fallback)
+- **Drag-and-drop reorder** is the primary way to change item order (drag handle on each row)
+- Up/down buttons as fallback for keyboard users and touch devices without drag
 - Remove button per item
 - "Add item" buttons at bottom: Body Element, Risk, Mastery, Artistry
+
+**Implementation note:** Use a dedicated drag-and-drop library (e.g. `@dnd-kit/core`) for accessible reordering; persist order via `reorderRoutineItems` mutation on drop.
 
 ### Editing Panel (center)
 
@@ -178,7 +181,7 @@ Use MUI `useMediaQuery` or `Grid` breakpoints.
 | ------------------- | --------------------------------------------------------------- |
 | Add item            | Mutation → server recalculates → UI updates scores + validation |
 | Remove item         | Confirmation dialog → mutation → recalculate                    |
-| Reorder             | Drag or buttons → mutation → recalculate                        |
+| Reorder             | **Drag-and-drop** (primary) or up/down buttons → mutation → recalculate |
 | Change item content | Mutation on save/select → recalculate                           |
 | Save routine        | Auto-saved on every change (no explicit save button needed)     |
 | Navigate away       | No unsaved warning needed (auto-save)                           |

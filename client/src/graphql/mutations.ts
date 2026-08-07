@@ -68,3 +68,29 @@ export const CHANGE_PASSWORD_MUTATION = gql`
     }
   }
 `;
+
+export const CREATE_ROUTINE_MUTATION = gql`
+  mutation CreateRoutine($input: CreateRoutineInput!) {
+    createRoutine(input: $input) {
+      id
+      gymnastName
+      apparatus
+      ageCategory
+      dbScore
+      daScore
+      validation {
+        isValid
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const DELETE_ROUTINE_MUTATION = gql`
+  mutation DeleteRoutine($id: ID!) {
+    deleteRoutine(id: $id) {
+      message
+    }
+  }
+`;

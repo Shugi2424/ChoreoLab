@@ -21,7 +21,7 @@ Detailed catalogs and rules live in the domain docs — this file is the index.
 
 Rules vary by:
 
-- **Apparatus** — hoop, ball, clubs, ribbon, rope
+- **Apparatus** — hoop, ball, clubs, ribbon
 - **Age category** — senior, junior `[TBD: additional categories]`
 
 Each routine has exactly one apparatus and one age category.

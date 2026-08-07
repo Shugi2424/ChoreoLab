@@ -54,3 +54,48 @@ export const REQUIREMENTS_QUERY = gql`
     }
   }
 `;
+
+export const ROUTINES_QUERY = gql`
+  query Routines {
+    routines {
+      id
+      gymnastName
+      apparatus
+      ageCategory
+      dbScore
+      daScore
+      validation {
+        isValid
+      }
+      updatedAt
+    }
+  }
+`;
+
+export const ROUTINE_QUERY = gql`
+  query Routine($id: ID!) {
+    routine(id: $id) {
+      id
+      gymnastName
+      apparatus
+      ageCategory
+      dbScore
+      daScore
+      validation {
+        isValid
+        dbValid
+        daValid
+        artistryValid
+        missingRequirements {
+          code
+          domain
+          message
+          severity
+        }
+        calculatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;

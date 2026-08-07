@@ -1,4 +1,4 @@
-export const APPARATUS = ["hoop", "ball", "clubs", "ribbon", "rope"] as const;
+export const APPARATUS = ["hoop", "ball", "clubs", "ribbon"] as const;
 export type Apparatus = (typeof APPARATUS)[number];
 
 export const AGE_CATEGORIES = ["senior", "junior"] as const;

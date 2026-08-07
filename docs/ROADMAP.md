@@ -111,18 +111,18 @@ Each milestone is **independently testable** and should be completed before movi
 
 ### Server
 
-- [ ] `Routine` Mongoose model (without timeline items initially)
-- [ ] `routineService` — create, list, get, delete (coach-scoped)
-- [ ] GraphQL: `createRoutine`, `routines`, `routine`, `deleteRoutine`
-- [ ] Initial scores (0) and empty validation on create
+- [x] `Routine` Mongoose model (without timeline items initially)
+- [x] `routineService` — create, list, get, delete (coach-scoped)
+- [x] GraphQL: `createRoutine`, `routines`, `routine`, `deleteRoutine`
+- [x] Initial scores (0) and empty validation on create
 
 ### Client
 
-- [ ] Dashboard page (Create Routine, My Routines, Profile cards)
-- [ ] Create Routine form (gymnast name, apparatus, age category)
-- [ ] My Routines list page
-- [ ] Delete routine with confirmation
-- [ ] Navigation between pages
+- [x] Dashboard page (Create Routine, My Routines, Profile cards)
+- [x] Create Routine form (gymnast name, apparatus, age category)
+- [x] My Routines list page
+- [x] Delete routine with confirmation
+- [x] Navigation between pages
 
 **Test:** Create routine → appears in My Routines → open → delete → gone from list.
 
@@ -164,11 +164,13 @@ Each milestone is **independently testable** and should be completed before movi
 ### Client
 
 - [ ] Routine Builder page (three-panel layout)
-- [ ] Timeline panel — list, select, reorder, remove
+- [ ] Timeline panel — **drag-and-drop reorder** (primary interaction), select, remove
+- [ ] Up/down reorder buttons as keyboard and accessibility fallback
 - [ ] Editing panel — forms per item type with reference data dropdowns
 - [ ] Add item flow for all four types
+- [ ] Use `@dnd-kit/core` (or equivalent) for accessible drag-and-drop
 
-**Test:** Create routine → add body element, risk, mastery, artistry → reorder → remove → timeline persists on reload.
+**Test:** Create routine → add body element, risk, mastery, artistry → drag to reorder → remove → timeline persists on reload.
 
 ---
 
@@ -341,4 +343,4 @@ M6 and M7 can be developed in parallel after M5.
 
 ## Next Step
 
-**Milestone 2 complete.** Next: **Milestone 3 — Dashboard & Routine CRUD**.
+**Milestone 3 complete.** Next: **Milestone 4 — Reference Data & Seeding** (remaining items) or continue to **Milestone 5 — Routine Builder**.

@@ -114,3 +114,69 @@ export function toGraphQLCoach(doc: {
     createdAt: doc.createdAt?.toISOString() ?? new Date().toISOString(),
   };
 }
+
+export function toGraphQLValidationResult(doc: {
+  isValid: boolean;
+  dbValid: boolean;
+  daValid: boolean;
+  artistryValid: boolean;
+  missingRequirements: Array<{
+    code: string;
+    domain: string;
+    message: string;
+    severity: string;
+  }>;
+  calculatedAt?: Date;
+}) {
+  return {
+    isValid: doc.isValid,
+    dbValid: doc.dbValid,
+    daValid: doc.daValid,
+    artistryValid: doc.artistryValid,
+    missingRequirements: doc.missingRequirements.map((item) => ({
+      code: item.code,
+      domain: item.domain,
+      message: item.message,
+      severity: item.severity,
+    })),
+    calculatedAt: doc.calculatedAt?.toISOString() ?? new Date().toISOString(),
+  };
+}
+
+export function toGraphQLRoutine(doc: {
+  _id: { toString(): string };
+  gymnastName: string;
+  apparatus: string;
+  ageCategory: string;
+  timeline?: unknown[];
+  dbScore: number;
+  daScore: number;
+  validation: {
+    isValid: boolean;
+    dbValid: boolean;
+    daValid: boolean;
+    artistryValid: boolean;
+    missingRequirements: Array<{
+      code: string;
+      domain: string;
+      message: string;
+      severity: string;
+    }>;
+    calculatedAt?: Date;
+  };
+  createdAt?: Date;
+  updatedAt?: Date;
+}) {
+  return {
+    id: doc._id.toString(),
+    gymnastName: doc.gymnastName,
+    apparatus: doc.apparatus,
+    ageCategory: doc.ageCategory,
+    timeline: [],
+    dbScore: doc.dbScore,
+    daScore: doc.daScore,
+    validation: toGraphQLValidationResult(doc.validation),
+    createdAt: doc.createdAt?.toISOString() ?? new Date().toISOString(),
+    updatedAt: doc.updatedAt?.toISOString() ?? new Date().toISOString(),
+  };
+}
