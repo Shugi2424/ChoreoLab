@@ -6,13 +6,13 @@ A production-quality web platform for rhythmic gymnastics coaches to build FIG C
 
 ## Stack
 
-| Layer | Technology |
-|-------|------------|
-| Frontend | React, TypeScript, Apollo Client, React Router, Material UI |
-| Backend | Node.js, TypeScript, Apollo Server, Mongoose |
-| Database | MongoDB Atlas |
-| Auth | JWT, bcrypt |
-| Deployment | Vercel (client) + Render (server) + Atlas (DB) |
+| Layer      | Technology                                                  |
+| ---------- | ----------------------------------------------------------- |
+| Frontend   | React, TypeScript, Apollo Client, React Router, Material UI |
+| Backend    | Node.js, TypeScript, Apollo Server, Mongoose                |
+| Database   | MongoDB Atlas                                               |
+| Auth       | JWT, bcrypt                                                 |
+| Deployment | Vercel (client) + Render (server) + Atlas (DB)              |
 
 ## Quick Start
 
@@ -55,17 +55,17 @@ All project documentation lives in [`docs/`](./docs/) and is the source of truth
 
 Start with [`docs/README.md`](./docs/README.md) for the index and editing workflow.
 
-| Document | Description |
-|----------|-------------|
-| [PROJECT_OVERVIEW.md](./docs/PROJECT_OVERVIEW.md) | Purpose, audience, user flow |
-| [ARCHITECTURE.md](./docs/ARCHITECTURE.md) | System design, layers, deployment |
-| [DATABASE.md](./docs/DATABASE.md) | Collections, schemas, relationships |
-| [API.md](./docs/API.md) | GraphQL schema and operations |
-| [CODE_OF_POINTS.md](./docs/CODE_OF_POINTS.md) | CoP overview |
-| [domains/](./docs/domains/) | Detailed CoP data (collaborative) |
-| [UI_UX.md](./docs/UI_UX.md) | Design system, layouts |
-| [ROADMAP.md](./docs/ROADMAP.md) | Milestone plan |
-| [AI_RULES.md](./docs/AI_RULES.md) | Development guidelines |
+| Document                                          | Description                         |
+| ------------------------------------------------- | ----------------------------------- |
+| [PROJECT_OVERVIEW.md](./docs/PROJECT_OVERVIEW.md) | Purpose, audience, user flow        |
+| [ARCHITECTURE.md](./docs/ARCHITECTURE.md)         | System design, layers, deployment   |
+| [DATABASE.md](./docs/DATABASE.md)                 | Collections, schemas, relationships |
+| [API.md](./docs/API.md)                           | GraphQL schema and operations       |
+| [CODE_OF_POINTS.md](./docs/CODE_OF_POINTS.md)     | CoP overview                        |
+| [domains/](./docs/domains/)                       | Detailed CoP data (collaborative)   |
+| [UI_UX.md](./docs/UI_UX.md)                       | Design system, layouts              |
+| [ROADMAP.md](./docs/ROADMAP.md)                   | Milestone plan                      |
+| [AI_RULES.md](./docs/AI_RULES.md)                 | Development guidelines              |
 
 ## Project Structure
 
@@ -90,9 +90,17 @@ ChoreoLab/
 
 ## Current Status
 
-**Phase 0 — Documentation.** Domain docs in `docs/domains/` are being filled in collaboratively. Milestone 0 (code foundation) follows.
+**Milestone 0 complete** — Express API, MUI client scaffold, reference data seeded. See [ROADMAP.md](./docs/ROADMAP.md).
 
-Early scaffold: Apollo GraphQL + MongoDB Atlas connected. See [ROADMAP.md](./docs/ROADMAP.md).
+**Next:** Milestone 1 — Authentication.
+
+### Lint & format (root)
+
+```bash
+npm install          # once, at repo root
+npm run lint
+npm run format:check
+```
 
 ## License
 

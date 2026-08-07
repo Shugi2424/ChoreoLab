@@ -55,16 +55,16 @@ Rules for AI assistants (Cursor, Copilot, etc.) working on this codebase.
 
 ## File Naming
 
-| Type | Convention | Example |
-|------|-----------|---------|
-| Model | PascalCase | `BodyElement.ts` |
-| Service | camelCase | `routineService.ts` |
-| Resolver | camelCase | `routineResolvers.ts` |
-| Page | PascalCase | `DashboardPage.tsx` |
-| Component | PascalCase | `TimelinePanel.tsx` |
-| Hook | camelCase with `use` prefix | `useAuth.ts` |
-| GraphQL ops | camelCase | `routineQueries.ts` |
-| Util | camelCase | `formatScore.ts` |
+| Type        | Convention                  | Example               |
+| ----------- | --------------------------- | --------------------- |
+| Model       | PascalCase                  | `BodyElement.ts`      |
+| Service     | camelCase                   | `routineService.ts`   |
+| Resolver    | camelCase                   | `routineResolvers.ts` |
+| Page        | PascalCase                  | `DashboardPage.tsx`   |
+| Component   | PascalCase                  | `TimelinePanel.tsx`   |
+| Hook        | camelCase with `use` prefix | `useAuth.ts`          |
+| GraphQL ops | camelCase                   | `routineQueries.ts`   |
+| Util        | camelCase                   | `formatScore.ts`      |
 
 ---
 
@@ -126,6 +126,7 @@ Rules for AI assistants (Cursor, Copilot, etc.) working on this codebase.
 Types: `feat`, `fix`, `refactor`, `docs`, `chore`, `style`
 
 Examples:
+
 - `feat: add JWT authentication with sign up and login`
 - `refactor: extract element queries into elementService`
 - `docs: add body element catalog to CODE_OF_POINTS`

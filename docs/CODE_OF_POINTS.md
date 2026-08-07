@@ -8,12 +8,12 @@ Detailed catalogs and rules live in the domain docs — this file is the index.
 
 ## Score domains
 
-| Domain | Code | Description | Detail doc |
-|--------|------|-------------|------------|
-| Body Difficulty | DB | Body elements and risks | [domains/DB.md](./domains/DB.md) |
-| Apparatus Difficulty | DA | Masteries (bases + criteria) | [domains/DA.md](./domains/DA.md) |
-| Artistry | — | Artistry components | [domains/ARTISTRY.md](./domains/ARTISTRY.md) |
-| Validation | — | Cross-domain CoP requirements | [domains/VALIDATION.md](./domains/VALIDATION.md) |
+| Domain               | Code | Description                   | Detail doc                                       |
+| -------------------- | ---- | ----------------------------- | ------------------------------------------------ |
+| Body Difficulty      | DB   | Body elements and risks       | [domains/DB.md](./domains/DB.md)                 |
+| Apparatus Difficulty | DA   | Masteries (bases + criteria)  | [domains/DA.md](./domains/DA.md)                 |
+| Artistry             | —    | Artistry components           | [domains/ARTISTRY.md](./domains/ARTISTRY.md)     |
+| Validation           | —    | Cross-domain CoP requirements | [domains/VALIDATION.md](./domains/VALIDATION.md) |
 
 ---
 
@@ -30,22 +30,22 @@ Each routine has exactly one apparatus and one age category.
 
 ## Routine timeline item types
 
-| Type | Source collection | Contributes to |
-|------|-------------------|----------------|
-| `body_element` | `bodyelements` | DB score |
-| `risk` | `risks` | DB score + risk requirements |
-| `mastery` | `bases` + `dacriteria` | DA score |
-| `artistry` | `artistrycomponents` | Artistry validation |
+| Type           | Source collection      | Contributes to               |
+| -------------- | ---------------------- | ---------------------------- |
+| `body_element` | `bodyelements`         | DB score                     |
+| `risk`         | `risks`                | DB score + risk requirements |
+| `mastery`      | `bases` + `dacriteria` | DA score                     |
+| `artistry`     | `artistrycomponents`   | Artistry validation          |
 
 ---
 
 ## Scoring summary
 
-| Score | Calculation |
-|-------|-------------|
-| **DB** | Sum of `BodyElement.value` + `Risk.value` for all timeline items of those types |
-| **DA** | Sum of `DACriteria.value` across all mastery items |
-| **Artistry** | `[TBD — see domains/ARTISTRY.md]` |
+| Score        | Calculation                                                                     |
+| ------------ | ------------------------------------------------------------------------------- |
+| **DB**       | Sum of `BodyElement.value` + `Risk.value` for all timeline items of those types |
+| **DA**       | Sum of `DACriteria.value` across all mastery items                              |
+| **Artistry** | `[TBD — see domains/ARTISTRY.md]`                                               |
 
 Scores are recalculated server-side on every routine change.
 

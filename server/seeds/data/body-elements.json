@@ -1,165 +1,920 @@
 [
-  {"id": "1.101", "name": "Tuck jump with one turn 360° during the flight, take-off from two feet", "category": "jump", "value": 0.1},
-  {"id": "1.201", "name": "\"Scissors\" forward with bent legs and one turn 360° during the flight (\"cat leap\")", "category": "jump", "value": 0.1},
-  {"id": "1.301", "name": "Vertical Jump with straight legs and with 1/1 turns (360°), take-off from two feet", "category": "jump", "value": 0.1},
-  {"id": "1.303", "name": "Vertical Jump with straight legs and with 2/1 turns (720°), take-off from two feet", "category": "jump", "value": 0.3},
-  {"id": "1.401", "name": "Vertical Jump with bent leg (Passé) with 1/1 turn (360°)", "category": "jump", "value": 0.1},
-  {"id": "1.403", "name": "Vertical Jump with bent leg (Passé) with 2/1 turns (720°)", "category": "jump", "value": 0.3},
-  {"id": "1.502", "name": "Vertical Jump with free leg stretched forward in horizontal with 180° turn during the flight", "category": "jump", "value": 0.2},
-  {"id": "1.503", "name": "Vertical Jump with free leg stretched forward in horizontal with 360° turn during the flight", "category": "jump", "value": 0.3},
-  {"id": "1.602", "name": "Vertical Jump with free leg stretched sideways in horizontal with 180° turn during flight", "category": "jump", "value": 0.2},
-  {"id": "1.603", "name": "Vertical Jump with free leg stretched sideways in horizontal with 360° turn during flight", "category": "jump", "value": 0.3},
-  {"id": "1.702", "name": "Vertical Jump with free leg stretched back in horizontal with 180° turn during flight", "category": "jump", "value": 0.2},
-  {"id": "1.704", "name": "Vertical Jump with free leg stretched back in horizontal with 360° turn during flight", "category": "jump", "value": 0.4},
-  {"id": "1.802", "name": "Vertical Jump with free leg bent back in horizontal (attitude) with 180° turn during flight", "category": "jump", "value": 0.2},
-  {"id": "1.804", "name": "Vertical Jump with free leg bent back in horizontal (attitude) with 360° turn during flight", "category": "jump", "value": 0.4},
-  {"id": "1.901", "name": "\"Cabriole\" forward", "category": "jump", "value": 0.1},
-  {"id": "1.1001", "name": "\"Cabriole\" sideways", "category": "jump", "value": 0.1},
-  {"id": "1.1101", "name": "\"Cabriole\" backwards", "category": "jump", "value": 0.1},
-  {"id": "1.1201", "name": "\"Scissors\" Leaps with switch of legs forward: legs consecutively at horizontal", "category": "jump", "value": 0.1},
-  {"id": "1.1301", "name": "\"Scissors\" leap with switch of legs backward at 45°", "category": "jump", "value": 0.1},
-  {"id": "1.1302", "name": "\"Scissors\" leap with switch of legs backward with ring", "category": "jump", "value": 0.2},
-  {"id": "1.1403", "name": "Pike jump with legs together or apart, take-off from one foot or from both feet", "category": "jump", "value": 0.3},
-  {"id": "1.1501", "name": "\"Cossack\" Jump straight leg forward at horizontal with or without trunk bent forward", "category": "jump", "value": 0.1},
-  {"id": "1.1503", "name": "\"Cossack\" Jump straight leg forward at horizontal with or without trunk bent forward with ½ (180°) turn during the flight", "category": "jump", "value": 0.3},
-  {"id": "1.1602", "name": "\"Cossack\" Jump straight leg forward, high up, whole foot higher than head, with help", "category": "jump", "value": 0.2},
-  {"id": "1.1604", "name": "\"Cossack\" Jump straight leg forward, high up, whole foot higher than head, with help, with ½ (180°) turn", "category": "jump", "value": 0.4},
-  {"id": "1.1703", "name": "\"Cossack\" Jump straight leg forward, high up, whole foot higher than head without help", "category": "jump", "value": 0.3},
-  {"id": "1.1705", "name": "\"Cossack\" Jump straight leg forward, high up, whole foot higher than head, without help and with ½ (180°) turn", "category": "jump", "value": 0.5},
-  {"id": "1.1802", "name": "\"Cossack\" Jump straight leg to the side high up, whole foot higher than head, with help of the hand of the same side", "category": "jump", "value": 0.2},
-  {"id": "1.1804", "name": "\"Cossack\" Jump straight leg to the side high up, whole foot higher than head, with help of the hand of the same side, the leg is straight with ½ (180°) turn", "category": "jump", "value": 0.4},
-  {"id": "1.1805", "name": "\"Cossack\" Jump straight leg to the side high up, whole foot higher than head, with help of the opposite hand, the leg is straight with 1/1 (360°) turn", "category": "jump", "value": 0.5},
-  {"id": "1.1903", "name": "\"Cossack\" Jump straight leg to the side high up, whole foot higher than head, without help", "category": "jump", "value": 0.3},
-  {"id": "1.1905", "name": "\"Cossack\" Jump straight leg to the side high up, whole foot higher than head, without help, with 1/2 (180°) turn", "category": "jump", "value": 0.5},
-  {"id": "1.2002", "name": "Ring with one leg, take-off with one foot, take-off from one or two feet", "category": "jump", "value": 0.2},
-  {"id": "1.2003", "name": "Ring with two legs, take-off with both legs, take-off from one or two feet", "category": "jump", "value": 0.3},
-  {"id": "1.2103", "name": "Split Leap, take-off from one or two feet", "category": "jump", "value": 0.3},
-  {"id": "1.2104", "name": "Split leap with ring, take-off and landing on the same leg", "category": "jump", "value": 0.4},
-  {"id": "1.2105", "name": "Split Leap with back bent of the trunk, take-off from one or two feet", "category": "jump", "value": 0.5},
-  {"id": "1.2205", "name": "Two consecutive split leaps with change of take-off foot", "category": "jump", "value": 0.5},
-  {"id": "1.2207", "name": "Three consecutive split leaps with change of take-off foot", "category": "jump", "value": 0.7},
-  {"id": "1.2305", "name": "Switch Split Leap, passing with stretched legs", "category": "jump", "value": 0.5},
-  {"id": "1.2307", "name": "Switch Split Leap, passing with stretched legs with ring/backbend", "category": "jump", "value": 0.7},
-  {"id": "1.2404", "name": "Switch split leap, passing with bent leg", "category": "jump", "value": 0.4},
-  {"id": "1.2406.1", "name": "Switch split leap, passing with bent leg, also with ring/backbend", "category": "jump", "value": 0.6},
-  {"id": "1.2406.2", "name": "Switch split leap, passing with bent leg, also with ring/backbend", "category": "jump", "value": 0.6},
-  {"id": "1.2503", "name": "Side Split Leap, take-off from one or both feet", "category": "jump", "value": 0.3},
-  {"id": "1.2505", "name": "Side Split Leap, take-off from one or both feet with ½ turn (180°)", "category": "jump", "value": 0.5},
-  {"id": "1.2604", "name": "Switch side Split Leap, passing with bent leg (with turn 90°)", "category": "jump", "value": 0.4},
-  {"id": "1.2605", "name": "Switch side Split Leap, passing with straight leg (with turn 90°)", "category": "jump", "value": 0.5},
-  {"id": "1.2702", "name": "Stag Leap, take off from one or two feet", "category": "jump", "value": 0.2},
-  {"id": "1.2704.1", "name": "Stag leap, take-off from one or two feet, with ring", "category": "jump", "value": 0.4},
-  {"id": "1.2704.2", "name": "Stag leap, take-off from one or two feet, with backbend of the trunk", "category": "jump", "value": 0.4},
-  {"id": "1.2804", "name": "Stag Leap, take off from one or two feet with ½ (180°) turn of the body", "category": "jump", "value": 0.4},
-  {"id": "1.2806.1", "name": "Stag Leap, take off from one or two feet with ½ (180°) turn of the body, with ring", "category": "jump", "value": 0.6},
-  {"id": "1.2806.2", "name": "Stag Leap, take off from one or two feet with ½ (180°) turn of the body, with backbend of the trunk", "category": "jump", "value": 0.6},
-  {"id": "1.2904", "name": "Switch Stag Leap, passing with straight leg", "category": "jump", "value": 0.4},
-  {"id": "1.2906.1", "name": "Switch Stag Leap, passing with straight leg with ring", "category": "jump", "value": 0.6},
-  {"id": "1.2906.2", "name": "Switch Stag Leap, passing with straight leg with backbend of the trunk", "category": "jump", "value": 0.6},
-  {"id": "1.3002", "name": "\"Fouetté\": Leg at the horizontal, or with greater amplitude", "category": "jump", "value": 0.2},
-  {"id": "1.3003", "name": "\"Fouetté\": Leg at the horizontal, or with greater amplitude with ring/backbend of the trunk", "category": "jump", "value": 0.3},
-  {"id": "1.3102", "name": "\"Fouetté\" with cabriole", "category": "jump", "value": 0.2},
-  {"id": "1.3103", "name": "\"Fouetté\" with stag", "category": "jump", "value": 0.3},
-  {"id": "1.3105.1", "name": "\"Fouetté\" with ring", "category": "jump", "value": 0.5},
-  {"id": "1.3105.2", "name": "\"Fouetté\" with backbend of the trunk", "category": "jump", "value": 0.5},
-  {"id": "1.3203", "name": "\"Entrelacé\": Legs at the horizontal, or with greater amplitude", "category": "jump", "value": 0.3},
-  {"id": "1.3205.1", "name": "\"Entrelacé\": with ring", "category": "jump", "value": 0.5},
-  {"id": "1.3205.2", "name": "\"Entrelacé\" with backbend of the trunk", "category": "jump", "value": 0.5},
-  {"id": "1.3303", "name": "Turning stag leap", "category": "jump", "value": 0.3},
-  {"id": "1.3305.1", "name": "Turning stag leap with ring", "category": "jump", "value": 0.5},
-  {"id": "1.3305.2", "name": "Turning stag leap with backbend of the trunk", "category": "jump", "value": 0.5},
-  {"id": "1.3405", "name": "Turning stag leap with switch of straight leg", "category": "jump", "value": 0.5},
-  {"id": "1.3407.1", "name": "Turning stag leap with switch of straight leg with ring", "category": "jump", "value": 0.7},
-  {"id": "1.3407.2", "name": "Turning stag leap with switch of straight leg with backbend of the trunk", "category": "jump", "value": 0.7},
-  {"id": "1.3504", "name": "Turning split leap (jeté en tournant)", "category": "jump", "value": 0.4},
-  {"id": "1.3505", "name": "Agiurgiuculese: turning split leap with ring, take-off and landing on the same leg", "category": "jump", "value": 0.5},
-  {"id": "1.3506.1", "name": "Turning split leap (jeté en tournant) with ring", "category": "jump", "value": 0.6},
-  {"id": "1.3506.2", "name": "Turning split leap (jeté en tournant) with backbend of the trunk", "category": "jump", "value": 0.6},
-  {"id": "1.3606", "name": "Turning split leap with switch of legs", "category": "jump", "value": 0.6},
-  {"id": "1.3608.1", "name": "Turning split leap with switch of legs with ring", "category": "jump", "value": 0.8},
-  {"id": "1.3608.2", "name": "Turning split leap with switch of legs with backbend of the trunk", "category": "jump", "value": 0.8},
-  {"id": "1.3705", "name": "\"Butterfly\" jump: With a minimum 180° turn from take-off to landing", "category": "jump", "value": 0.5},
-  {"id": "2.101.1", "name": "Passé front or side (horizontal position), or with bend of the upper back and shoulders", "category": "balance", "value": 0.1},
-  {"id": "2.101.2", "name": "Passé front or side (horizontal position), or with bend of the upper back and shoulders", "category": "balance", "value": 0.1},
-  {"id": "2.201", "name": "Free leg horizontal forward bent 30°", "category": "balance", "value": 0.1},
-  {"id": "2.202", "name": "Free leg horizontal forward straight", "category": "balance", "value": 0.2},
-  {"id": "2.203", "name": "Free leg horizontal forward straight and with trunk back at the horizontal position", "category": "balance", "value": 0.3},
-  {"id": "2.303", "name": "Front Split with help", "category": "balance", "value": 0.3},
-  {"id": "2.305", "name": "Front Split without help", "category": "balance", "value": 0.5},
-  {"id": "2.404", "name": "Front split with help, trunk backward at horizontal", "category": "balance", "value": 0.4},
-  {"id": "2.406", "name": "Front split without help, trunk backward at horizontal", "category": "balance", "value": 0.6},
-  {"id": "2.506.1", "name": "From standing - Front split without help, trunk backward below horizontal from the standing position", "category": "balance", "value": 0.6},
-  {"id": "2.506.2", "name": "From seated position - Front split without help, trunk backward below horizontal from the seated position", "category": "balance", "value": 0.6},
-  {"id": "2.602", "name": "Free leg horizontal sideward", "category": "balance", "value": 0.2},
-  {"id": "2.603", "name": "Free leg horizontal sideward with trunk side at the horizontal", "category": "balance", "value": 0.3},
-  {"id": "2.703", "name": "Side Split with help", "category": "balance", "value": 0.3},
-  {"id": "2.705", "name": "Side Split without help", "category": "balance", "value": 0.5},
-  {"id": "2.804", "name": "Side Split with help with trunk side at the horizontal", "category": "balance", "value": 0.4},
-  {"id": "2.806", "name": "Side Split without help with trunk side at the horizontal", "category": "balance", "value": 0.6},
-  {"id": "2.902", "name": "Arabesque: free leg horizontal backward", "category": "balance", "value": 0.2},
-  {"id": "2.903", "name": "Arabesque: free leg horizontal backward with trunk forward at the horizontal or bent backward at horizontal", "category": "balance", "value": 0.3},
-  {"id": "2.904", "name": "Arabesque: free leg horizontal backward with back bend at horizontal", "category": "balance", "value": 0.4},
-  {"id": "2.1003", "name": "Back split with help; foot above head", "category": "balance", "value": 0.3},
-  {"id": "2.1005", "name": "Back split without help; foot above head", "category": "balance", "value": 0.5},
-  {"id": "2.1104", "name": "Back split with help, trunk forward at horizontal", "category": "balance", "value": 0.4},
-  {"id": "2.1106.1", "name": "Back split without help, trunk forward at horizontal", "category": "balance", "value": 0.6},
-  {"id": "2.1106.2", "name": "Back split without help, trunk forward at below horizontal", "category": "balance", "value": 0.6},
-  {"id": "2.1106.3", "name": "Ring without help, with split and trunk horizontal", "category": "balance", "value": 0.6},
-  {"id": "2.1202", "name": "Attitude", "category": "balance", "value": 0.2},
-  {"id": "2.1203", "name": "Ring with help, with the leg on the shoulder", "category": "balance", "value": 0.3},
-  {"id": "2.1204", "name": "Ring without help, with back bend of the trunk", "category": "balance", "value": 0.4},
-  {"id": "2.1301", "name": "\"Cossack\", free leg at horizontal at forward", "category": "balance", "value": 0.1},
-  {"id": "2.1402", "name": "\"Cossack\", free leg front, foot higher than head with help", "category": "balance", "value": 0.2},
-  {"id": "2.1403", "name": "\"Cossack\", free leg front, foot higher than head without help", "category": "balance", "value": 0.3},
-  {"id": "2.1501", "name": "Lying on the floor with trunk lifted (legs may be separated to shoulder width)", "category": "balance", "value": 0.1},
-  {"id": "2.1503", "name": "Kabaeva (KB): On the chest with help", "category": "balance", "value": 0.3},
-  {"id": "2.1504", "name": "Kabaeva (KB): on the chest without help", "category": "balance", "value": 0.4},
-  {"id": "2.1604", "name": "Passing from lying with the trunk lifted to the chest", "category": "balance", "value": 0.4},
-  {"id": "2.1703", "name": "Passing from kneeling to standing, over the toes, with or without backbend", "category": "balance", "value": 0.3},
-  {"id": "2.1803", "name": "Fouetté consisting of min. 3 same or different shapes (leg at the horizontal for min. 2 shapes + min. 1 turn)", "category": "balance", "value": 0.3},
-  {"id": "2.1805", "name": "Fouetté consisting of min. 3 same or different shapes (leg above the horizontal for min. 2 shapes + min. 1 turn)", "category": "balance", "value": 0.5},
-  {"id": "2.1904.1", "name": "Utyascheva: Two or three shapes from back split with help to front split with back bend of the trunk on the other foot, without rotation of 180° or more", "category": "balance", "value": 0.4},
-  {"id": "2.1904.2", "name": "Utyascheva: Two or three shapes from back split with help to front split with back bend of the trunk on the other foot, eventually also back to the initial shape, without rotation of 180° or more", "category": "balance", "value": 0.4},
-  {"id": "2.1904.3", "name": "Utyascheva: Two or three shapes from back split with help to front split with back bend of the trunk on the other foot, with rotation of 180° or more", "category": "balance", "value": 0.4},
-  {"id": "3.101", "name": "\"Passé\" (forward or side)", "category": "pivot", "value": 0.1},
-  {"id": "3.203", "name": "Spiral turn (\"Tonneau\") on one leg", "category": "pivot", "value": 0.3},
-  {"id": "3.301", "name": "Free leg horizontal forward, bent 30°", "category": "pivot", "value": 0.1},
-  {"id": "3.303", "name": "Free leg horizontal forward, straight", "category": "pivot", "value": 0.3},
-  {"id": "3.403", "name": "Front split with help", "category": "pivot", "value": 0.3},
-  {"id": "3.405", "name": "Front split without help", "category": "pivot", "value": 0.5},
-  {"id": "3.505", "name": "Elkatib: Front split with trunk backward at the horizontal (180°)", "category": "pivot", "value": 0.5},
-  {"id": "3.603", "name": "Free leg horizontal sideward", "category": "pivot", "value": 0.3},
-  {"id": "3.604", "name": "Free leg horizontal sideward with trunk side at the horizontal", "category": "pivot", "value": 0.4},
-  {"id": "3.703", "name": "Side split with help", "category": "pivot", "value": 0.3},
-  {"id": "3.705", "name": "Side split without help", "category": "pivot", "value": 0.5},
-  {"id": "3.804", "name": "Side split with help, trunk horizontal (180°)", "category": "pivot", "value": 0.4},
-  {"id": "3.805.1", "name": "Side split without help, trunk horizontal (180°)", "category": "pivot", "value": 0.5},
-  {"id": "3.805.2", "name": "Side split without help, trunk horizontal, Raffaeli with free bent leg (RF)", "category": "pivot", "value": 0.5},
-  {"id": "3.903", "name": "Arabesque: free leg horizontal", "category": "pivot", "value": 0.3},
-  {"id": "3.904", "name": "Arabesque: free leg horizontal with trunk forward", "category": "pivot", "value": 0.4},
-  {"id": "3.905", "name": "Arabesque: free leg horizontal with trunk backward, at horizontal", "category": "pivot", "value": 0.5},
-  {"id": "3.1003", "name": "Back split with help", "category": "pivot", "value": 0.3},
-  {"id": "3.1005", "name": "Back split without help", "category": "pivot", "value": 0.5},
-  {"id": "3.1104", "name": "Split back with help, trunk horizontal", "category": "pivot", "value": 0.4},
-  {"id": "3.1105.1", "name": "Split back without help, trunk horizontal", "category": "pivot", "value": 0.5},
-  {"id": "3.1105.2", "name": "Split back without help, trunk below horizontal", "category": "pivot", "value": 0.5},
-  {"id": "3.1105.3", "name": "Split back without help with ring (Sakura)", "category": "pivot", "value": 0.5},
-  {"id": "3.1203", "name": "Attitude", "category": "pivot", "value": 0.3},
-  {"id": "3.1205.1", "name": "Attitude, with trunk backward at horizontal", "category": "pivot", "value": 0.5},
-  {"id": "3.1205.2", "name": "Ring without help", "category": "pivot", "value": 0.5},
-  {"id": "3.1303.1", "name": "Ring with help", "category": "pivot", "value": 0.3},
-  {"id": "3.1303.2", "name": "Ring with help and with the leg on the shoulder", "category": "pivot", "value": 0.3},
-  {"id": "3.1405.1", "name": "Front split; trunk bent back below horizontal from standing position (Kabaeva)", "category": "pivot", "value": 0.5},
-  {"id": "3.1405.2", "name": "Front split; trunk bent back below horizontal from a seated position (Kabaeva)", "category": "pivot", "value": 0.5},
-  {"id": "3.1405.3", "name": "Kramarenko: Free leg bent 30° - position \"Tire-Buchon\"", "category": "pivot", "value": 0.5},
-  {"id": "3.1501", "name": "\"Cossack\" free leg forward without help", "category": "pivot", "value": 0.1},
-  {"id": "3.1601", "name": "Fouetté: Passé", "category": "pivot", "value": 0.1},
-  {"id": "3.1602", "name": "Fouetté: with leg stretched at the horizontal: in front, side", "category": "pivot", "value": 0.2},
-  {"id": "3.1704", "name": "Illusion backwards: Trunk bent backward at horizontal or below", "category": "pivot", "value": 0.4},
-  {"id": "3.1801", "name": "Ralenkova: Rotation on the back", "category": "pivot", "value": 0.1},
-  {"id": "3.1902", "name": "Rotation on the stomach, legs close to ring", "category": "pivot", "value": 0.2},
-  {"id": "3.2003.1", "name": "Rotation on the stomach, legs in stag position with help (Ashram)", "category": "pivot", "value": 0.3},
-  {"id": "3.2003.2", "name": "Rotation in split position without help (Kanaeva)", "category": "pivot", "value": 0.3},
-  {"id": "3.2101", "name": "Rotation in a split with help without interruption, bent forward", "category": "pivot", "value": 0.1},
-  {"id": "3.2202", "name": "Rotation in a split with help without interruption, bent backward", "category": "pivot", "value": 0.2}
+  {
+    "id": "1.101",
+    "name": "Tuck jump with one turn 360° during the flight, take-off from two feet",
+    "category": "jump",
+    "value": 0.1
+  },
+  {
+    "id": "1.201",
+    "name": "\"Scissors\" forward with bent legs and one turn 360° during the flight (\"cat leap\")",
+    "category": "jump",
+    "value": 0.1
+  },
+  {
+    "id": "1.301",
+    "name": "Vertical Jump with straight legs and with 1/1 turns (360°), take-off from two feet",
+    "category": "jump",
+    "value": 0.1
+  },
+  {
+    "id": "1.303",
+    "name": "Vertical Jump with straight legs and with 2/1 turns (720°), take-off from two feet",
+    "category": "jump",
+    "value": 0.3
+  },
+  {
+    "id": "1.401",
+    "name": "Vertical Jump with bent leg (Passé) with 1/1 turn (360°)",
+    "category": "jump",
+    "value": 0.1
+  },
+  {
+    "id": "1.403",
+    "name": "Vertical Jump with bent leg (Passé) with 2/1 turns (720°)",
+    "category": "jump",
+    "value": 0.3
+  },
+  {
+    "id": "1.502",
+    "name": "Vertical Jump with free leg stretched forward in horizontal with 180° turn during the flight",
+    "category": "jump",
+    "value": 0.2
+  },
+  {
+    "id": "1.503",
+    "name": "Vertical Jump with free leg stretched forward in horizontal with 360° turn during the flight",
+    "category": "jump",
+    "value": 0.3
+  },
+  {
+    "id": "1.602",
+    "name": "Vertical Jump with free leg stretched sideways in horizontal with 180° turn during flight",
+    "category": "jump",
+    "value": 0.2
+  },
+  {
+    "id": "1.603",
+    "name": "Vertical Jump with free leg stretched sideways in horizontal with 360° turn during flight",
+    "category": "jump",
+    "value": 0.3
+  },
+  {
+    "id": "1.702",
+    "name": "Vertical Jump with free leg stretched back in horizontal with 180° turn during flight",
+    "category": "jump",
+    "value": 0.2
+  },
+  {
+    "id": "1.704",
+    "name": "Vertical Jump with free leg stretched back in horizontal with 360° turn during flight",
+    "category": "jump",
+    "value": 0.4
+  },
+  {
+    "id": "1.802",
+    "name": "Vertical Jump with free leg bent back in horizontal (attitude) with 180° turn during flight",
+    "category": "jump",
+    "value": 0.2
+  },
+  {
+    "id": "1.804",
+    "name": "Vertical Jump with free leg bent back in horizontal (attitude) with 360° turn during flight",
+    "category": "jump",
+    "value": 0.4
+  },
+  { "id": "1.901", "name": "\"Cabriole\" forward", "category": "jump", "value": 0.1 },
+  { "id": "1.1001", "name": "\"Cabriole\" sideways", "category": "jump", "value": 0.1 },
+  {
+    "id": "1.1101",
+    "name": "\"Cabriole\" backwards",
+    "category": "jump",
+    "value": 0.1
+  },
+  {
+    "id": "1.1201",
+    "name": "\"Scissors\" Leaps with switch of legs forward: legs consecutively at horizontal",
+    "category": "jump",
+    "value": 0.1
+  },
+  {
+    "id": "1.1301",
+    "name": "\"Scissors\" leap with switch of legs backward at 45°",
+    "category": "jump",
+    "value": 0.1
+  },
+  {
+    "id": "1.1302",
+    "name": "\"Scissors\" leap with switch of legs backward with ring",
+    "category": "jump",
+    "value": 0.2
+  },
+  {
+    "id": "1.1403",
+    "name": "Pike jump with legs together or apart, take-off from one foot or from both feet",
+    "category": "jump",
+    "value": 0.3
+  },
+  {
+    "id": "1.1501",
+    "name": "\"Cossack\" Jump straight leg forward at horizontal with or without trunk bent forward",
+    "category": "jump",
+    "value": 0.1
+  },
+  {
+    "id": "1.1503",
+    "name": "\"Cossack\" Jump straight leg forward at horizontal with or without trunk bent forward with ½ (180°) turn during the flight",
+    "category": "jump",
+    "value": 0.3
+  },
+  {
+    "id": "1.1602",
+    "name": "\"Cossack\" Jump straight leg forward, high up, whole foot higher than head, with help",
+    "category": "jump",
+    "value": 0.2
+  },
+  {
+    "id": "1.1604",
+    "name": "\"Cossack\" Jump straight leg forward, high up, whole foot higher than head, with help, with ½ (180°) turn",
+    "category": "jump",
+    "value": 0.4
+  },
+  {
+    "id": "1.1703",
+    "name": "\"Cossack\" Jump straight leg forward, high up, whole foot higher than head without help",
+    "category": "jump",
+    "value": 0.3
+  },
+  {
+    "id": "1.1705",
+    "name": "\"Cossack\" Jump straight leg forward, high up, whole foot higher than head, without help and with ½ (180°) turn",
+    "category": "jump",
+    "value": 0.5
+  },
+  {
+    "id": "1.1802",
+    "name": "\"Cossack\" Jump straight leg to the side high up, whole foot higher than head, with help of the hand of the same side",
+    "category": "jump",
+    "value": 0.2
+  },
+  {
+    "id": "1.1804",
+    "name": "\"Cossack\" Jump straight leg to the side high up, whole foot higher than head, with help of the hand of the same side, the leg is straight with ½ (180°) turn",
+    "category": "jump",
+    "value": 0.4
+  },
+  {
+    "id": "1.1805",
+    "name": "\"Cossack\" Jump straight leg to the side high up, whole foot higher than head, with help of the opposite hand, the leg is straight with 1/1 (360°) turn",
+    "category": "jump",
+    "value": 0.5
+  },
+  {
+    "id": "1.1903",
+    "name": "\"Cossack\" Jump straight leg to the side high up, whole foot higher than head, without help",
+    "category": "jump",
+    "value": 0.3
+  },
+  {
+    "id": "1.1905",
+    "name": "\"Cossack\" Jump straight leg to the side high up, whole foot higher than head, without help, with 1/2 (180°) turn",
+    "category": "jump",
+    "value": 0.5
+  },
+  {
+    "id": "1.2002",
+    "name": "Ring with one leg, take-off with one foot, take-off from one or two feet",
+    "category": "jump",
+    "value": 0.2
+  },
+  {
+    "id": "1.2003",
+    "name": "Ring with two legs, take-off with both legs, take-off from one or two feet",
+    "category": "jump",
+    "value": 0.3
+  },
+  {
+    "id": "1.2103",
+    "name": "Split Leap, take-off from one or two feet",
+    "category": "jump",
+    "value": 0.3
+  },
+  {
+    "id": "1.2104",
+    "name": "Split leap with ring, take-off and landing on the same leg",
+    "category": "jump",
+    "value": 0.4
+  },
+  {
+    "id": "1.2105",
+    "name": "Split Leap with back bent of the trunk, take-off from one or two feet",
+    "category": "jump",
+    "value": 0.5
+  },
+  {
+    "id": "1.2205",
+    "name": "Two consecutive split leaps with change of take-off foot",
+    "category": "jump",
+    "value": 0.5
+  },
+  {
+    "id": "1.2207",
+    "name": "Three consecutive split leaps with change of take-off foot",
+    "category": "jump",
+    "value": 0.7
+  },
+  {
+    "id": "1.2305",
+    "name": "Switch Split Leap, passing with stretched legs",
+    "category": "jump",
+    "value": 0.5
+  },
+  {
+    "id": "1.2307",
+    "name": "Switch Split Leap, passing with stretched legs with ring/backbend",
+    "category": "jump",
+    "value": 0.7
+  },
+  {
+    "id": "1.2404",
+    "name": "Switch split leap, passing with bent leg",
+    "category": "jump",
+    "value": 0.4
+  },
+  {
+    "id": "1.2406.1",
+    "name": "Switch split leap, passing with bent leg, also with ring/backbend",
+    "category": "jump",
+    "value": 0.6
+  },
+  {
+    "id": "1.2406.2",
+    "name": "Switch split leap, passing with bent leg, also with ring/backbend",
+    "category": "jump",
+    "value": 0.6
+  },
+  {
+    "id": "1.2503",
+    "name": "Side Split Leap, take-off from one or both feet",
+    "category": "jump",
+    "value": 0.3
+  },
+  {
+    "id": "1.2505",
+    "name": "Side Split Leap, take-off from one or both feet with ½ turn (180°)",
+    "category": "jump",
+    "value": 0.5
+  },
+  {
+    "id": "1.2604",
+    "name": "Switch side Split Leap, passing with bent leg (with turn 90°)",
+    "category": "jump",
+    "value": 0.4
+  },
+  {
+    "id": "1.2605",
+    "name": "Switch side Split Leap, passing with straight leg (with turn 90°)",
+    "category": "jump",
+    "value": 0.5
+  },
+  {
+    "id": "1.2702",
+    "name": "Stag Leap, take off from one or two feet",
+    "category": "jump",
+    "value": 0.2
+  },
+  {
+    "id": "1.2704.1",
+    "name": "Stag leap, take-off from one or two feet, with ring",
+    "category": "jump",
+    "value": 0.4
+  },
+  {
+    "id": "1.2704.2",
+    "name": "Stag leap, take-off from one or two feet, with backbend of the trunk",
+    "category": "jump",
+    "value": 0.4
+  },
+  {
+    "id": "1.2804",
+    "name": "Stag Leap, take off from one or two feet with ½ (180°) turn of the body",
+    "category": "jump",
+    "value": 0.4
+  },
+  {
+    "id": "1.2806.1",
+    "name": "Stag Leap, take off from one or two feet with ½ (180°) turn of the body, with ring",
+    "category": "jump",
+    "value": 0.6
+  },
+  {
+    "id": "1.2806.2",
+    "name": "Stag Leap, take off from one or two feet with ½ (180°) turn of the body, with backbend of the trunk",
+    "category": "jump",
+    "value": 0.6
+  },
+  {
+    "id": "1.2904",
+    "name": "Switch Stag Leap, passing with straight leg",
+    "category": "jump",
+    "value": 0.4
+  },
+  {
+    "id": "1.2906.1",
+    "name": "Switch Stag Leap, passing with straight leg with ring",
+    "category": "jump",
+    "value": 0.6
+  },
+  {
+    "id": "1.2906.2",
+    "name": "Switch Stag Leap, passing with straight leg with backbend of the trunk",
+    "category": "jump",
+    "value": 0.6
+  },
+  {
+    "id": "1.3002",
+    "name": "\"Fouetté\": Leg at the horizontal, or with greater amplitude",
+    "category": "jump",
+    "value": 0.2
+  },
+  {
+    "id": "1.3003",
+    "name": "\"Fouetté\": Leg at the horizontal, or with greater amplitude with ring/backbend of the trunk",
+    "category": "jump",
+    "value": 0.3
+  },
+  {
+    "id": "1.3102",
+    "name": "\"Fouetté\" with cabriole",
+    "category": "jump",
+    "value": 0.2
+  },
+  { "id": "1.3103", "name": "\"Fouetté\" with stag", "category": "jump", "value": 0.3 },
+  {
+    "id": "1.3105.1",
+    "name": "\"Fouetté\" with ring",
+    "category": "jump",
+    "value": 0.5
+  },
+  {
+    "id": "1.3105.2",
+    "name": "\"Fouetté\" with backbend of the trunk",
+    "category": "jump",
+    "value": 0.5
+  },
+  {
+    "id": "1.3203",
+    "name": "\"Entrelacé\": Legs at the horizontal, or with greater amplitude",
+    "category": "jump",
+    "value": 0.3
+  },
+  {
+    "id": "1.3205.1",
+    "name": "\"Entrelacé\": with ring",
+    "category": "jump",
+    "value": 0.5
+  },
+  {
+    "id": "1.3205.2",
+    "name": "\"Entrelacé\" with backbend of the trunk",
+    "category": "jump",
+    "value": 0.5
+  },
+  { "id": "1.3303", "name": "Turning stag leap", "category": "jump", "value": 0.3 },
+  {
+    "id": "1.3305.1",
+    "name": "Turning stag leap with ring",
+    "category": "jump",
+    "value": 0.5
+  },
+  {
+    "id": "1.3305.2",
+    "name": "Turning stag leap with backbend of the trunk",
+    "category": "jump",
+    "value": 0.5
+  },
+  {
+    "id": "1.3405",
+    "name": "Turning stag leap with switch of straight leg",
+    "category": "jump",
+    "value": 0.5
+  },
+  {
+    "id": "1.3407.1",
+    "name": "Turning stag leap with switch of straight leg with ring",
+    "category": "jump",
+    "value": 0.7
+  },
+  {
+    "id": "1.3407.2",
+    "name": "Turning stag leap with switch of straight leg with backbend of the trunk",
+    "category": "jump",
+    "value": 0.7
+  },
+  {
+    "id": "1.3504",
+    "name": "Turning split leap (jeté en tournant)",
+    "category": "jump",
+    "value": 0.4
+  },
+  {
+    "id": "1.3505",
+    "name": "Agiurgiuculese: turning split leap with ring, take-off and landing on the same leg",
+    "category": "jump",
+    "value": 0.5
+  },
+  {
+    "id": "1.3506.1",
+    "name": "Turning split leap (jeté en tournant) with ring",
+    "category": "jump",
+    "value": 0.6
+  },
+  {
+    "id": "1.3506.2",
+    "name": "Turning split leap (jeté en tournant) with backbend of the trunk",
+    "category": "jump",
+    "value": 0.6
+  },
+  {
+    "id": "1.3606",
+    "name": "Turning split leap with switch of legs",
+    "category": "jump",
+    "value": 0.6
+  },
+  {
+    "id": "1.3608.1",
+    "name": "Turning split leap with switch of legs with ring",
+    "category": "jump",
+    "value": 0.8
+  },
+  {
+    "id": "1.3608.2",
+    "name": "Turning split leap with switch of legs with backbend of the trunk",
+    "category": "jump",
+    "value": 0.8
+  },
+  {
+    "id": "1.3705",
+    "name": "\"Butterfly\" jump: With a minimum 180° turn from take-off to landing",
+    "category": "jump",
+    "value": 0.5
+  },
+  {
+    "id": "2.101.1",
+    "name": "Passé front or side (horizontal position), or with bend of the upper back and shoulders",
+    "category": "balance",
+    "value": 0.1
+  },
+  {
+    "id": "2.101.2",
+    "name": "Passé front or side (horizontal position), or with bend of the upper back and shoulders",
+    "category": "balance",
+    "value": 0.1
+  },
+  {
+    "id": "2.201",
+    "name": "Free leg horizontal forward bent 30°",
+    "category": "balance",
+    "value": 0.1
+  },
+  {
+    "id": "2.202",
+    "name": "Free leg horizontal forward straight",
+    "category": "balance",
+    "value": 0.2
+  },
+  {
+    "id": "2.203",
+    "name": "Free leg horizontal forward straight and with trunk back at the horizontal position",
+    "category": "balance",
+    "value": 0.3
+  },
+  {
+    "id": "2.303",
+    "name": "Front Split with help",
+    "category": "balance",
+    "value": 0.3
+  },
+  {
+    "id": "2.305",
+    "name": "Front Split without help",
+    "category": "balance",
+    "value": 0.5
+  },
+  {
+    "id": "2.404",
+    "name": "Front split with help, trunk backward at horizontal",
+    "category": "balance",
+    "value": 0.4
+  },
+  {
+    "id": "2.406",
+    "name": "Front split without help, trunk backward at horizontal",
+    "category": "balance",
+    "value": 0.6
+  },
+  {
+    "id": "2.506.1",
+    "name": "From standing - Front split without help, trunk backward below horizontal from the standing position",
+    "category": "balance",
+    "value": 0.6
+  },
+  {
+    "id": "2.506.2",
+    "name": "From seated position - Front split without help, trunk backward below horizontal from the seated position",
+    "category": "balance",
+    "value": 0.6
+  },
+  {
+    "id": "2.602",
+    "name": "Free leg horizontal sideward",
+    "category": "balance",
+    "value": 0.2
+  },
+  {
+    "id": "2.603",
+    "name": "Free leg horizontal sideward with trunk side at the horizontal",
+    "category": "balance",
+    "value": 0.3
+  },
+  {
+    "id": "2.703",
+    "name": "Side Split with help",
+    "category": "balance",
+    "value": 0.3
+  },
+  {
+    "id": "2.705",
+    "name": "Side Split without help",
+    "category": "balance",
+    "value": 0.5
+  },
+  {
+    "id": "2.804",
+    "name": "Side Split with help with trunk side at the horizontal",
+    "category": "balance",
+    "value": 0.4
+  },
+  {
+    "id": "2.806",
+    "name": "Side Split without help with trunk side at the horizontal",
+    "category": "balance",
+    "value": 0.6
+  },
+  {
+    "id": "2.902",
+    "name": "Arabesque: free leg horizontal backward",
+    "category": "balance",
+    "value": 0.2
+  },
+  {
+    "id": "2.903",
+    "name": "Arabesque: free leg horizontal backward with trunk forward at the horizontal or bent backward at horizontal",
+    "category": "balance",
+    "value": 0.3
+  },
+  {
+    "id": "2.904",
+    "name": "Arabesque: free leg horizontal backward with back bend at horizontal",
+    "category": "balance",
+    "value": 0.4
+  },
+  {
+    "id": "2.1003",
+    "name": "Back split with help; foot above head",
+    "category": "balance",
+    "value": 0.3
+  },
+  {
+    "id": "2.1005",
+    "name": "Back split without help; foot above head",
+    "category": "balance",
+    "value": 0.5
+  },
+  {
+    "id": "2.1104",
+    "name": "Back split with help, trunk forward at horizontal",
+    "category": "balance",
+    "value": 0.4
+  },
+  {
+    "id": "2.1106.1",
+    "name": "Back split without help, trunk forward at horizontal",
+    "category": "balance",
+    "value": 0.6
+  },
+  {
+    "id": "2.1106.2",
+    "name": "Back split without help, trunk forward at below horizontal",
+    "category": "balance",
+    "value": 0.6
+  },
+  {
+    "id": "2.1106.3",
+    "name": "Ring without help, with split and trunk horizontal",
+    "category": "balance",
+    "value": 0.6
+  },
+  { "id": "2.1202", "name": "Attitude", "category": "balance", "value": 0.2 },
+  {
+    "id": "2.1203",
+    "name": "Ring with help, with the leg on the shoulder",
+    "category": "balance",
+    "value": 0.3
+  },
+  {
+    "id": "2.1204",
+    "name": "Ring without help, with back bend of the trunk",
+    "category": "balance",
+    "value": 0.4
+  },
+  {
+    "id": "2.1301",
+    "name": "\"Cossack\", free leg at horizontal at forward",
+    "category": "balance",
+    "value": 0.1
+  },
+  {
+    "id": "2.1402",
+    "name": "\"Cossack\", free leg front, foot higher than head with help",
+    "category": "balance",
+    "value": 0.2
+  },
+  {
+    "id": "2.1403",
+    "name": "\"Cossack\", free leg front, foot higher than head without help",
+    "category": "balance",
+    "value": 0.3
+  },
+  {
+    "id": "2.1501",
+    "name": "Lying on the floor with trunk lifted (legs may be separated to shoulder width)",
+    "category": "balance",
+    "value": 0.1
+  },
+  {
+    "id": "2.1503",
+    "name": "Kabaeva (KB): On the chest with help",
+    "category": "balance",
+    "value": 0.3
+  },
+  {
+    "id": "2.1504",
+    "name": "Kabaeva (KB): on the chest without help",
+    "category": "balance",
+    "value": 0.4
+  },
+  {
+    "id": "2.1604",
+    "name": "Passing from lying with the trunk lifted to the chest",
+    "category": "balance",
+    "value": 0.4
+  },
+  {
+    "id": "2.1703",
+    "name": "Passing from kneeling to standing, over the toes, with or without backbend",
+    "category": "balance",
+    "value": 0.3
+  },
+  {
+    "id": "2.1803",
+    "name": "Fouetté consisting of min. 3 same or different shapes (leg at the horizontal for min. 2 shapes + min. 1 turn)",
+    "category": "balance",
+    "value": 0.3
+  },
+  {
+    "id": "2.1805",
+    "name": "Fouetté consisting of min. 3 same or different shapes (leg above the horizontal for min. 2 shapes + min. 1 turn)",
+    "category": "balance",
+    "value": 0.5
+  },
+  {
+    "id": "2.1904.1",
+    "name": "Utyascheva: Two or three shapes from back split with help to front split with back bend of the trunk on the other foot, without rotation of 180° or more",
+    "category": "balance",
+    "value": 0.4
+  },
+  {
+    "id": "2.1904.2",
+    "name": "Utyascheva: Two or three shapes from back split with help to front split with back bend of the trunk on the other foot, eventually also back to the initial shape, without rotation of 180° or more",
+    "category": "balance",
+    "value": 0.4
+  },
+  {
+    "id": "2.1904.3",
+    "name": "Utyascheva: Two or three shapes from back split with help to front split with back bend of the trunk on the other foot, with rotation of 180° or more",
+    "category": "balance",
+    "value": 0.4
+  },
+  {
+    "id": "3.101",
+    "name": "\"Passé\" (forward or side)",
+    "category": "pivot",
+    "value": 0.1
+  },
+  {
+    "id": "3.203",
+    "name": "Spiral turn (\"Tonneau\") on one leg",
+    "category": "pivot",
+    "value": 0.3
+  },
+  {
+    "id": "3.301",
+    "name": "Free leg horizontal forward, bent 30°",
+    "category": "pivot",
+    "value": 0.1
+  },
+  {
+    "id": "3.303",
+    "name": "Free leg horizontal forward, straight",
+    "category": "pivot",
+    "value": 0.3
+  },
+  { "id": "3.403", "name": "Front split with help", "category": "pivot", "value": 0.3 },
+  {
+    "id": "3.405",
+    "name": "Front split without help",
+    "category": "pivot",
+    "value": 0.5
+  },
+  {
+    "id": "3.505",
+    "name": "Elkatib: Front split with trunk backward at the horizontal (180°)",
+    "category": "pivot",
+    "value": 0.5
+  },
+  {
+    "id": "3.603",
+    "name": "Free leg horizontal sideward",
+    "category": "pivot",
+    "value": 0.3
+  },
+  {
+    "id": "3.604",
+    "name": "Free leg horizontal sideward with trunk side at the horizontal",
+    "category": "pivot",
+    "value": 0.4
+  },
+  { "id": "3.703", "name": "Side split with help", "category": "pivot", "value": 0.3 },
+  {
+    "id": "3.705",
+    "name": "Side split without help",
+    "category": "pivot",
+    "value": 0.5
+  },
+  {
+    "id": "3.804",
+    "name": "Side split with help, trunk horizontal (180°)",
+    "category": "pivot",
+    "value": 0.4
+  },
+  {
+    "id": "3.805.1",
+    "name": "Side split without help, trunk horizontal (180°)",
+    "category": "pivot",
+    "value": 0.5
+  },
+  {
+    "id": "3.805.2",
+    "name": "Side split without help, trunk horizontal, Raffaeli with free bent leg (RF)",
+    "category": "pivot",
+    "value": 0.5
+  },
+  {
+    "id": "3.903",
+    "name": "Arabesque: free leg horizontal",
+    "category": "pivot",
+    "value": 0.3
+  },
+  {
+    "id": "3.904",
+    "name": "Arabesque: free leg horizontal with trunk forward",
+    "category": "pivot",
+    "value": 0.4
+  },
+  {
+    "id": "3.905",
+    "name": "Arabesque: free leg horizontal with trunk backward, at horizontal",
+    "category": "pivot",
+    "value": 0.5
+  },
+  { "id": "3.1003", "name": "Back split with help", "category": "pivot", "value": 0.3 },
+  {
+    "id": "3.1005",
+    "name": "Back split without help",
+    "category": "pivot",
+    "value": 0.5
+  },
+  {
+    "id": "3.1104",
+    "name": "Split back with help, trunk horizontal",
+    "category": "pivot",
+    "value": 0.4
+  },
+  {
+    "id": "3.1105.1",
+    "name": "Split back without help, trunk horizontal",
+    "category": "pivot",
+    "value": 0.5
+  },
+  {
+    "id": "3.1105.2",
+    "name": "Split back without help, trunk below horizontal",
+    "category": "pivot",
+    "value": 0.5
+  },
+  {
+    "id": "3.1105.3",
+    "name": "Split back without help with ring (Sakura)",
+    "category": "pivot",
+    "value": 0.5
+  },
+  { "id": "3.1203", "name": "Attitude", "category": "pivot", "value": 0.3 },
+  {
+    "id": "3.1205.1",
+    "name": "Attitude, with trunk backward at horizontal",
+    "category": "pivot",
+    "value": 0.5
+  },
+  { "id": "3.1205.2", "name": "Ring without help", "category": "pivot", "value": 0.5 },
+  { "id": "3.1303.1", "name": "Ring with help", "category": "pivot", "value": 0.3 },
+  {
+    "id": "3.1303.2",
+    "name": "Ring with help and with the leg on the shoulder",
+    "category": "pivot",
+    "value": 0.3
+  },
+  {
+    "id": "3.1405.1",
+    "name": "Front split; trunk bent back below horizontal from standing position (Kabaeva)",
+    "category": "pivot",
+    "value": 0.5
+  },
+  {
+    "id": "3.1405.2",
+    "name": "Front split; trunk bent back below horizontal from a seated position (Kabaeva)",
+    "category": "pivot",
+    "value": 0.5
+  },
+  {
+    "id": "3.1405.3",
+    "name": "Kramarenko: Free leg bent 30° - position \"Tire-Buchon\"",
+    "category": "pivot",
+    "value": 0.5
+  },
+  {
+    "id": "3.1501",
+    "name": "\"Cossack\" free leg forward without help",
+    "category": "pivot",
+    "value": 0.1
+  },
+  { "id": "3.1601", "name": "Fouetté: Passé", "category": "pivot", "value": 0.1 },
+  {
+    "id": "3.1602",
+    "name": "Fouetté: with leg stretched at the horizontal: in front, side",
+    "category": "pivot",
+    "value": 0.2
+  },
+  {
+    "id": "3.1704",
+    "name": "Illusion backwards: Trunk bent backward at horizontal or below",
+    "category": "pivot",
+    "value": 0.4
+  },
+  {
+    "id": "3.1801",
+    "name": "Ralenkova: Rotation on the back",
+    "category": "pivot",
+    "value": 0.1
+  },
+  {
+    "id": "3.1902",
+    "name": "Rotation on the stomach, legs close to ring",
+    "category": "pivot",
+    "value": 0.2
+  },
+  {
+    "id": "3.2003.1",
+    "name": "Rotation on the stomach, legs in stag position with help (Ashram)",
+    "category": "pivot",
+    "value": 0.3
+  },
+  {
+    "id": "3.2003.2",
+    "name": "Rotation in split position without help (Kanaeva)",
+    "category": "pivot",
+    "value": 0.3
+  },
+  {
+    "id": "3.2101",
+    "name": "Rotation in a split with help without interruption, bent forward",
+    "category": "pivot",
+    "value": 0.1
+  },
+  {
+    "id": "3.2202",
+    "name": "Rotation in a split with help without interruption, bent backward",
+    "category": "pivot",
+    "value": 0.2
+  }
 ]

@@ -12,7 +12,7 @@
   {
     "id": "dynamic-change",
     "name": "Dynamic change",
-    "type": "dynamic"
+    "type": "dynamic-change"
   },
   {
     "id": "effect",

@@ -80,14 +80,14 @@ Responsibilities:
 
 All business logic lives here. Planned services:
 
-| Service | Responsibility |
-|---------|---------------|
-| `authService` | Sign up, login, JWT issue/verify, password reset |
-| `coachService` | Profile CRUD |
-| `routineService` | Routine CRUD, timeline management |
-| `scoringService` | DB and DA calculation |
-| `validationService` | CoP requirement checking |
-| `referenceDataService` | Read-only access to BodyElements, Bases, etc. |
+| Service                | Responsibility                                   |
+| ---------------------- | ------------------------------------------------ |
+| `authService`          | Sign up, login, JWT issue/verify, password reset |
+| `coachService`         | Profile CRUD                                     |
+| `routineService`       | Routine CRUD, timeline management                |
+| `scoringService`       | DB and DA calculation                            |
+| `validationService`    | CoP requirement checking                         |
+| `referenceDataService` | Read-only access to BodyElements, Bases, etc.    |
 
 Services may call other services (composition). They receive `coachId` from context for authorization.
 
@@ -120,7 +120,7 @@ Every authenticated request carries:
 
 ```typescript
 interface GraphQLContext {
-  coachId: string | null;   // null for public operations
+  coachId: string | null; // null for public operations
   coach: CoachDocument | null;
 }
 ```
@@ -190,17 +190,18 @@ Reset password  ──▶ authService.resetPassword() ──▶ verify token ─
 
 ## Deployment Architecture
 
-| Component | Platform | Notes |
-|-----------|----------|-------|
-| Client | Vercel | Static build from `client/`; env `VITE_GRAPHQL_URL` |
-| Server | Render | Web service; env: MongoDB, JWT secret, Resend API key, CORS origin |
-| Database | MongoDB Atlas | Production cluster; IP allowlist for Render |
+| Component | Platform      | Notes                                                              |
+| --------- | ------------- | ------------------------------------------------------------------ |
+| Client    | Vercel        | Static build from `client/`; env `VITE_GRAPHQL_URL`                |
+| Server    | Render        | Web service; env: MongoDB, JWT secret, Resend API key, CORS origin |
+| Database  | MongoDB Atlas | Production cluster; IP allowlist for Render                        |
 
 CORS on the server must allow the Vercel domain in production.
 
 ## Existing Code — Migration Notes
 
 Completed:
+
 - `BodyElement` model replaces the legacy `Element` scaffold
 - `bodyelements` collection seeded; legacy `elements` collection removed
 
@@ -216,12 +217,12 @@ These refactors are scheduled in [ROADMAP.md](./ROADMAP.md) Milestone 0.
 
 ## Confirmed Decisions
 
-| Decision | Choice |
-|----------|--------|
-| Git default branch | `master` |
-| Email provider | **Resend** |
-| Apollo Server hosting | **Express** (health check, CORS, graceful shutdown for Render) |
-| GraphQL schema organization | Split by domain once auth lands |
-| Client code generation | GraphQL Codegen once schema stabilizes (Milestone 4+) |
+| Decision                    | Choice                                                         |
+| --------------------------- | -------------------------------------------------------------- |
+| Git default branch          | `master`                                                       |
+| Email provider              | **Resend**                                                     |
+| Apollo Server hosting       | **Express** (health check, CORS, graceful shutdown for Render) |
+| GraphQL schema organization | Split by domain once auth lands                                |
+| Client code generation      | GraphQL Codegen once schema stabilizes (Milestone 4+)          |
 
 Ask before changing any of these during implementation.

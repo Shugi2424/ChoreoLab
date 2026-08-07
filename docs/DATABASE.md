@@ -12,23 +12,23 @@ Collections are divided into **reference data** (shared, read-only for coaches) 
 
 Populated via seed scripts. Coaches read but never write.
 
-| Collection | Purpose |
-|------------|---------|
-| `bodyelements` | Body difficulty elements with values and categories |
-| `risks` | Risk elements with values |
-| `bases` | DA mastery bases (apparatus-specific) |
-| `dacriteria` | DA criteria linked to eligible bases |
-| `rcriteria` | Additional reference criteria |
-| `rotations` | Acrobatic rotation definitions and limits |
-| `artistrycomponents` | Artistry component definitions |
-| `requirements` | Age-category rules (DB, DA, artistry limits) |
-| `coprequirements` | Code of Points requirement rules |
+| Collection           | Purpose                                             |
+| -------------------- | --------------------------------------------------- |
+| `bodyelements`       | Body difficulty elements with values and categories |
+| `risks`              | Risk elements with values                           |
+| `bases`              | DA mastery bases (apparatus-specific)               |
+| `dacriteria`         | DA criteria linked to eligible bases                |
+| `rcriteria`          | Additional reference criteria                       |
+| `rotations`          | Acrobatic rotation definitions and limits           |
+| `artistrycomponents` | Artistry component definitions                      |
+| `requirements`       | Age-category rules (DB, DA, artistry limits)        |
+| `coprequirements`    | Code of Points requirement rules                    |
 
 ### User Collections
 
-| Collection | Purpose |
-|------------|---------|
-| `coaches` | Coach accounts (auth, profile) |
+| Collection | Purpose                                       |
+| ---------- | --------------------------------------------- |
+| `coaches`  | Coach accounts (auth, profile)                |
 | `routines` | Coach-owned routines with timeline and scores |
 
 ---
@@ -79,7 +79,7 @@ Populated via seed scripts. Coaches read but never write.
 
 ```typescript
 {
-  id: string;              // e.g. "outside-visual-field"
+  id: string; // e.g. "outside-visual-field"
   name: string;
 }
 ```
@@ -104,7 +104,7 @@ Risk criteria from CoP §4.8–4.10. See [domains/DB.md](./domains/DB.md).
 {
   id: string;
   name: string;
-  group: string;           // "v1" | "v2" | "v3" | "acro-1" … "acro-13"
+  group: string; // "v1" | "v2" | "v3" | "acro-1" … "acro-13"
 }
 ```
 
@@ -114,7 +114,7 @@ Risk criteria from CoP §4.8–4.10. See [domains/DB.md](./domains/DB.md).
 {
   id: string;
   name: string;
-  type: "character" | "dance" | "dynamic" | "effect";
+  type: "character" | "dance" | "dynamic-change" | "effect";
 }
 ```
 
@@ -154,9 +154,9 @@ Age-category limits stored as two documents (`senior`, `junior`):
   apparatus: Apparatus | "all";
   ageCategory: AgeCategory | "all";
   domain: "db" | "da" | "artistry" | "general";
-  ruleType: string;        // e.g. "min_count", "max_count", "required_category", "min_value"
-  parameters: Record<string, unknown>;  // rule-specific config
-  message: string;         // human-readable description for validation panel
+  ruleType: string; // e.g. "min_count", "max_count", "required_category", "min_value"
+  parameters: Record<string, unknown>; // rule-specific config
+  message: string; // human-readable description for validation panel
   active: boolean;
 }
 ```
@@ -291,19 +291,19 @@ Reference collections are **not** embedded in routines. Timeline items store **O
 
 ## Current State vs Target
 
-| Collection | Status |
-|------------|--------|
-| `bodyelements` | ✅ Seeded (163 elements) |
-| `requirements` | ✅ Seeded (senior + junior) |
-| `risks` | ❌ Not created |
-| `bases` | ✅ Seeded (34 bases — shared + apparatus-specific) |
-| `dacriteria` | ✅ Seeded (7 criteria) |
-| `rcriteria` | ✅ Seeded (15 criteria) |
-| `rotations` | ✅ Seeded (16 groups) |
-| `artistrycomponents` | ✅ Seeded (4 types) |
-| `coprequirements` | ❌ Not created |
-| `coaches` | ❌ Not created |
-| `routines` | ❌ Not created |
+| Collection           | Status                                             |
+| -------------------- | -------------------------------------------------- |
+| `bodyelements`       | ✅ Seeded (163 elements)                           |
+| `requirements`       | ✅ Seeded (senior + junior)                        |
+| `risks`              | ❌ Not created                                     |
+| `bases`              | ✅ Seeded (34 bases — shared + apparatus-specific) |
+| `dacriteria`         | ✅ Seeded (7 criteria)                             |
+| `rcriteria`          | ✅ Seeded (15 criteria)                            |
+| `rotations`          | ✅ Seeded (16 groups)                              |
+| `artistrycomponents` | ✅ Seeded (4 types)                                |
+| `coprequirements`    | ❌ Not created                                     |
+| `coaches`            | ❌ Not created                                     |
+| `routines`           | ❌ Not created                                     |
 
 > **Note:** The legacy `elements` collection from the initial scaffold has been removed. Use `bodyelements` only.
 
@@ -341,14 +341,14 @@ Detailed element values and CoP rules are defined in [docs/domains/](./domains/)
 
 ## Indexing Strategy
 
-| Collection | Index | Reason |
-|------------|-------|--------|
-| `coaches` | `{ email: 1 }` unique | Login lookup |
-| `routines` | `{ coach: 1, updatedAt: -1 }` | Dashboard list |
-| `bodyelements` | `{ code: 1 }` unique | Reference lookup |
-| `risks` | `{ code: 1 }` unique | Reference lookup |
-| `bases` | `{ code: 1 }` unique | Reference lookup |
-| `dacriteria` | `{ code: 1 }` unique | Reference lookup |
+| Collection        | Index                              | Reason           |
+| ----------------- | ---------------------------------- | ---------------- |
+| `coaches`         | `{ email: 1 }` unique              | Login lookup     |
+| `routines`        | `{ coach: 1, updatedAt: -1 }`      | Dashboard list   |
+| `bodyelements`    | `{ code: 1 }` unique               | Reference lookup |
+| `risks`           | `{ code: 1 }` unique               | Reference lookup |
+| `bases`           | `{ code: 1 }` unique               | Reference lookup |
+| `dacriteria`      | `{ code: 1 }` unique               | Reference lookup |
 | `coprequirements` | `{ apparatus: 1, ageCategory: 1 }` | Validation query |
 
 ---

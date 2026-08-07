@@ -1,12 +1,5 @@
 import { Outlet } from "react-router-dom";
-import {
-  AppBar,
-  Box,
-  Button,
-  Container,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+import { AppBar, Box, Button, Container, Toolbar, Typography } from "@mui/material";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 
 const navItems = [

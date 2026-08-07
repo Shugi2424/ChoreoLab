@@ -22,8 +22,8 @@ export function DashboardPage() {
       )}
       {error && (
         <Alert severity="warning" sx={{ mb: 3 }}>
-          Could not reach the API. Start the server with{" "}
-          <code>npm run dev</code> in <code>server/</code>.
+          Could not reach the API. Start the server with <code>npm run dev</code> in{" "}
+          <code>server/</code>.
         </Alert>
       )}
       {data?.health && (

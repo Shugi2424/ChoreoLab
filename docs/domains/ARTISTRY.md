@@ -2,81 +2,57 @@
 
 FIG Rhythmic Gymnastics Code of Points **2025–2028**, individual exercises only.
 
-> **Status:** Artistry components seeded (4 types). Execution penalties and full Artistry jury scoring are **out of scope**.
+> **Status:** Artistry components seeded (4 types).
 
 ---
 
 ## ChoreoLab artistry model
 
-Instead of the full CoP artistry evaluation (character "parts", expression penalties, etc.), ChoreoLab tracks:
+ChoreoLab tracks four component types on the routine timeline:
 
-| Component | CoP reference | ChoreoLab tracking |
-|-----------|---------------|-------------------|
-| Character moments | §3 Guiding Idea and Character | Count `character` items (20 senior / 15 junior) |
-| Dance steps combinations | §5 Dance Steps Combinations | Count `dance` items (min 2) |
-| Dynamic changes + Effects | §6 Dynamic Changes and Effects | Count `dynamic` + `effect` items (min 2 combined) |
+| Component        | CoP reference                  | ChoreoLab tracking                          |
+| ---------------- | ------------------------------ | ------------------------------------------- |
+| Character moment | §3 Guiding Idea and Character  | Count `character` items (min 20)            |
+| Dance combination | §5 Dance Steps Combinations   | Count `dance` items (min 2)               |
+| Dynamic change   | §6 Dynamic Changes and Effects | Count `dynamic-change` items              |
+| Effect           | §6 Dynamic Changes and Effects | Count `effect` items (min 2 with dynamic) |
 
-**Ignored:** Expression (§4), Connections (§7), Rhythm (§8), Space (§9), Continuity (§10), Execution (Section D).
+**Not tracked:** Expression (§4), Connections (§7), Rhythm (§8), Space (§9), Continuity (§10).
 
 ---
 
-## ArtistryComponent (timeline item type)
+## ArtistryComponent (reference collection: `artistrycomponents`)
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | string | Generated when saved |
-| `name` | string | Coach label for the moment |
-| `type` | enum | `character` \| `dance` \| `dynamic` \| `effect` |
+Coach picks a component **type** from reference data when adding an artistry item to the timeline.
 
-**Seeded:** 4 component types — Character moment, Dance combination, Dynamic change, Effect.
+| Field  | Type   | Description                                                          |
+| ------ | ------ | -------------------------------------------------------------------- |
+| `id`   | string | Stable slug, e.g. `dance-combination`                                |
+| `name` | string | Component name, e.g. _Dance combination_                             |
+| `type` | enum   | `character` \| `dance` \| `dynamic-change` \| `effect`               |
 
-### Type definitions
+**Seeded:** 4 component types.
 
-| Type | CoP meaning | ChoreoLab rule |
-|------|-------------|----------------|
-| `character` | A movement/detail expressing the routine's guiding idea | One counted "character moment" |
-| `dance` | A valid 8-second dance steps combination (§5.2) | One counted dance combination |
-| `dynamic` | A contrast in tempo/intensity (§6.1.4) | One counted dynamic change |
-| `effect` | Movement highlighting a significant musical moment (§6.2) | One counted effect |
+| id                  | name             | type              |
+| ------------------- | ---------------- | ----------------- |
+| `character-moment`  | Character moment | `character`       |
+| `dance-combination` | Dance combination | `dance`          |
+| `dynamic-change`    | Dynamic change   | `dynamic-change`  |
+| `effect`            | Effect           | `effect`          |
 
-CoP §6.3.1: Minimum **2** Dynamic changes **or** Effects combined — ChoreoLab tracks `minDynamicEffects: 2` across `dynamic` + `effect` types.
+Each timeline item of this type counts as one instance toward the age-category minimum for that type.
 
 ---
 
 ## Requirements (from `requirements` collection)
 
-| Rule | Senior | Junior |
-|------|--------|--------|
-| Min character moments | 20 | 15 |
-| Min dance steps combinations | 2 | 2 |
-| Min dynamic changes + effects | 2 | 2 |
+| Rule                          | Senior | Junior |
+| ----------------------------- | ------ | ------ |
+| Min character moments         | 20     | 20     |
+| Min dance combinations        | 2      | 2      |
+| Min dynamic changes + effects | 2      | 2      |
 
----
-
-## Dance steps combination (CoP §5.2 recap)
-
-A valid dance combination requires:
-- Minimum **8 seconds** with apparatus in motion
-- Movements in harmony with rhythm throughout
-- Defined character/style (not generic walking/stepping)
-- Minimum **2 different step types** with displacement
-- Part in upright position
-- No pre-acrobatic elements, high throws, DA, or DB ≥ 0.20
-
----
-
-## Dynamic change (CoP §6.1.4 recap)
-
-Recognized methods:
-1. Instant contrast between parts of the exercise
-2. Gradual increase/reduction within a part
-3. Minimum 2 movements demonstrating opposite tempo/intensity
-
----
-
-## Effect with music (CoP §6.2 recap)
-
-Strategic placement of body/apparatus movement to highlight a significant musical accent or phrase.
+`minDynamicEffects` counts `dynamic-change` and `effect` items combined.
 
 ---
 

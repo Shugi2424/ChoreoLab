@@ -10,17 +10,17 @@ The interface prioritizes clarity and speed: coaches are building routines under
 
 ## Color Palette
 
-| Role | Color | Usage |
-|------|-------|-------|
-| Primary | Pink `#E91E8C` | Buttons, active states, accents |
-| Secondary | Purple `#7B2D8E` | Headers, navigation, secondary actions |
-| Background | White `#FFFFFF` | Page background |
-| Surface | Light pink `#FFF5FA` | Cards, panels |
-| Text primary | Dark `#1A1A2E` | Body text |
-| Text secondary | Gray `#5A6072` | Labels, hints |
-| Success | Green `#0F7B4A` | Valid requirements |
-| Error | Red `#B42318` | Missing requirements, errors |
-| Warning | Amber `#B54708` | Warnings in validation panel |
+| Role           | Color                | Usage                                  |
+| -------------- | -------------------- | -------------------------------------- |
+| Primary        | Pink `#E91E8C`       | Buttons, active states, accents        |
+| Secondary      | Purple `#7B2D8E`     | Headers, navigation, secondary actions |
+| Background     | White `#FFFFFF`      | Page background                        |
+| Surface        | Light pink `#FFF5FA` | Cards, panels                          |
+| Text primary   | Dark `#1A1A2E`       | Body text                              |
+| Text secondary | Gray `#5A6072`       | Labels, hints                          |
+| Success        | Green `#0F7B4A`      | Valid requirements                     |
+| Error          | Red `#B42318`        | Missing requirements, errors           |
+| Warning        | Amber `#B54708`      | Warnings in validation panel           |
 
 These will be defined as an MUI theme in `client/src/theme/theme.ts`.
 
@@ -174,14 +174,14 @@ Use MUI `useMediaQuery` or `Grid` breakpoints.
 
 ## Interaction Patterns
 
-| Action | Behavior |
-|--------|----------|
-| Add item | Mutation → server recalculates → UI updates scores + validation |
-| Remove item | Confirmation dialog → mutation → recalculate |
-| Reorder | Drag or buttons → mutation → recalculate |
-| Change item content | Mutation on save/select → recalculate |
-| Save routine | Auto-saved on every change (no explicit save button needed) |
-| Navigate away | No unsaved warning needed (auto-save) |
+| Action              | Behavior                                                        |
+| ------------------- | --------------------------------------------------------------- |
+| Add item            | Mutation → server recalculates → UI updates scores + validation |
+| Remove item         | Confirmation dialog → mutation → recalculate                    |
+| Reorder             | Drag or buttons → mutation → recalculate                        |
+| Change item content | Mutation on save/select → recalculate                           |
+| Save routine        | Auto-saved on every change (no explicit save button needed)     |
+| Navigate away       | No unsaved warning needed (auto-save)                           |
 
 ---
 
@@ -205,15 +205,15 @@ Use MUI `useMediaQuery` or `Grid` breakpoints.
 
 ## Current State vs Target
 
-| Area | Status |
-|------|--------|
-| MUI theme | ❌ Not created |
-| React Router | ❌ Not installed |
-| App shell / nav | ❌ Not created |
-| Auth pages | ❌ Not created |
-| Dashboard | ❌ Not created |
-| Routine Builder | ❌ Not created |
-| Current UI | Plain HTML/CSS demo showing API health + elements list |
+| Area            | Status                                                 |
+| --------------- | ------------------------------------------------------ |
+| MUI theme       | ❌ Not created                                         |
+| React Router    | ❌ Not installed                                       |
+| App shell / nav | ❌ Not created                                         |
+| Auth pages      | ❌ Not created                                         |
+| Dashboard       | ❌ Not created                                         |
+| Routine Builder | ❌ Not created                                         |
+| Current UI      | Plain HTML/CSS demo showing API health + elements list |
 
 The existing `App.tsx` will be replaced by the routed page structure defined here.
 

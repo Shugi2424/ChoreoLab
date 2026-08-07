@@ -10,10 +10,7 @@ const artistryComponentSchema = new Schema(
   { timestamps: true, versionKey: false, collection: "artistrycomponents" },
 );
 
-export const ArtistryComponent = model(
-  "ArtistryComponent",
-  artistryComponentSchema,
-);
+export const ArtistryComponent = model("ArtistryComponent", artistryComponentSchema);
 
 // Placeholder models — expanded in later milestones
 const baseSchema = new Schema(

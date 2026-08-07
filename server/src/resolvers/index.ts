@@ -9,8 +9,7 @@ export const resolvers = {
     bodyElements: (_: unknown, { category }: { category?: string }) =>
       bodyElementService.list(category),
 
-    bodyElement: (_: unknown, { id }: { id: string }) =>
-      bodyElementService.getById(id),
+    bodyElement: (_: unknown, { id }: { id: string }) => bodyElementService.getById(id),
 
     requirements: (_: unknown, { ageCategory }: { ageCategory: string }) =>
       requirementService.getByAgeCategory(ageCategory),
@@ -23,8 +22,7 @@ export const resolvers = {
     bases: (_: unknown, { apparatus }: { apparatus?: string }) =>
       referenceDataService.listBases(apparatus),
 
-    base: (_: unknown, { id }: { id: string }) =>
-      referenceDataService.getBase(id),
+    base: (_: unknown, { id }: { id: string }) => referenceDataService.getBase(id),
 
     rCriteria: (
       _: unknown,

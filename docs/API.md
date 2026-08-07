@@ -24,24 +24,26 @@ Errors follow GraphQL error format with extensions:
 
 ```json
 {
-  "errors": [{
-    "message": "Routine not found",
-    "extensions": {
-      "code": "NOT_FOUND"
+  "errors": [
+    {
+      "message": "Routine not found",
+      "extensions": {
+        "code": "NOT_FOUND"
+      }
     }
-  }]
+  ]
 }
 ```
 
 Standard error codes:
 
-| Code | Meaning |
-|------|---------|
-| `UNAUTHENTICATED` | Missing or invalid JWT |
-| `FORBIDDEN` | Valid JWT but not owner of resource |
-| `NOT_FOUND` | Resource does not exist |
-| `BAD_USER_INPUT` | Validation failure |
-| `INTERNAL_SERVER_ERROR` | Unexpected server error |
+| Code                    | Meaning                             |
+| ----------------------- | ----------------------------------- |
+| `UNAUTHENTICATED`       | Missing or invalid JWT              |
+| `FORBIDDEN`             | Valid JWT but not owner of resource |
+| `NOT_FOUND`             | Resource does not exist             |
+| `BAD_USER_INPUT`        | Validation failure                  |
+| `INTERNAL_SERVER_ERROR` | Unexpected server error             |
 
 ### Naming
 
@@ -223,7 +225,7 @@ type Rotation {
 enum ArtistryType {
   character
   dance
-  dynamic
+  dynamic-change
   effect
 }
 
@@ -443,20 +445,20 @@ Every routine mutation recalculates `dbScore`, `daScore`, and `validation` befor
 
 ## Current State vs Target
 
-| Operation | Status |
-|-----------|--------|
-| `health` | ✅ Implemented |
-| `bodyElements` / `bodyElement` | ✅ Implemented |
-| `requirements` | ✅ Implemented |
-| `bases` / `base` | ✅ Implemented |
-| `rCriteria` / `rCriterion` | ✅ Implemented |
-| `rotations` / `rotation` | ✅ Implemented |
-| `artistryComponents` / `artistryComponent` | ✅ Implemented |
-| `daCriteria` / `daCriterion` | ✅ Implemented |
-| All auth operations | ❌ Not implemented |
-| All routine operations | ❌ Not implemented |
-| Reference data queries | ❌ Not implemented |
-| Mutations | ❌ None implemented |
+| Operation                                  | Status              |
+| ------------------------------------------ | ------------------- |
+| `health`                                   | ✅ Implemented      |
+| `bodyElements` / `bodyElement`             | ✅ Implemented      |
+| `requirements`                             | ✅ Implemented      |
+| `bases` / `base`                           | ✅ Implemented      |
+| `rCriteria` / `rCriterion`                 | ✅ Implemented      |
+| `rotations` / `rotation`                   | ✅ Implemented      |
+| `artistryComponents` / `artistryComponent` | ✅ Implemented      |
+| `daCriteria` / `daCriterion`               | ✅ Implemented      |
+| All auth operations                        | ❌ Not implemented  |
+| All routine operations                     | ❌ Not implemented  |
+| Reference data queries                     | ❌ Not implemented  |
+| Mutations                                  | ❌ None implemented |
 
 ---
 

@@ -77,11 +77,7 @@ export function toGraphQLRCriteria(doc: {
   };
 }
 
-export function toGraphQLRotation(doc: {
-  id: string;
-  name: string;
-  group: string;
-}) {
+export function toGraphQLRotation(doc: { id: string; name: string; group: string }) {
   return {
     id: doc.id,
     name: doc.name,

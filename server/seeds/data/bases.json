@@ -4,49 +4,96 @@
     "name": "Large roll over minimum 2 large body segments",
     "value": 0.3,
     "apparatuses": ["hoop", "ball", "clubs", "ribbon"],
-    "allowedCriteria": ["outside-visual-field", "without-hands", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "without-hands",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "transmission-no-hands",
     "name": "Transmission without the help of the hands between at least 2 body parts (not the hands)",
     "value": 0.2,
     "apparatuses": ["hoop", "ball", "clubs", "ribbon"],
-    "allowedCriteria": ["outside-visual-field", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "small-throw-catch",
     "name": "Small throw/catch (including free fall)",
     "value": 0.2,
     "apparatuses": ["hoop", "ball", "clubs", "ribbon"],
-    "allowedCriteria": ["outside-visual-field", "without-hands", "under-leg", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "without-hands",
+      "under-leg",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "thrust-rebound",
     "name": "Thrust, push, rebound: using different parts of the body except hands/arms",
     "value": 0.2,
     "apparatuses": ["hoop", "ball", "clubs", "ribbon"],
-    "allowedCriteria": ["outside-visual-field", "without-hands", "under-leg", "on-floor"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "without-hands",
+      "under-leg",
+      "on-floor"
+    ]
   },
   {
     "id": "high-throw",
     "name": "High throw",
     "value": 0.2,
     "apparatuses": ["hoop", "ball", "clubs", "ribbon"],
-    "allowedCriteria": ["outside-visual-field", "without-hands", "under-leg", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "without-hands",
+      "under-leg",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "catch-from-high-throw",
     "name": "Catch from the flight of a high throw",
     "value": 0.3,
     "apparatuses": ["hoop", "ball", "clubs", "ribbon"],
-    "allowedCriteria": ["outside-visual-field", "without-hands", "under-leg", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "without-hands",
+      "under-leg",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "sliding",
     "name": "Sliding over minimum 2 large body segments",
     "value": 0.2,
     "apparatuses": ["hoop", "clubs"],
-    "allowedCriteria": ["outside-visual-field", "without-hands", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "without-hands",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
 
   {
@@ -54,21 +101,42 @@
     "name": "Free rotation of the apparatus around its axis (around part of the body or on a part of body, not valid on open palm)",
     "value": 0.3,
     "apparatuses": ["hoop"],
-    "allowedCriteria": ["outside-visual-field", "without-hands", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "without-hands",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "rotation-around-body",
     "name": "Rotation (min. 1) of the apparatus around part of the body (not the hands and not on the straight arm)",
     "value": 0.2,
     "apparatuses": ["hoop"],
-    "allowedCriteria": ["outside-visual-field", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "passing-through-hoop",
     "name": "Passing through the Hoop with the whole body or part of the body (2 large body segments)",
     "value": 0.2,
     "apparatuses": ["hoop"],
-    "allowedCriteria": ["outside-visual-field", "without-hands", "under-leg", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "without-hands",
+      "under-leg",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "roll-on-floor",
@@ -89,7 +157,15 @@
     "name": "High throw with rotation of the apparatus around its axis while in flight",
     "value": 0.3,
     "apparatuses": ["hoop"],
-    "allowedCriteria": ["outside-visual-field", "without-hands", "under-leg", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "without-hands",
+      "under-leg",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
 
   {
@@ -97,35 +173,69 @@
     "name": "Catch of the Ball with 1 hand from high throw",
     "value": 0.3,
     "apparatuses": ["ball"],
-    "allowedCriteria": ["outside-visual-field", "under-leg", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "under-leg",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "bounce-high",
     "name": "1 high bounce (knee level and higher) from the floor",
     "value": 0.2,
     "apparatuses": ["ball"],
-    "allowedCriteria": ["outside-visual-field", "without-hands", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "without-hands",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "bounce-series",
     "name": "Series (min. 3) of small bounces from the floor",
     "value": 0.2,
     "apparatuses": ["ball"],
-    "allowedCriteria": ["outside-visual-field", "without-hands", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "without-hands",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "free-rotations-on-body",
     "name": "Free rotations of the Ball on a part of the body",
     "value": 0.2,
     "apparatuses": ["ball"],
-    "allowedCriteria": ["outside-visual-field", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "rebound-floor-retrieval",
     "name": "Rebound on the floor after a high throw and direct retrieval (any height, not with hands/arms)",
     "value": 0.3,
     "apparatuses": ["ball"],
-    "allowedCriteria": ["outside-visual-field", "without-hands", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "without-hands",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
 
   {
@@ -133,56 +243,114 @@
     "name": "Mills (min. 4/6 circles)",
     "value": 0.3,
     "apparatuses": ["clubs"],
-    "allowedCriteria": ["outside-visual-field", "under-leg", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "under-leg",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "small-throw-2-unlocked",
     "name": "Small throw of 2 unlocked Clubs/catch",
     "value": 0.3,
     "apparatuses": ["clubs"],
-    "allowedCriteria": ["outside-visual-field", "without-hands", "under-leg", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "without-hands",
+      "under-leg",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "small-circles",
     "name": "Small circles with 2 Clubs",
     "value": 0.2,
     "apparatuses": ["clubs"],
-    "allowedCriteria": ["outside-visual-field", "under-leg", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "under-leg",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "free-rotations-clubs",
     "name": "Free rotations of 1 or 2 Clubs on or around a part of the body or around the other Club",
     "value": 0.2,
     "apparatuses": ["clubs"],
-    "allowedCriteria": ["outside-visual-field", "without-hands", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "without-hands",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "small-throw-2-locked",
     "name": "Small throw of 2 locked Clubs/catch",
     "value": 0.2,
     "apparatuses": ["clubs"],
-    "allowedCriteria": ["outside-visual-field", "without-hands", "under-leg", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "without-hands",
+      "under-leg",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "high-throw-2-unlocked",
     "name": "High throw of 2 unlocked Clubs",
     "value": 0.3,
     "apparatuses": ["clubs"],
-    "allowedCriteria": ["outside-visual-field", "without-hands", "under-leg", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "without-hands",
+      "under-leg",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "catch-one-club-held",
     "name": "Catch of 1 Club from the flight of a high throw in 1 hand, the other Club already held in the same hand",
     "value": 0.3,
     "apparatuses": ["clubs"],
-    "allowedCriteria": ["outside-visual-field", "under-leg", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "under-leg",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "simultaneous-catch-2-unlocked",
     "name": "Simultaneous catch of 2 unlocked Clubs from the flight of a high throw",
     "value": 0.3,
     "apparatuses": ["clubs"],
-    "allowedCriteria": ["outside-visual-field", "without-hands", "under-leg", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "without-hands",
+      "under-leg",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
 
   {
@@ -190,55 +358,114 @@
     "name": "Spirals / \"Swordsman\" (min. 4 loops, tight and the same height, in the air or on the floor)",
     "value": 0.3,
     "apparatuses": ["ribbon"],
-    "allowedCriteria": ["outside-visual-field", "without-hands", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "without-hands",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "snakes",
     "name": "Snakes (min. 4 waves, tight and the same height, in the air or on the floor)",
     "value": 0.3,
     "apparatuses": ["ribbon"],
-    "allowedCriteria": ["outside-visual-field", "without-hands", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "without-hands",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "boomerang-air",
     "name": "Boomerang in the air",
     "value": 0.4,
     "apparatuses": ["ribbon"],
-    "allowedCriteria": ["outside-visual-field", "without-hands", "under-leg", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "without-hands",
+      "under-leg",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "boomerang-floor",
     "name": "Boomerang with release and/or pull back along the floor",
     "value": 0.3,
     "apparatuses": ["ribbon"],
-    "allowedCriteria": ["outside-visual-field", "without-hands", "under-leg", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "without-hands",
+      "under-leg",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "echappe-catch",
     "name": "Echappé and catch",
     "value": 0.2,
     "apparatuses": ["ribbon"],
-    "allowedCriteria": ["outside-visual-field", "without-hands", "under-leg", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "without-hands",
+      "under-leg",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "passing-through-pattern",
     "name": "Passing with the whole body or part of the body through or over the pattern of the Ribbon",
     "value": 0.2,
     "apparatuses": ["ribbon"],
-    "allowedCriteria": ["outside-visual-field", "under-leg", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "under-leg",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   },
   {
     "id": "stick-without-hands",
     "name": "Stick held without hands (e.g., neck, knee, elbow) during movements or Difficulties with rotation (not slow turn), creating a full circle pattern of the fabric around the body",
     "value": 0.2,
     "apparatuses": ["ribbon"],
-    "allowedCriteria": ["outside-visual-field", "without-hands", "on-floor", "full-body-wave", "with-db"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "without-hands",
+      "on-floor",
+      "full-body-wave",
+      "with-db"
+    ]
   },
   {
     "id": "high-throw-from-sliding",
     "name": "High throw from sliding on the floor",
     "value": 0.3,
     "apparatuses": ["ribbon"],
-    "allowedCriteria": ["outside-visual-field", "without-hands", "under-leg", "on-floor", "full-body-wave", "with-db", "rotation"]
+    "allowedCriteria": [
+      "outside-visual-field",
+      "without-hands",
+      "under-leg",
+      "on-floor",
+      "full-body-wave",
+      "with-db",
+      "rotation"
+    ]
   }
 ]

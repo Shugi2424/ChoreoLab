@@ -5,12 +5,17 @@ import { fileURLToPath } from "node:url";
 import mongoose from "mongoose";
 import { BodyElement } from "../src/models/BodyElement.js";
 import { Requirement } from "../src/models/Requirement.js";
-import { Base, DACriteria, RCriteria, Rotation, ArtistryComponent } from "../src/models/reference.js";
+import {
+  Base,
+  DACriteria,
+  RCriteria,
+  Rotation,
+  ArtistryComponent,
+} from "../src/models/reference.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const MONGODB_URI =
-  process.env.MONGODB_URI ?? "mongodb://localhost:27017/choreolab";
+const MONGODB_URI = process.env.MONGODB_URI ?? "mongodb://localhost:27017/choreolab";
 
 async function loadJson<T>(filename: string): Promise<T> {
   const path = join(__dirname, "data", filename);
@@ -77,9 +82,8 @@ async function seedRequirements() {
 }
 
 async function seedDACriteria() {
-  const criteria = await loadJson<
-    Array<{ id: string; name: string }>
-  >("da-criteria.json");
+  const criteria =
+    await loadJson<Array<{ id: string; name: string }>>("da-criteria.json");
 
   for (const criterion of criteria) {
     await DACriteria.replaceOne({ id: criterion.id }, criterion, {
@@ -108,7 +112,9 @@ async function seedBases() {
   const seededIds = bases.map((b) => b.id);
   const removed = await Base.deleteMany({ id: { $nin: seededIds } });
 
-  console.log(`Seeded ${bases.length} DA bases (removed ${removed.deletedCount} stale)`);
+  console.log(
+    `Seeded ${bases.length} DA bases (removed ${removed.deletedCount} stale)`,
+  );
 }
 
 async function seedRCriteria() {
@@ -129,7 +135,9 @@ async function seedRCriteria() {
   const seededIds = criteria.map((c) => c.id);
   const removed = await RCriteria.deleteMany({ id: { $nin: seededIds } });
 
-  console.log(`Seeded ${criteria.length} R criteria (removed ${removed.deletedCount} stale)`);
+  console.log(
+    `Seeded ${criteria.length} R criteria (removed ${removed.deletedCount} stale)`,
+  );
 }
 
 async function seedRotations() {
@@ -148,7 +156,9 @@ async function seedRotations() {
   const seededIds = rotations.map((r) => r.id);
   const removed = await Rotation.deleteMany({ id: { $nin: seededIds } });
 
-  console.log(`Seeded ${rotations.length} rotations (removed ${removed.deletedCount} stale)`);
+  console.log(
+    `Seeded ${rotations.length} rotations (removed ${removed.deletedCount} stale)`,
+  );
 }
 
 async function seedArtistryComponents() {

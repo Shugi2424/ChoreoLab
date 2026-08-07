@@ -34,7 +34,7 @@
       "maxAcrobatics": 3
     },
     "A": {
-      "minCharacterMoves": 15,
+      "minCharacterMoves": 20,
       "minDanceSteps": 2,
       "minDynamicEffects": 2
     }
