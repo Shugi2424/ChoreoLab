@@ -1,10 +1,18 @@
 import { useQuery } from "@apollo/client";
-import { ELEMENTS_QUERY, HEALTH_QUERY } from "./apollo/client";
+import {
+  BODY_ELEMENTS_QUERY,
+  HEALTH_QUERY,
+  REQUIREMENTS_QUERY,
+} from "./apollo/client";
 import "./App.css";
 
 function App() {
   const { data: healthData, loading: healthLoading } = useQuery(HEALTH_QUERY);
-  const { data: elementsData, loading: elementsLoading, error } = useQuery(ELEMENTS_QUERY);
+  const { data: elementsData, loading: elementsLoading, error } =
+    useQuery(BODY_ELEMENTS_QUERY);
+  const { data: reqData } = useQuery(REQUIREMENTS_QUERY, {
+    variables: { ageCategory: "senior" },
+  });
 
   return (
     <main className="app">
@@ -22,30 +30,52 @@ function App() {
         )}
       </section>
 
+      {reqData?.requirements && (
+        <section>
+          <h2>Senior requirements (2025–2028 CoP)</h2>
+          <p>
+            DB: max {reqData.requirements.DB.maxElements} elements · max{" "}
+            {reqData.requirements.DB.maxRisks} risks
+          </p>
+          <p>
+            DA: max {reqData.requirements.DA.maxMasteries} masteries · max{" "}
+            {reqData.requirements.DA.maxAcrobatics} acrobatics
+          </p>
+          <p>
+            Artistry: {reqData.requirements.A.minCharacterMoves} character ·{" "}
+            {reqData.requirements.A.minDanceSteps} dance ·{" "}
+            {reqData.requirements.A.minDynamicEffects} dynamic/effects
+          </p>
+        </section>
+      )}
+
       <section>
-        <h2>Elements</h2>
+        <h2>Body elements ({elementsData?.bodyElements?.length ?? 0})</h2>
         {elementsLoading && <p>Loading elements…</p>}
-        {error && <p className="error">Could not load elements. Is the server running?</p>}
+        {error && (
+          <p className="error">
+            Could not load elements. Is the server running?
+          </p>
+        )}
         {!elementsLoading && !error && (
           <ul className="element-list">
-            {(elementsData?.elements ?? []).map((el: {
+            {(elementsData?.bodyElements ?? []).slice(0, 20).map((el: {
               id: string;
-              code: string;
               name: string;
-              apparatus: string;
-              difficulty: number;
+              category: string;
+              value: number;
             }) => (
               <li key={el.id}>
-                <strong>{el.code}</strong> — {el.name}
+                <strong>{el.id}</strong> — {el.name}
                 <span>
-                  {el.apparatus} · D{el.difficulty}
+                  {el.category} · {el.value}
                 </span>
               </li>
             ))}
           </ul>
         )}
-        {!elementsLoading && !error && elementsData?.elements?.length === 0 && (
-          <p>No elements yet. Seed the database or add docs under <code>docs/</code>.</p>
+        {(elementsData?.bodyElements?.length ?? 0) > 20 && (
+          <p>Showing first 20 of {elementsData.bodyElements.length} elements</p>
         )}
       </section>
     </main>

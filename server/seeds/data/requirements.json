@@ -1,0 +1,42 @@
+[
+  {
+    "id": "requirements-senior",
+    "ageCategory": "senior",
+    "DB": {
+      "minElements": 3,
+      "maxElements": 8,
+      "requiredElements": ["jump", "balance", "pivot"],
+      "maxRisks": 4
+    },
+    "DA": {
+      "minMasteries": 0,
+      "maxMasteries": 15,
+      "maxAcrobatics": 3
+    },
+    "A": {
+      "minCharacterMoves": 20,
+      "minDanceSteps": 2,
+      "minDynamicEffects": 2
+    }
+  },
+  {
+    "id": "requirements-junior",
+    "ageCategory": "junior",
+    "DB": {
+      "minElements": 3,
+      "maxElements": 6,
+      "requiredElements": ["jump", "balance", "pivot"],
+      "maxRisks": 3
+    },
+    "DA": {
+      "minMasteries": 0,
+      "maxMasteries": 12,
+      "maxAcrobatics": 3
+    },
+    "A": {
+      "minCharacterMoves": 15,
+      "minDanceSteps": 2,
+      "minDynamicEffects": 2
+    }
+  }
+]

@@ -1,0 +1,50 @@
+---
+description: Core development rules for the ChoreoLab project
+alwaysApply: true
+---
+
+# ChoreoLab Project Rules
+
+Always use TypeScript.
+
+Never put business logic in GraphQL resolvers. Resolvers delegate to services.
+
+Prefer functional React components.
+
+Use Material UI for all UI components.
+
+Use async/await. No raw Promise chains.
+
+Use Mongoose models for all database access.
+
+Keep code modular and reusable.
+
+Don't duplicate logic — extract shared code into services or utils.
+
+Ask before changing the architecture.
+
+Read the docs/ folder before implementing new features:
+- docs/README.md
+- docs/PROJECT_OVERVIEW.md
+- docs/ARCHITECTURE.md
+- docs/DATABASE.md
+- docs/API.md
+- docs/CODE_OF_POINTS.md
+- docs/domains/ (DB, DA, ARTISTRY, VALIDATION)
+- docs/UI_UX.md
+- docs/ROADMAP.md
+- docs/AI_RULES.md
+
+Follow the current phase in docs/ROADMAP.md. Do not implement future milestones without confirmation.
+
+CoP element values and rules in docs/domains/ are defined collaboratively — do not invent difficulty values or requirements.
+
+Never generate placeholder code. Every implementation should be production-quality.
+
+Never commit .env files or secrets.
+
+Update documentation when changing architecture, database schema, API, or domain rules.
+
+Keep commits small and focused.
+
+Match existing code conventions (naming, folder structure, import style).

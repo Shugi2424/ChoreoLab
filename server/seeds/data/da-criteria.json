@@ -1,0 +1,30 @@
+[
+  {
+    "id": "outside-visual-field",
+    "name": "Outside the visual field"
+  },
+  {
+    "id": "without-hands",
+    "name": "Without the help of the hands"
+  },
+  {
+    "id": "under-leg",
+    "name": "Under the leg/legs"
+  },
+  {
+    "id": "on-floor",
+    "name": "Position on the floor"
+  },
+  {
+    "id": "full-body-wave",
+    "name": "Full body wave"
+  },
+  {
+    "id": "with-db",
+    "name": "Difficulty of Body"
+  },
+  {
+    "id": "rotation",
+    "name": "Rotation"
+  }
+]

@@ -1,59 +1,89 @@
 # ChoreoLab
 
-Rhythmic gymnastics choreography builder — elements database, rules engine, and GraphQL API.
+A production-quality web platform for rhythmic gymnastics coaches to build FIG Code of Points compliant routines with live DB/DA scoring and validation.
+
+**Repository:** https://github.com/Shugi2424/ChoreoLab
 
 ## Stack
 
-- **Server:** Node.js, TypeScript, Apollo Server, MongoDB, Mongoose
-- **Client:** React, TypeScript, Vite, Apollo Client
+| Layer | Technology |
+|-------|------------|
+| Frontend | React, TypeScript, Apollo Client, React Router, Material UI |
+| Backend | Node.js, TypeScript, Apollo Server, Mongoose |
+| Database | MongoDB Atlas |
+| Auth | JWT, bcrypt |
+| Deployment | Vercel (client) + Render (server) + Atlas (DB) |
 
-## Getting started
+## Quick Start
 
 ### Prerequisites
 
 - Node.js 20+
-- MongoDB Atlas cluster (free tier is fine)
-
-### MongoDB Atlas (one-time setup)
-
-1. Sign up at https://www.mongodb.com/cloud/atlas/register
-2. Create a **free M0 cluster** (any cloud/region is fine)
-3. **Database Access** → Add user (username + password) → **Atlas admin** or **Read and write to any database**
-4. **Network Access** → **Add IP Address** → **Allow Access from Anywhere** (`0.0.0.0/0`) for dev  
-   *(tighten this later for production)*
-5. **Database** → your cluster → **Connect** → **Drivers** → copy the connection string  
-   It looks like: `mongodb+srv://user:pass@cluster0.xxxxx.mongodb.net/`
-6. Paste into `server/.env` as `MONGODB_URI`, and append the database name `choreolab`:
-
-```
-MONGODB_URI=mongodb+srv://myuser:mypass@cluster0.xxxxx.mongodb.net/choreolab?retryWrites=true&w=majority
-```
-
-If your password has special characters (`@`, `#`, `:`), [URL-encode](https://www.urlencoder.org/) them first.
-
-**Compass:** use the same connection string (with `/choreolab` before the `?`) to browse the database visually.
+- MongoDB Atlas cluster
 
 ### Server
 
 ```bash
 cd server
-cp .env.example .env   # then edit .env with your Atlas URI
+cp .env.example .env   # add your Atlas URI and secrets
 npm install
-npm run dev
+npm run dev            # http://localhost:4000
 ```
-
-GraphQL playground: http://localhost:4000
 
 ### Client
 
 ```bash
 cd client
+cp .env.example .env   # VITE_GRAPHQL_URL=http://localhost:4000
 npm install
-npm run dev
+npm run dev            # http://localhost:5173
 ```
 
-App: http://localhost:5173
+## Documentation
 
-## Project docs
+All project documentation lives in [`docs/`](./docs/) and is the source of truth.
 
-Domain rules and element types will live in markdown files under `docs/` (coming soon).
+Start with [`docs/README.md`](./docs/README.md) for the index and editing workflow.
+
+| Document | Description |
+|----------|-------------|
+| [PROJECT_OVERVIEW.md](./docs/PROJECT_OVERVIEW.md) | Purpose, audience, user flow |
+| [ARCHITECTURE.md](./docs/ARCHITECTURE.md) | System design, layers, deployment |
+| [DATABASE.md](./docs/DATABASE.md) | Collections, schemas, relationships |
+| [API.md](./docs/API.md) | GraphQL schema and operations |
+| [CODE_OF_POINTS.md](./docs/CODE_OF_POINTS.md) | CoP overview |
+| [domains/](./docs/domains/) | Detailed CoP data (collaborative) |
+| [UI_UX.md](./docs/UI_UX.md) | Design system, layouts |
+| [ROADMAP.md](./docs/ROADMAP.md) | Milestone plan |
+| [AI_RULES.md](./docs/AI_RULES.md) | Development guidelines |
+
+## Project Structure
+
+```
+ChoreoLab/
+├── client/              React SPA
+│   └── src/
+│       ├── apollo/      Apollo Client config
+│       ├── components/  Reusable UI (planned)
+│       ├── pages/       Route pages (planned)
+│       ├── graphql/     Queries & mutations (planned)
+│       └── theme/       MUI theme (planned)
+├── server/              GraphQL API
+│   └── src/
+│       ├── models/      Mongoose schemas
+│       ├── resolvers/   Thin GraphQL resolvers
+│       ├── services/    Business logic (planned)
+│       └── schema/      GraphQL typeDefs (planned)
+├── docs/                Documentation
+└── .cursor/rules/       AI assistant rules
+```
+
+## Current Status
+
+**Phase 0 — Documentation.** Domain docs in `docs/domains/` are being filled in collaboratively. Milestone 0 (code foundation) follows.
+
+Early scaffold: Apollo GraphQL + MongoDB Atlas connected. See [ROADMAP.md](./docs/ROADMAP.md).
+
+## License
+
+Private — all rights reserved.
