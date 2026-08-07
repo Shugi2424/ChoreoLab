@@ -27,17 +27,27 @@ A production-quality web platform for rhythmic gymnastics coaches to build FIG C
 cd server
 cp .env.example .env   # add your Atlas URI and secrets
 npm install
-npm run dev            # http://localhost:4000
+npm run dev            # http://localhost:4000/graphql  (health: /health)
 ```
 
 ### Client
 
 ```bash
 cd client
-cp .env.example .env   # VITE_GRAPHQL_URL=http://localhost:4000
+cp .env.example .env   # VITE_GRAPHQL_URL=http://localhost:4000/graphql
 npm install
 npm run dev            # http://localhost:5173
 ```
+
+### Access from another device (same Wi-Fi)
+
+1. On this PC, run `ipconfig` and note the **Wi-Fi IPv4 address** (e.g. `192.168.1.42`).
+2. In `client/.env`, set `VITE_GRAPHQL_URL=http://<your-ip>:4000/graphql`.
+3. In `server/.env`, set `CORS_ORIGIN=http://<your-ip>:5173`.
+4. Restart both dev servers.
+5. On the other device, open the **Network** URL Vite prints (e.g. `http://192.168.1.42:5173/dashboard`).
+
+If the other device cannot connect, allow Node.js through Windows Firewall for ports **5173** and **4000**.
 
 ## Documentation
 

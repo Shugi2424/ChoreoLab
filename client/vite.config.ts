@@ -5,5 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
+    // Listen on all network interfaces so other devices on the same Wi-Fi can connect.
+    host: true,
   },
 });
