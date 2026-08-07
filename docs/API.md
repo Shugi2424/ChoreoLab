@@ -449,6 +449,8 @@ Every routine mutation recalculates `dbScore`, `daScore`, and `validation` befor
 | ------------------------------------------ | ------------------- |
 | `health`                                   | ✅ Implemented      |
 | `signUp` / `login` / `me`                  | ✅ Implemented      |
+| `forgotPassword` / `resetPassword`         | ✅ Implemented      |
+| `updateProfile` / `changePassword`           | ✅ Implemented      |
 | `bodyElements` / `bodyElement`             | ✅ Implemented (auth required) |
 | `requirements`                             | ✅ Implemented      |
 | `bases` / `base`                           | ✅ Implemented      |

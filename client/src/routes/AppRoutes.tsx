@@ -6,6 +6,8 @@ import {
   RootRedirect,
 } from "../components/layout/ProtectedRoute";
 import { DashboardPage } from "../pages/DashboardPage";
+import { ForgotPasswordPage } from "../pages/ForgotPasswordPage";
+import { ResetPasswordPage } from "../pages/ResetPasswordPage";
 import { LoginPage } from "../pages/LoginPage";
 import { MyRoutinesPage } from "../pages/MyRoutinesPage";
 import { ProfilePage } from "../pages/ProfilePage";
@@ -20,6 +22,8 @@ export function AppRoutes() {
       <Route element={<PublicOnlyRoute />}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
       </Route>
 
       <Route element={<ProtectedRoute />}>

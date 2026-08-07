@@ -90,16 +90,16 @@ Each milestone is **independently testable** and should be completed before movi
 
 ### Server
 
-- [ ] `forgotPassword` / `resetPassword` mutations
-- [ ] Email integration (**Resend**)
-- [ ] `updateProfile` / `changePassword` mutations
-- [ ] `coachService`
+- [x] `forgotPassword` / `resetPassword` mutations
+- [x] Email integration (**Resend**)
+- [x] `updateProfile` / `changePassword` mutations
+- [x] `coachService`
 
 ### Client
 
-- [ ] Forgot password page
-- [ ] Reset password page
-- [ ] Profile page (edit name, club, change password)
+- [x] Forgot password page
+- [x] Reset password page
+- [x] Profile page (edit name, club, change password)
 
 **Test:** Request reset → receive email → reset password → login with new password → edit profile.
 
@@ -210,7 +210,54 @@ Each milestone is **independently testable** and should be completed before movi
 
 ---
 
-## Milestone 8 — Deployment
+## Milestone 8 — Client UI Polish
+
+**Goal:** Elevate the client to a polished, professional coaching product — refined visuals, consistent layout, and thoughtful UX across every screen.
+
+Reference: [UI_UX.md](./UI_UX.md) for palette, typography, and component standards.
+
+### Theme & visual identity
+
+- [ ] Refine MUI theme — palette, typography scale, spacing, shadows, transitions
+- [ ] Apply design tokens consistently (primary pink, secondary purple, surface pink, semantic colors)
+- [ ] Button, input, card, and chip variants aligned to design system
+- [ ] Subtle hover/focus/active states on interactive elements
+
+### Layout & navigation
+
+- [ ] App shell polish — logo, nav hierarchy, coach menu, logout
+- [ ] Responsive layout — desktop top nav, mobile drawer/hamburger
+- [ ] Consistent page structure — max-width, padding, section headings, breadcrumbs where helpful
+- [ ] Auth pages — centered card layout, branded header, improved visual balance
+
+### UX patterns
+
+- [ ] Loading states — skeletons or spinners on data-fetching pages
+- [ ] Empty states — helpful copy and primary CTAs (e.g. no routines yet)
+- [ ] Form UX — inline validation, clear error messages, disabled/submitting states
+- [ ] Feedback consistency — success/error alerts or toasts with uniform placement
+- [ ] Confirmation dialogs for destructive actions (delete routine, etc.)
+
+### Page polish (pass over each screen)
+
+- [ ] Login, sign up, forgot password, reset password
+- [ ] Dashboard — action cards, visual hierarchy
+- [ ] Profile — grouped sections, readable forms
+- [ ] My Routines — list/card layout, filters or sort if needed
+- [ ] Routine Builder — three-panel layout, timeline, editing, score/validation panels
+
+### Responsive & accessibility
+
+- [ ] Test all flows at mobile, tablet, and desktop breakpoints
+- [ ] Touch-friendly targets and spacing on small screens
+- [ ] Visible focus rings and keyboard navigation
+- [ ] Color contrast meets WCAG AA for text and controls
+
+**Test:** Full user flow on desktop and mobile feels cohesive, modern, and professional; no raw placeholder styling remains.
+
+---
+
+## Milestone 9 — Deployment
 
 **Goal:** Application accessible on the internet.
 
@@ -237,19 +284,17 @@ Each milestone is **independently testable** and should be completed before movi
 
 ---
 
-## Milestone 9 — Polish & Hardening
+## Milestone 10 — Polish & Hardening
 
-**Goal:** Production-quality finishing touches.
+**Goal:** Production-quality finishing touches (server-side and reliability).
 
 - [ ] Error boundaries on client
 - [ ] Rate limiting on auth endpoints
 - [ ] Input validation on all mutations
-- [ ] Loading states and empty states on all pages
-- [ ] Mobile responsive testing
 - [ ] Security review (JWT expiry, password strength, CORS)
 - [ ] Performance: indexes verified, query optimization
 
-**Test:** Full user flow on mobile and desktop without errors.
+**Test:** Full user flow on mobile and desktop without errors; auth and API hardened for production load.
 
 ---
 
@@ -265,10 +310,11 @@ Each milestone is **independently testable** and should be completed before movi
 | 5 — Routine Builder          | 3–5 days                              |
 | 6 — Scoring Engine           | 2–3 days                              |
 | 7 — Validation Engine        | 3–5 days (depends on CoP rules input) |
-| 8 — Deployment               | 1–2 days                              |
-| 9 — Polish                   | 2–3 days                              |
+| 8 — Client UI Polish         | 3–5 days                              |
+| 9 — Deployment               | 1–2 days                              |
+| 10 — Polish & Hardening      | 2–3 days                              |
 
-**Total estimate:** 8–12 weeks at a steady pace, depending on CoP data availability.
+**Total estimate:** 9–14 weeks at a steady pace, depending on CoP data availability.
 
 ---
 
@@ -284,8 +330,9 @@ Phase 0 Documentation (current)
                                 └── M5 Routine Builder
                                       ├── M6 Scoring Engine
                                       └── M7 Validation Engine
-                                            └── M8 Deployment
-                                                  └── M9 Polish
+                                            └── M8 Client UI Polish
+                                                  └── M9 Deployment
+                                                        └── M10 Polish & Hardening
 ```
 
 M6 and M7 can be developed in parallel after M5.
@@ -294,4 +341,4 @@ M6 and M7 can be developed in parallel after M5.
 
 ## Next Step
 
-**Milestone 1 complete.** Next: **Milestone 2 — Password Reset & Profile**.
+**Milestone 2 complete.** Next: **Milestone 3 — Dashboard & Routine CRUD**.

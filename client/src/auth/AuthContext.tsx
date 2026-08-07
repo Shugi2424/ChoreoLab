@@ -2,7 +2,6 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -19,6 +18,7 @@ interface AuthContextValue {
   isAuthenticated: boolean;
   loginWithToken: (token: string) => void;
   logout: () => void;
+  refetchCoach: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -27,18 +27,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const client = useApolloClient();
   const [token, setToken] = useState<string | null>(() => getStoredToken());
 
-  const { data, loading, error } = useQuery<{ me: Coach }>(ME_QUERY, {
+  const handleSessionError = useCallback(async () => {
+    clearStoredToken();
+    setToken(null);
+    await client.clearStore();
+  }, [client]);
+
+  const { data, loading, refetch } = useQuery<{ me: Coach }>(ME_QUERY, {
     skip: !token,
     fetchPolicy: "network-only",
+    onError: () => {
+      void handleSessionError();
+    },
   });
-
-  useEffect(() => {
-    if (token && error) {
-      clearStoredToken();
-      setToken(null);
-      void client.clearStore();
-    }
-  }, [token, error, client]);
 
   const loginWithToken = useCallback((newToken: string) => {
     setStoredToken(newToken);
@@ -51,6 +52,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await client.clearStore();
   }, [client]);
 
+  const refetchCoach = useCallback(async () => {
+    if (token) {
+      await refetch();
+    }
+  }, [token, refetch]);
+
   const value = useMemo(
     () => ({
       coach: data?.me ?? null,
@@ -59,8 +66,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAuthenticated: Boolean(token),
       loginWithToken,
       logout,
+      refetchCoach,
     }),
-    [data?.me, token, loading, loginWithToken, logout],
+    [data?.me, token, loading, loginWithToken, logout, refetchCoach],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

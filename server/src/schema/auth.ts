@@ -25,4 +25,19 @@ export const authTypeDefs = `#graphql
     email: String!
     password: String!
   }
+
+  input ResetPasswordInput {
+    token: String!
+    password: String!
+  }
+
+  input UpdateProfileInput {
+    firstName: String!
+    lastName: String!
+    club: String
+  }
+
+  type MessagePayload {
+    message: String!
+  }
 `;

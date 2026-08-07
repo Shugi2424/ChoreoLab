@@ -1,14 +1,13 @@
-import { Navigate } from "react-router-dom";
+import { Alert, Box, Link } from "@mui/material";
+import { useMutation } from "@apollo/client";
+import { FormEvent, useState } from "react";
+import { Link as RouterLink, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import {
   AuthPageShell,
   AuthSubmitButton,
   AuthTextField,
 } from "../components/auth/AuthPageShell";
-import { Alert } from "@mui/material";
-import { useMutation } from "@apollo/client";
-import { FormEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { LOGIN_MUTATION } from "../graphql/mutations";
 
 export function LoginPage() {
@@ -67,6 +66,11 @@ export function LoginPage() {
           value={password}
           onChange={(event) => setPassword(event.target.value)}
         />
+        <Box sx={{ textAlign: "right", mt: 1 }}>
+          <Link component={RouterLink} to="/forgot-password" underline="hover">
+            Forgot password?
+          </Link>
+        </Box>
         <AuthSubmitButton loading={loading} label="Log in" />
       </form>
     </AuthPageShell>

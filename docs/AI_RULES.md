@@ -90,7 +90,7 @@ Rules for AI assistants (Cursor, Copilot, etc.) working on this codebase.
 ## Testing Expectations
 
 - Each milestone in [ROADMAP.md](./ROADMAP.md) defines its test criteria
-- Manual testing is acceptable for v1 — automated tests added in Milestone 9
+- Manual testing is acceptable for v1 — automated tests added in Milestone 10
 - When adding a service, verify it works via GraphQL playground or client UI
 
 ---

@@ -4,6 +4,9 @@ export interface AppConfig {
   corsOrigin: string;
   nodeEnv: string;
   jwtSecret: string;
+  clientUrl: string;
+  resendApiKey: string | null;
+  emailFrom: string;
 }
 
 export function loadConfig(): AppConfig {
@@ -23,5 +26,9 @@ export function loadConfig(): AppConfig {
     corsOrigin: process.env.CORS_ORIGIN ?? "http://localhost:5173",
     nodeEnv: process.env.NODE_ENV ?? "development",
     jwtSecret,
+    clientUrl: process.env.CLIENT_URL ?? "http://localhost:5173",
+    resendApiKey: process.env.RESEND_API_KEY?.trim() || null,
+    emailFrom:
+      process.env.EMAIL_FROM?.trim() || "ChoreoLab <onboarding@resend.dev>",
   };
 }

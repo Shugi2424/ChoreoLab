@@ -243,4 +243,4 @@ const theme = createTheme({
 });
 ```
 
-This will be implemented in Milestone 1 (Foundation & Auth).
+This will be implemented in Milestone 0 (Foundation). A dedicated visual and UX pass is **Milestone 8 — Client UI Polish** in [ROADMAP.md](./ROADMAP.md).

@@ -29,7 +29,7 @@ async function main() {
     cors({ origin: config.corsOrigin, credentials: true }),
     express.json(),
     expressMiddleware(server, {
-      context: async ({ req }) => buildGraphQLContext(req, config.jwtSecret),
+      context: async ({ req }) => buildGraphQLContext(req, config),
     }) as unknown as RequestHandler,
   );
 

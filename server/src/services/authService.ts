@@ -1,11 +1,12 @@
-import bcrypt from "bcrypt";
+import crypto from "node:crypto";
 import { Coach } from "../models/Coach.js";
+import { sendPasswordResetEmail, type EmailConfig } from "./emailService.js";
 import { UserInputError } from "../utils/errors.js";
 import { signToken } from "../utils/jwt.js";
 import { toGraphQLCoach } from "../utils/mappers.js";
+import { comparePassword, hashPassword, validatePassword } from "../utils/password.js";
 
-const BCRYPT_ROUNDS = 10;
-const MIN_PASSWORD_LENGTH = 8;
+const RESET_TOKEN_EXPIRY_MS = 60 * 60 * 1000;
 
 export interface SignUpInput {
   email: string;
@@ -20,16 +21,13 @@ export interface LoginInput {
   password: string;
 }
 
-function normalizeEmail(email: string): string {
-  return email.trim().toLowerCase();
+export interface ResetPasswordInput {
+  token: string;
+  password: string;
 }
 
-function validatePassword(password: string): void {
-  if (password.length < MIN_PASSWORD_LENGTH) {
-    throw new UserInputError(
-      `Password must be at least ${MIN_PASSWORD_LENGTH} characters`,
-    );
-  }
+function normalizeEmail(email: string): string {
+  return email.trim().toLowerCase();
 }
 
 function validateSignUpInput(input: SignUpInput): void {
@@ -45,6 +43,14 @@ function validateSignUpInput(input: SignUpInput): void {
   validatePassword(input.password);
 }
 
+function hashResetToken(token: string): string {
+  return crypto.createHash("sha256").update(token).digest("hex");
+}
+
+function generateResetToken(): string {
+  return crypto.randomBytes(32).toString("hex");
+}
+
 export const authService = {
   async signUp(input: SignUpInput, jwtSecret: string) {
     validateSignUpInput(input);
@@ -55,7 +61,7 @@ export const authService = {
       throw new UserInputError("An account with this email already exists");
     }
 
-    const passwordHash = await bcrypt.hash(input.password, BCRYPT_ROUNDS);
+    const passwordHash = await hashPassword(input.password);
     const coach = await Coach.create({
       email,
       passwordHash,
@@ -79,7 +85,7 @@ export const authService = {
       throw new UserInputError("Invalid email or password");
     }
 
-    const valid = await bcrypt.compare(input.password, coach.passwordHash);
+    const valid = await comparePassword(input.password, coach.passwordHash);
     if (!valid) {
       throw new UserInputError("Invalid email or password");
     }
@@ -91,5 +97,46 @@ export const authService = {
   async getCoachById(coachId: string) {
     const coach = await Coach.findById(coachId).lean();
     return coach ? toGraphQLCoach(coach) : null;
+  },
+
+  async forgotPassword(email: string, emailConfig: EmailConfig) {
+    const normalizedEmail = normalizeEmail(email);
+    const coach = await Coach.findOne({ email: normalizedEmail });
+
+    if (coach) {
+      const resetToken = generateResetToken();
+      coach.resetToken = hashResetToken(resetToken);
+      coach.resetTokenExpiry = new Date(Date.now() + RESET_TOKEN_EXPIRY_MS);
+      await coach.save();
+      await sendPasswordResetEmail(emailConfig, coach.email, resetToken);
+    }
+
+    return {
+      message:
+        "If an account exists for that email, a password reset link has been sent.",
+    };
+  },
+
+  async resetPassword(input: ResetPasswordInput) {
+    if (!input.token.trim()) {
+      throw new UserInputError("Reset token is required");
+    }
+    validatePassword(input.password);
+
+    const hashedToken = hashResetToken(input.token.trim());
+    const coach = await Coach.findOne({
+      resetToken: hashedToken,
+      resetTokenExpiry: { $gt: new Date() },
+    });
+
+    if (!coach) {
+      throw new UserInputError("Invalid or expired reset token");
+    }
+
+    coach.passwordHash = await hashPassword(input.password);
+    coach.set({ resetToken: undefined, resetTokenExpiry: undefined });
+    await coach.save();
+
+    return { message: "Password reset successfully" };
   },
 };
