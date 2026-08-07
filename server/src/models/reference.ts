@@ -44,7 +44,8 @@ const rCriteriaSchema = new Schema(
     id: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     type: { type: String, enum: ["throw", "catch", "general"], required: true },
-    apparatus: { type: String, enum: APPARATUS, required: true },
+    value: { type: Number, required: true },
+    apparatuses: { type: [String], enum: APPARATUS, required: true },
   },
   { timestamps: true, versionKey: false, collection: "rcriteria" },
 );
@@ -55,7 +56,7 @@ const rotationSchema = new Schema(
   {
     id: { type: String, required: true, unique: true },
     name: { type: String, required: true },
-    type: { type: String, enum: ["v1", "v2", "v3", "acro"], required: true },
+    group: { type: String, required: true },
   },
   { timestamps: true, versionKey: false, collection: "rotations" },
 );

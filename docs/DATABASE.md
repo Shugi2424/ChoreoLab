@@ -86,15 +86,15 @@ Populated via seed scripts. Coaches read but never write.
 
 ### RCriteria
 
-Rotation-linked criteria used in the DA domain. See [domains/DA.md](./domains/DA.md).
+Risk criteria from CoP §4.8–4.10. See [domains/DB.md](./domains/DB.md).
 
 ```typescript
 {
-  code: string;
+  id: string;
   name: string;
-  description?: string;
-  apparatus: Apparatus;
-  active: boolean;
+  type: "throw" | "catch" | "general";
+  value: number;           // 0.10 or 0.20
+  apparatuses: Apparatus[];
 }
 ```
 
@@ -102,12 +102,9 @@ Rotation-linked criteria used in the DA domain. See [domains/DA.md](./domains/DA
 
 ```typescript
 {
-  code: string;
+  id: string;
   name: string;
-  apparatus: Apparatus;
-  maxAllowed: number;      // maximum in a single routine
-  description?: string;
-  active: boolean;
+  group: string;           // "v1" | "v2" | "v3" | "acro-1" … "acro-13"
 }
 ```
 
@@ -115,12 +112,9 @@ Rotation-linked criteria used in the DA domain. See [domains/DA.md](./domains/DA
 
 ```typescript
 {
-  code: string;
+  id: string;
   name: string;
-  category: string;
-  value: number;
-  description?: string;
-  active: boolean;
+  type: "character" | "dance" | "dynamic" | "effect";
 }
 ```
 
@@ -304,9 +298,9 @@ Reference collections are **not** embedded in routines. Timeline items store **O
 | `risks` | ❌ Not created |
 | `bases` | ✅ Seeded (34 bases — shared + apparatus-specific) |
 | `dacriteria` | ✅ Seeded (7 criteria) |
-| `rcriteria` | ❌ Not created |
-| `rotations` | ❌ Not created |
-| `artistrycomponents` | ❌ Not created |
+| `rcriteria` | ✅ Seeded (15 criteria) |
+| `rotations` | ✅ Seeded (16 groups) |
+| `artistrycomponents` | ✅ Seeded (4 types) |
 | `coprequirements` | ❌ Not created |
 | `coaches` | ❌ Not created |
 | `routines` | ❌ Not created |

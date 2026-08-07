@@ -65,6 +65,39 @@ export const typeDefs = `#graphql
     allowedCriteria: [ID!]!
   }
 
+  type RCriteria {
+    id: ID!
+    name: String!
+    type: RCriteriaType!
+    value: Float!
+    apparatuses: [Apparatus!]!
+  }
+
+  type Rotation {
+    id: ID!
+    name: String!
+    group: String!
+  }
+
+  enum RCriteriaType {
+    throw
+    catch
+    general
+  }
+
+  enum ArtistryType {
+    character
+    dance
+    dynamic
+    effect
+  }
+
+  type ArtistryComponent {
+    id: ID!
+    name: String!
+    type: ArtistryType!
+  }
+
   type Query {
     health: String!
     bodyElements(category: BodyCategory): [BodyElement!]!
@@ -74,5 +107,11 @@ export const typeDefs = `#graphql
     daCriterion(id: ID!): DACriteria
     bases(apparatus: Apparatus): [Base!]!
     base(id: ID!): Base
+    rCriteria(apparatus: Apparatus, type: RCriteriaType): [RCriteria!]!
+    rCriterion(id: ID!): RCriteria
+    rotations(group: String): [Rotation!]!
+    rotation(id: ID!): Rotation
+    artistryComponents(type: ArtistryType): [ArtistryComponent!]!
+    artistryComponent(id: ID!): ArtistryComponent
   }
 `;

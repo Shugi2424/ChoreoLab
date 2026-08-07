@@ -2,7 +2,7 @@
 
 FIG Rhythmic Gymnastics Code of Points **2025–2028**, individual exercises only.
 
-> **Status:** ChoreoLab uses a simplified artistry model for the app. Execution penalties and full Artistry jury scoring are **out of scope**.
+> **Status:** Artistry components seeded (4 types). Execution penalties and full Artistry jury scoring are **out of scope**.
 
 ---
 
@@ -27,6 +27,8 @@ Instead of the full CoP artistry evaluation (character "parts", expression penal
 | `id` | string | Generated when saved |
 | `name` | string | Coach label for the moment |
 | `type` | enum | `character` \| `dance` \| `dynamic` \| `effect` |
+
+**Seeded:** 4 component types — Character moment, Dance combination, Dynamic change, Effect.
 
 ### Type definitions
 

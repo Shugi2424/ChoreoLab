@@ -1,6 +1,6 @@
 import { BodyElement } from "../models/BodyElement.js";
 import { Requirement } from "../models/Requirement.js";
-import { Base, DACriteria } from "../models/reference.js";
+import { Base, DACriteria, RCriteria, Rotation, ArtistryComponent } from "../models/reference.js";
 
 export const resolvers = {
   Query: {
@@ -47,6 +47,44 @@ export const resolvers = {
     base: async (_: unknown, { id }: { id: string }) => {
       const doc = await Base.findOne({ id }).lean();
       return doc ? toGraphQLBase(doc) : null;
+    },
+
+    rCriteria: async (
+      _: unknown,
+      { apparatus, type }: { apparatus?: string; type?: string },
+    ) => {
+      const filter: Record<string, unknown> = {};
+      if (apparatus) filter.apparatuses = apparatus;
+      if (type) filter.type = type;
+      const docs = await RCriteria.find(filter).sort({ id: 1 }).lean();
+      return docs.map(toGraphQLRCriteria);
+    },
+
+    rCriterion: async (_: unknown, { id }: { id: string }) => {
+      const doc = await RCriteria.findOne({ id }).lean();
+      return doc ? toGraphQLRCriteria(doc) : null;
+    },
+
+    rotations: async (_: unknown, { group }: { group?: string }) => {
+      const filter = group ? { group } : {};
+      const docs = await Rotation.find(filter).sort({ id: 1 }).lean();
+      return docs.map(toGraphQLRotation);
+    },
+
+    rotation: async (_: unknown, { id }: { id: string }) => {
+      const doc = await Rotation.findOne({ id }).lean();
+      return doc ? toGraphQLRotation(doc) : null;
+    },
+
+    artistryComponents: async (_: unknown, { type }: { type?: string }) => {
+      const filter = type ? { type } : {};
+      const docs = await ArtistryComponent.find(filter).sort({ id: 1 }).lean();
+      return docs.map(toGraphQLArtistryComponent);
+    },
+
+    artistryComponent: async (_: unknown, { id }: { id: string }) => {
+      const doc = await ArtistryComponent.findOne({ id }).lean();
+      return doc ? toGraphQLArtistryComponent(doc) : null;
     },
   },
 };
@@ -111,5 +149,45 @@ function toGraphQLBase(doc: {
     value: doc.value,
     apparatuses: doc.apparatuses,
     allowedCriteria: doc.allowedCriteria,
+  };
+}
+
+function toGraphQLRCriteria(doc: {
+  id: string;
+  name: string;
+  type: string;
+  value: number;
+  apparatuses: string[];
+}) {
+  return {
+    id: doc.id,
+    name: doc.name,
+    type: doc.type,
+    value: doc.value,
+    apparatuses: doc.apparatuses,
+  };
+}
+
+function toGraphQLRotation(doc: {
+  id: string;
+  name: string;
+  group: string;
+}) {
+  return {
+    id: doc.id,
+    name: doc.name,
+    group: doc.group,
+  };
+}
+
+function toGraphQLArtistryComponent(doc: {
+  id: string;
+  name: string;
+  type: string;
+}) {
+  return {
+    id: doc.id,
+    name: doc.name,
+    type: doc.type,
   };
 }

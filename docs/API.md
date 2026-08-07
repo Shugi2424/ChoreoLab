@@ -189,6 +189,51 @@ type DACriteria {
 }
 ```
 
+### RCriteria
+
+```graphql
+enum RCriteriaType {
+  throw
+  catch
+  general
+}
+
+type RCriteria {
+  id: ID!
+  name: String!
+  type: RCriteriaType!
+  value: Float!
+  apparatuses: [Apparatus!]!
+}
+```
+
+### Rotation
+
+```graphql
+type Rotation {
+  id: ID!
+  name: String!
+  group: String!
+}
+```
+
+### ArtistryComponent
+
+```graphql
+enum ArtistryType {
+  character
+  dance
+  dynamic
+  effect
+}
+
+type ArtistryComponent {
+  id: ID!
+  name: String!
+  type: ArtistryType!
+}
+```
+
 ### MasteryComposition
 
 ```graphql
@@ -279,9 +324,12 @@ risk(id: ID!): Risk
 
 bases(apparatus: Apparatus!): [Base!]!
 daCriteria(apparatus: Apparatus!, baseId: ID): [DACriteria!]!
-rCriteria(apparatus: Apparatus!): [RCriteria!]!
-rotations(apparatus: Apparatus!): [Rotation!]!
-artistryComponents(category: String): [ArtistryComponent!]!
+rCriteria(apparatus: Apparatus, type: RCriteriaType): [RCriteria!]!
+rCriterion(id: ID!): RCriteria
+rotations(group: String): [Rotation!]!
+rotation(id: ID!): Rotation
+artistryComponents(type: ArtistryType): [ArtistryComponent!]!
+artistryComponent(id: ID!): ArtistryComponent
 ```
 
 ### Routines (authenticated, coach-scoped)
@@ -401,6 +449,9 @@ Every routine mutation recalculates `dbScore`, `daScore`, and `validation` befor
 | `bodyElements` / `bodyElement` | ✅ Implemented |
 | `requirements` | ✅ Implemented |
 | `bases` / `base` | ✅ Implemented |
+| `rCriteria` / `rCriterion` | ✅ Implemented |
+| `rotations` / `rotation` | ✅ Implemented |
+| `artistryComponents` / `artistryComponent` | ✅ Implemented |
 | `daCriteria` / `daCriterion` | ✅ Implemented |
 | All auth operations | ❌ Not implemented |
 | All routine operations | ❌ Not implemented |

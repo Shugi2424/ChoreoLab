@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import mongoose from "mongoose";
 import { BodyElement } from "../src/models/BodyElement.js";
 import { Requirement } from "../src/models/Requirement.js";
-import { Base, DACriteria } from "../src/models/reference.js";
+import { Base, DACriteria, RCriteria, Rotation, ArtistryComponent } from "../src/models/reference.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -34,6 +34,9 @@ async function stripVersionKeys() {
   await Requirement.updateMany({}, { $unset: { __v: 1 } });
   await Base.updateMany({}, { $unset: { __v: 1 } });
   await DACriteria.updateMany({}, { $unset: { __v: 1 } });
+  await RCriteria.updateMany({}, { $unset: { __v: 1 } });
+  await Rotation.updateMany({}, { $unset: { __v: 1 } });
+  await ArtistryComponent.updateMany({}, { $unset: { __v: 1 } });
 }
 
 async function seedBodyElements() {
@@ -108,6 +111,71 @@ async function seedBases() {
   console.log(`Seeded ${bases.length} DA bases (removed ${removed.deletedCount} stale)`);
 }
 
+async function seedRCriteria() {
+  const criteria = await loadJson<
+    Array<{
+      id: string;
+      name: string;
+      type: string;
+      value: number;
+      apparatuses: string[];
+    }>
+  >("rcriteria.json");
+
+  for (const criterion of criteria) {
+    await RCriteria.replaceOne({ id: criterion.id }, criterion, { upsert: true });
+  }
+
+  const seededIds = criteria.map((c) => c.id);
+  const removed = await RCriteria.deleteMany({ id: { $nin: seededIds } });
+
+  console.log(`Seeded ${criteria.length} R criteria (removed ${removed.deletedCount} stale)`);
+}
+
+async function seedRotations() {
+  const rotations = await loadJson<
+    Array<{
+      id: string;
+      name: string;
+      group: string;
+    }>
+  >("rotations.json");
+
+  for (const rotation of rotations) {
+    await Rotation.replaceOne({ id: rotation.id }, rotation, { upsert: true });
+  }
+
+  const seededIds = rotations.map((r) => r.id);
+  const removed = await Rotation.deleteMany({ id: { $nin: seededIds } });
+
+  console.log(`Seeded ${rotations.length} rotations (removed ${removed.deletedCount} stale)`);
+}
+
+async function seedArtistryComponents() {
+  const components = await loadJson<
+    Array<{
+      id: string;
+      name: string;
+      type: string;
+    }>
+  >("artistry-components.json");
+
+  for (const component of components) {
+    await ArtistryComponent.replaceOne({ id: component.id }, component, {
+      upsert: true,
+    });
+  }
+
+  const seededIds = components.map((c) => c.id);
+  const removed = await ArtistryComponent.deleteMany({
+    id: { $nin: seededIds },
+  });
+
+  console.log(
+    `Seeded ${components.length} artistry components (removed ${removed.deletedCount} stale)`,
+  );
+}
+
 async function main() {
   await mongoose.connect(MONGODB_URI);
   console.log("Connected to MongoDB");
@@ -117,14 +185,20 @@ async function main() {
   await seedRequirements();
   await seedDACriteria();
   await seedBases();
+  await seedRCriteria();
+  await seedRotations();
+  await seedArtistryComponents();
   await stripVersionKeys();
 
   const bodyCount = await BodyElement.countDocuments();
   const reqCount = await Requirement.countDocuments();
   const criteriaCount = await DACriteria.countDocuments();
   const baseCount = await Base.countDocuments();
+  const rCriteriaCount = await RCriteria.countDocuments();
+  const rotationCount = await Rotation.countDocuments();
+  const artistryCount = await ArtistryComponent.countDocuments();
   console.log(
-    `Done. bodyelements: ${bodyCount}, requirements: ${reqCount}, dacriteria: ${criteriaCount}, bases: ${baseCount}`,
+    `Done. bodyelements: ${bodyCount}, requirements: ${reqCount}, dacriteria: ${criteriaCount}, bases: ${baseCount}, rcriteria: ${rCriteriaCount}, rotations: ${rotationCount}, artistrycomponents: ${artistryCount}`,
   );
 
   await mongoose.disconnect();

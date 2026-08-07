@@ -1,0 +1,107 @@
+[
+  {
+    "id": "rotation",
+    "name": "Complete 360° rotation (during throw, under flight, or with catch during final rotation)",
+    "type": "general",
+    "value": 0.1,
+    "apparatuses": ["hoop", "ball", "clubs", "ribbon"]
+  },
+  {
+    "id": "change-axis-or-level",
+    "name": "Change of rotation axis or change of level during rotations",
+    "type": "general",
+    "value": 0.1,
+    "apparatuses": ["hoop", "ball", "clubs", "ribbon"]
+  },
+  {
+    "id": "series-pre-acro-or-turning-leaps",
+    "name": "Series of 3+ identical pre-acrobatic elements under the flight, or series of 3 turning leap DBs with throw and catch",
+    "type": "general",
+    "value": 0.2,
+    "apparatuses": ["hoop", "ball", "clubs", "ribbon"]
+  },
+  {
+    "id": "outside-visual-field-throw",
+    "name": "Outside the visual field",
+    "type": "throw",
+    "value": 0.1,
+    "apparatuses": ["hoop", "ball", "clubs", "ribbon"]
+  },
+  {
+    "id": "outside-visual-field-catch",
+    "name": "Outside the visual field",
+    "type": "catch",
+    "value": 0.1,
+    "apparatuses": ["hoop", "ball", "clubs", "ribbon"]
+  },
+  {
+    "id": "without-hands-throw",
+    "name": "Without the help of the hands",
+    "type": "throw",
+    "value": 0.1,
+    "apparatuses": ["hoop", "ball", "clubs", "ribbon"]
+  },
+  {
+    "id": "without-hands-catch",
+    "name": "Without the help of the hands",
+    "type": "catch",
+    "value": 0.1,
+    "apparatuses": ["hoop", "ball", "clubs", "ribbon"]
+  },
+  {
+    "id": "throw-after-roll-on-floor",
+    "name": "Throw after rolling the apparatus on the floor (valid only when combined with without the help of the hands)",
+    "type": "throw",
+    "value": 0.1,
+    "apparatuses": ["hoop"]
+  },
+  {
+    "id": "passing-through-hoop",
+    "name": "Passing through the Hoop with the whole body or part of the body (minimum 2 large body segments)",
+    "type": "catch",
+    "value": 0.1,
+    "apparatuses": ["hoop"]
+  },
+  {
+    "id": "catch-hoop-rotation-on-body",
+    "name": "Direct catch of the Hoop with rotation around another part of the body, without hands (not on straight arm)",
+    "type": "catch",
+    "value": 0.1,
+    "apparatuses": ["hoop"]
+  },
+  {
+    "id": "direct-rebound-on-body",
+    "name": "Direct rebound on the body without any stops, without arm(s) or hand(s)",
+    "type": "catch",
+    "value": 0.1,
+    "apparatuses": ["ball"]
+  },
+  {
+    "id": "catch-ball-one-hand",
+    "name": "Catch of the Ball with 1 hand or the other, without additional support of the body or other hand",
+    "type": "catch",
+    "value": 0.1,
+    "apparatuses": ["ball"]
+  },
+  {
+    "id": "throw-2-unlocked-clubs",
+    "name": "Throw of 2 unlocked Clubs (simultaneously, asymmetric, or cascade)",
+    "type": "throw",
+    "value": 0.1,
+    "apparatuses": ["clubs"]
+  },
+  {
+    "id": "catch-2-unlocked-clubs-simultaneous",
+    "name": "Simultaneous catch of 2 unlocked Clubs from the flight of a high throw",
+    "type": "catch",
+    "value": 0.1,
+    "apparatuses": ["clubs"]
+  },
+  {
+    "id": "catch-roll-over-body",
+    "name": "Direct catch with rolling of the apparatus over minimum 2 large body segments",
+    "type": "catch",
+    "value": 0.1,
+    "apparatuses": ["hoop", "ball", "clubs", "ribbon"]
+  }
+]

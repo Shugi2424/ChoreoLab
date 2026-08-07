@@ -125,7 +125,9 @@ Each milestone is **independently testable** and should be completed before movi
 - [x] `BodyElement` model and seed (163 elements)
 - [x] `Requirement` model and seed (senior + junior)
 - [x] `Base` and `DACriteria` models and seed (34 bases, 7 criteria)
-- [ ] Remaining reference models (`RCriteria`, `Rotation`, `ArtistryComponent`, `CoPRequirement`)
+- [x] `RCriteria` and `Rotation` models and seed (15 criteria, 16 rotation groups)
+- [x] `ArtistryComponent` model and seed (4 types)
+- [ ] `CoPRequirement`
 - [ ] `referenceDataService`
 
 ### Documentation

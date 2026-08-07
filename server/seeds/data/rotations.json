@@ -1,0 +1,82 @@
+[
+  {
+    "id": "v1-upright",
+    "name": "Upright: with jump/skip/hop with rotation, or turning steps with rotation on 1 or 2 feet",
+    "group": "v1"
+  },
+  {
+    "id": "v2-seated-kneeling",
+    "name": "Seated or kneeling rotation, with or without passing through split",
+    "group": "v2"
+  },
+  {
+    "id": "v3-lateral-roll",
+    "name": "Lateral roll: body rotates laterally lying on the floor, or passing from kneeling onto the back",
+    "group": "v3"
+  },
+  {
+    "id": "acro-walkover-forward",
+    "name": "Walkover forward",
+    "group": "acro-1"
+  },
+  {
+    "id": "acro-walkover-backward",
+    "name": "Walkover backward",
+    "group": "acro-2"
+  },
+  {
+    "id": "acro-cartwheel",
+    "name": "Cartwheel",
+    "group": "acro-3"
+  },
+  {
+    "id": "acro-roll-forward",
+    "name": "Roll forward",
+    "group": "acro-4"
+  },
+  {
+    "id": "acro-roll-backward",
+    "name": "Roll backward",
+    "group": "acro-5"
+  },
+  {
+    "id": "acro-chest-roll-forward",
+    "name": "Chest roll forward",
+    "group": "acro-6"
+  },
+  {
+    "id": "acro-chest-roll-backward",
+    "name": "Chest roll backward",
+    "group": "acro-7"
+  },
+  {
+    "id": "acro-fish-flop-forward",
+    "name": "Fish flop forward",
+    "group": "acro-8"
+  },
+  {
+    "id": "acro-fish-flop-backward",
+    "name": "Fish flop backward",
+    "group": "acro-9"
+  },
+  {
+    "id": "acro-lateral-rotation-bridge-split",
+    "name": "Lateral rotation passing through a bridge, ending with a kick into split",
+    "group": "acro-10"
+  },
+  {
+    "id": "acro-lateral-rotation-arched-back",
+    "name": "Lateral rotation with trunk arched back",
+    "group": "acro-11"
+  },
+  {
+    "id": "acro-dive-leap",
+    "name": "Dive leap (leap with trunk bent forward followed directly by 1 roll)",
+    "group": "acro-12"
+  },
+  {
+    "id": "acro-illusion",
+    "name": "Illusion (rotation on 1 leg with 360° in the vertical plane)",
+    "group": "acro-13"
+  }
+]

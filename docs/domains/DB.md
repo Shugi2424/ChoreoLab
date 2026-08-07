@@ -45,6 +45,8 @@ In ChoreoLab, **Risk** is a separate timeline item type (not a BodyElement).
 
 CoP definition (§4): A Risk is a **high throw + minimum 2 base rotations (360° each) + catch**.
 
+When building a Risk, the rotation count starts at **0** — validation requires at least 2 base rotations (360° each) under the flight for a valid R.
+
 | Field | Type | Description |
 |-------|------|-------------|
 | `id` | string | Generated when saved in routine |
@@ -61,9 +63,51 @@ CoP definition (§4): A Risk is a **high throw + minimum 2 base rotations (360°
 | Junior | 3 |
 
 Risk rotations may come from:
-- Pre-acrobatic elements (walkover, cartwheel, roll, etc.)
-- Vertical rotations (chainé, passé pivot, etc.)
+- Pre-acrobatic elements (walkover, cartwheel, roll, etc.) — groups `acro-1` … `acro-13`
+- Vertical rotations (chainé, passé pivot, etc.) — groups `v1`, `v2`, `v3`
 - DB pivots/jumps with rotation ≥ 360° and value ≥ 0.20 (max 1 per R)
+
+### RCriteria (reference collection: `rcriteria`)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | Stable slug |
+| `name` | string | Official criterion name |
+| `type` | enum | `throw` \| `catch` \| `general` |
+| `value` | number | +0.10 or +0.20 added to R base (0.20) |
+| `apparatuses` | Apparatus[] | Which apparatus the criterion applies to |
+
+**Seeded:** 15 criteria from CoP §4.8–4.10.
+
+| Type | Count | Apparatus |
+|------|-------|-----------|
+| `general` | 3 | all four (hoop, ball, clubs, ribbon) |
+| `throw` / `catch` | 4 | all four (outside visual field, without hands) |
+| `throw` | 1 | hoop (throw after roll on floor) |
+| `catch` | 2 | hoop (passing through, catch with rotation on body) |
+| `catch` | 2 | ball (direct rebound on body, catch with 1 hand) |
+| `throw` | 1 | clubs (throw 2 unlocked clubs) |
+| `catch` | 1 | clubs (simultaneous catch 2 unlocked) |
+| `catch` | 1 | all four (catch with roll over body) |
+
+Ribbon has no apparatus-specific throw/catch criteria — only general and shared criteria apply.
+
+### Rotation (reference collection: `rotations`)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | Stable slug |
+| `name` | string | Group name |
+| `group` | string | `v1` \| `v2` \| `v3` \| `acro-1` … `acro-13` |
+
+**Seeded:** 16 rotation groups — 3 vertical + 13 pre-acrobatic.
+
+| Group | Description | CoP limit per routine |
+|-------|-------------|----------------------|
+| `v1` | Upright (jump/skip/hop, turning steps) | max 2 R |
+| `v2` | Seated/kneeling | max 1 R |
+| `v3` | Lateral roll | max 1 R |
+| `acro-1` … `acro-13` | Pre-acrobatic groups (walkover, cartwheel, roll, etc.) | max 1 R per group |
 
 ---
 

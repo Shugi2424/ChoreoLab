@@ -1,0 +1,22 @@
+[
+  {
+    "id": "character-moment",
+    "name": "Character moment",
+    "type": "character"
+  },
+  {
+    "id": "dance-combination",
+    "name": "Dance combination",
+    "type": "dance"
+  },
+  {
+    "id": "dynamic-change",
+    "name": "Dynamic change",
+    "type": "dynamic"
+  },
+  {
+    "id": "effect",
+    "name": "Effect",
+    "type": "effect"
+  }
+]

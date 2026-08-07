@@ -10,9 +10,6 @@ export type BodyCategory = (typeof BODY_CATEGORIES)[number];
 export const R_CRITERIA_TYPES = ["throw", "catch", "general"] as const;
 export type RCriteriaType = (typeof R_CRITERIA_TYPES)[number];
 
-export const ROTATION_TYPES = ["v1", "v2", "v3", "acro"] as const;
-export type RotationType = (typeof ROTATION_TYPES)[number];
-
 export const ARTISTRY_TYPES = ["character", "dance", "dynamic", "effect"] as const;
 export type ArtistryType = (typeof ARTISTRY_TYPES)[number];
 
