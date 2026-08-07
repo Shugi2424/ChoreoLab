@@ -15,14 +15,16 @@ Populated via seed scripts. Coaches read but never write.
 | Collection           | Purpose                                             |
 | -------------------- | --------------------------------------------------- |
 | `bodyelements`       | Body difficulty elements with values and categories |
-| `risks`              | Risk elements with values                           |
 | `bases`              | DA mastery bases (apparatus-specific)               |
 | `dacriteria`         | DA criteria linked to eligible bases                |
-| `rcriteria`          | Additional reference criteria                       |
-| `rotations`          | Acrobatic rotation definitions and limits           |
+| `rcriteria`          | Risk criteria (throw / catch / general)             |
+| `rotations`          | Rotation groups — vertical (`v1`, `v2`, `v3`) and pre-acrobatic (`acro-1` … `acro-13`) |
 | `artistrycomponents` | Artistry component definitions                      |
-| `requirements`       | Age-category rules (DB, DA, artistry limits)        |
-| `coprequirements`    | Code of Points requirement rules                    |
+| `requirements`       | Age-category limits (DB, DA, A)                     |
+
+There is **no `risks` reference collection**. A Risk is composed on the routine timeline from `rcriteria` and `rotations` references (see [Risk embedded schema](#risk-embedded-in-routineitem) below).
+
+There is **no `coprequirements` collection**. Validation uses the `requirements` collection plus rule handlers in `validationService` (see [Validation](#validationresult-embedded-in-routine) below).
 
 ### User Collections
 
@@ -35,31 +37,16 @@ Populated via seed scripts. Coaches read but never write.
 
 ## Reference Schemas
 
+All reference documents use a string **`id`** as the stable primary key (CoP code for body elements, slug for everything else). Seed scripts upsert by `id`. There is no separate `code` field.
+
 ### BodyElement
 
 ```typescript
 {
-  code: string;           // unique identifier, e.g. "BB-001"
+  id: string;       // CoP code, e.g. "1.101", "2.305", "3.505"
   name: string;
-  category: string;       // e.g. "balance", "flexibility", "jump", "leap", "pivot", "rotation"
-  value: number;          // DB value
-  apparatus: Apparatus[]; // which apparatus this element applies to
-  description?: string;
-  tags: string[];         // flexible metadata for validation rules
-  active: boolean;        // soft disable without deletion
-}
-```
-
-### Risk
-
-```typescript
-{
-  code: string;
-  name: string;
-  value: number;          // DB value contribution
-  apparatus: Apparatus[]; // applicable apparatus
-  description?: string;
-  active: boolean;
+  category: "jump" | "balance" | "pivot";
+  value: number;    // DB value (0.1 – 0.8)
 }
 ```
 
@@ -70,8 +57,8 @@ Populated via seed scripts. Coaches read but never write.
   id: string;              // e.g. "large-roll"
   name: string;
   value: number;           // DA base value (0.20 – 0.40)
-  apparatuses: Apparatus[]; // one or more apparatus
-  allowedCriteria: string[]; // DACriteria ids (N/A excluded per CoP table)
+  apparatuses: Apparatus[];
+  allowedCriteria: string[]; // DACriteria ids
 }
 ```
 
@@ -93,12 +80,14 @@ Risk criteria from CoP §4.8–4.10. See [domains/DB.md](./domains/DB.md).
   id: string;
   name: string;
   type: "throw" | "catch" | "general";
-  value: number;           // 0.10 or 0.20
+  value: number;           // 0.10 or 0.20 added to R base (0.20)
   apparatuses: Apparatus[];
 }
 ```
 
 ### Rotation
+
+Rotation groups used by **Risks** and **Masteries**. Includes vertical rotations and pre-acrobatic groups.
 
 ```typescript
 {
@@ -107,6 +96,13 @@ Risk criteria from CoP §4.8–4.10. See [domains/DB.md](./domains/DB.md).
   group: string; // "v1" | "v2" | "v3" | "acro-1" … "acro-13"
 }
 ```
+
+| Group                | Description                                            |
+| -------------------- | ------------------------------------------------------ |
+| `v1`                 | Upright (jump/skip/hop, turning steps)                 |
+| `v2`                 | Seated/kneeling                                        |
+| `v3`                 | Lateral roll                                           |
+| `acro-1` … `acro-13` | Pre-acrobatic groups (walkover, cartwheel, roll, etc.) |
 
 ### ArtistryComponent
 
@@ -120,16 +116,16 @@ Risk criteria from CoP §4.8–4.10. See [domains/DB.md](./domains/DB.md).
 
 ### Requirement
 
-Age-category limits stored as two documents (`senior`, `junior`):
+Age-category limits stored as two documents (`requirements-senior`, `requirements-junior`):
 
 ```typescript
 {
-  id: string;              // e.g. "requirements-senior"
-  ageCategory: AgeCategory;
+  id: string;
+  ageCategory: "senior" | "junior";
   DB: {
     minElements: number;
     maxElements: number;
-    requiredElements: BodyCategory[];
+    requiredElements: ("jump" | "balance" | "pivot")[];
     maxRisks: number;
   };
   DA: {
@@ -142,22 +138,6 @@ Age-category limits stored as two documents (`senior`, `junior`):
     minDanceSteps: number;
     minDynamicEffects: number;
   };
-}
-```
-
-### CoPRequirement
-
-```typescript
-{
-  code: string;
-  name: string;
-  apparatus: Apparatus | "all";
-  ageCategory: AgeCategory | "all";
-  domain: "db" | "da" | "artistry" | "general";
-  ruleType: string; // e.g. "min_count", "max_count", "required_category", "min_value"
-  parameters: Record<string, unknown>; // rule-specific config
-  message: string; // human-readable description for validation panel
-  active: boolean;
 }
 ```
 
@@ -210,20 +190,43 @@ Indexes: `{ coach: 1, updatedAt: -1 }`
   type: "body_element" | "risk" | "mastery" | "artistry";
   order: number;
 
-  // type-specific reference (only one populated per item)
-  bodyElementId?: ObjectId;       // ref BodyElement
-  riskId?: ObjectId;              // ref Risk
-  mastery?: MasteryComposition;
-  artistryComponentId?: ObjectId; // ref ArtistryComponent
+  // type-specific (only one populated per item)
+  bodyElementId?: string;         // ref BodyElement.id
+  risk?: Risk;
+  mastery?: Mastery;
+  artistryComponentId?: string;   // ref ArtistryComponent.id
 }
 ```
 
-### MasteryComposition (embedded in RoutineItem)
+Reference collections are **not** embedded in routines. Timeline items store **string `id` references** (or embedded Risk/Mastery compositions) so reference data updates propagate on recalculation.
+
+### Risk (embedded in RoutineItem)
+
+Not a separate collection. A Risk is a **composition** of R criteria and rotations under a high throw + catch (CoP §4).
 
 ```typescript
 {
-  bases: ObjectId[];       // ref Base, length 1 or 2
-  criteria: ObjectId[];    // ref DACriteria, length 1 or 2
+  criteriaIds: string[];   // ref RCriteria.id
+  rotations: {
+    rotationId: string;    // ref Rotation.id
+    count: number;
+  }[];
+  bodyElementId?: string;    // optional ref BodyElement.id (pivot/jump ≥ 0.20, max 1 per R)
+  value: number;             // calculated: 0.20 base + criteria values
+}
+```
+
+### Mastery (embedded in RoutineItem)
+
+Not a separate collection. A Mastery is a **composition** of bases and DA criteria (CoP §5).
+
+```typescript
+{
+  baseIds: string[];       // ref Base.id, length 1 or 2
+  criteriaIds: string[];   // ref DACriteria.id, length 1 or 2
+  rotationId?: string;       // optional ref Rotation.id
+  value: number;             // calculated from bases + criteria combo
+  isAcro: boolean;           // true when rotation.group starts with "acro-"
 }
 ```
 
@@ -240,12 +243,13 @@ Indexes: `{ coach: 1, updatedAt: -1 }`
 }
 
 interface MissingRequirement {
-  code: string;
-  domain: string;
-  message: string;
-  severity: "error" | "warning";
+  id: string;      // stable slug for the rule, e.g. "missing-balance"
+  domain: string;  // "db" | "da" | "a"
+  message: string; // human-readable text for the validation panel
 }
 ```
+
+Validation reads the `requirements` document for the routine's age category and evaluates the timeline in `validationService`. No separate rule collection.
 
 ---
 
@@ -262,7 +266,6 @@ enum Apparatus {
 enum AgeCategory {
   SENIOR = "senior",
   JUNIOR = "junior",
-  // additional categories as defined in CoP docs
 }
 ```
 
@@ -273,18 +276,14 @@ enum AgeCategory {
 ```
 Coach 1 ──▶ * Routine
 
-Routine.timeline[*] ──▶ BodyElement     (type: body_element)
-Routine.timeline[*] ──▶ Risk            (type: risk)
-Routine.timeline[*] ──▶ MasteryComposition
-  MasteryComposition.bases[*]    ──▶ Base
-  MasteryComposition.criteria[*] ──▶ DACriteria
-Routine.timeline[*] ──▶ ArtistryComponent
+Routine.timeline[*] ──▶ BodyElement.id     (type: body_element)
+Routine.timeline[*].risk ──▶ RCriteria.id, Rotation.id, BodyElement.id (optional)
+Routine.timeline[*].mastery ──▶ Base.id, DACriteria.id, Rotation.id (optional)
+Routine.timeline[*] ──▶ ArtistryComponent.id (type: artistry)
 
-ValidationEngine reads ──▶ CoPRequirement (filtered by apparatus + ageCategory)
-ScoringEngine reads    ──▶ BodyElement, Risk, DACriteria, ArtistryComponent
+ValidationEngine reads ──▶ requirements (by ageCategory)
+ScoringEngine reads    ──▶ BodyElement, RCriteria (via Risk), DACriteria (via Mastery)
 ```
-
-Reference collections are **not** embedded in routines. Timeline items store **ObjectId references** so that reference data updates propagate correctly on recalculation.
 
 ---
 
@@ -294,15 +293,13 @@ Reference collections are **not** embedded in routines. Timeline items store **O
 | -------------------- | -------------------------------------------------- |
 | `bodyelements`       | ✅ Seeded (163 elements)                           |
 | `requirements`       | ✅ Seeded (senior + junior)                        |
-| `risks`              | ❌ Not created                                     |
-| `bases`              | ✅ Seeded (34 bases — shared + apparatus-specific) |
+| `bases`              | ✅ Seeded (34 bases)                               |
 | `dacriteria`         | ✅ Seeded (7 criteria)                             |
-| `rcriteria`          | ✅ Seeded (15 criteria)                            |
-| `rotations`          | ✅ Seeded (16 groups)                              |
+| `rcriteria`          | ✅ Seeded (15 risk criteria)                       |
+| `rotations`          | ✅ Seeded (16 groups: v1–v3 + acro-1…13)           |
 | `artistrycomponents` | ✅ Seeded (4 types)                                |
-| `coprequirements`    | ❌ Not created                                     |
 | `coaches`            | ✅ Created on sign-up                              |
-| `routines`           | ❌ Not created                                     |
+| `routines`           | ✅ Created via createRoutine (M3)                  |
 
 > **Note:** The legacy `elements` collection from the initial scaffold has been removed. Use `bodyelements` only.
 
@@ -314,25 +311,22 @@ All schemas set `versionKey: false` — documents do **not** include a `__v` fie
 
 ## Seed Strategy
 
-Reference data will be loaded from structured JSON or CSV files under `server/seeds/data/`, driven by scripts in `server/seeds/`.
+Reference data is loaded from JSON under `server/seeds/data/`.
 
 ```
 server/seeds/
 ├── data/
 │   ├── body-elements.json
-│   ├── risks.json
 │   ├── bases.json
 │   ├── da-criteria.json
 │   ├── rcriteria.json
 │   ├── rotations.json
 │   ├── artistry-components.json
-│   └── cop-requirements.json
-├── seedBodyElements.ts
-├── seedReferenceData.ts
-└── index.ts              # npm run seed
+│   └── requirements.json
+└── seed.ts               # npm run seed
 ```
 
-Seed scripts must be **idempotent** (upsert by `code`, never duplicate).
+Seed scripts are **idempotent** (upsert by `id`, never duplicate).
 
 Detailed element values and CoP rules are defined in [docs/domains/](./domains/) and loaded via seed scripts.
 
@@ -340,15 +334,17 @@ Detailed element values and CoP rules are defined in [docs/domains/](./domains/)
 
 ## Indexing Strategy
 
-| Collection        | Index                              | Reason           |
-| ----------------- | ---------------------------------- | ---------------- |
-| `coaches`         | `{ email: 1 }` unique              | Login lookup     |
-| `routines`        | `{ coach: 1, updatedAt: -1 }`      | Dashboard list   |
-| `bodyelements`    | `{ code: 1 }` unique               | Reference lookup |
-| `risks`           | `{ code: 1 }` unique               | Reference lookup |
-| `bases`           | `{ code: 1 }` unique               | Reference lookup |
-| `dacriteria`      | `{ code: 1 }` unique               | Reference lookup |
-| `coprequirements` | `{ apparatus: 1, ageCategory: 1 }` | Validation query |
+| Collection        | Index                         | Reason           |
+| ----------------- | ----------------------------- | ---------------- |
+| `coaches`         | `{ email: 1 }` unique         | Login lookup     |
+| `routines`        | `{ coach: 1, updatedAt: -1 }` | Dashboard list   |
+| `bodyelements`    | `{ id: 1 }` unique            | Reference lookup |
+| `bases`           | `{ id: 1 }` unique            | Reference lookup |
+| `dacriteria`      | `{ id: 1 }` unique            | Reference lookup |
+| `rcriteria`       | `{ id: 1 }` unique            | Reference lookup |
+| `rotations`       | `{ id: 1 }` unique            | Reference lookup |
+| `artistrycomponents` | `{ id: 1 }` unique         | Reference lookup |
+| `requirements`    | `{ id: 1 }` unique            | Reference lookup |
 
 ---
 
@@ -357,5 +353,5 @@ Detailed element values and CoP rules are defined in [docs/domains/](./domains/)
 1. A coach can only read/write routines where `routine.coach === context.coachId`
 2. Timeline `order` values must be contiguous integers starting at 0
 3. Mastery compositions must satisfy DA combination rules before being saved
-4. Reference data deactivation uses `active: false`, never hard delete
+4. Reference data is replaced on seed — no soft-delete `active` flag on reference collections
 5. Scores and validation on a routine are always recalculated server-side — never trusted from the client

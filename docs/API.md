@@ -77,10 +77,6 @@ enum RoutineItemType {
   artistry
 }
 
-enum ValidationSeverity {
-  error
-  warning
-}
 ```
 
 ---
@@ -156,16 +152,21 @@ type ArtistryRequirements {
 }
 ```
 
-### Risk
+### Risk (embedded — not a reference query)
+
+Composed on the routine timeline from `rcriteria` and `rotations`. See [DATABASE.md](./DATABASE.md).
 
 ```graphql
+type RiskRotation {
+  rotationId: ID!
+  count: Int!
+}
+
 type Risk {
-  id: ID!
-  code: String!
-  name: String!
+  criteriaIds: [ID!]!
+  rotations: [RiskRotation!]!
+  bodyElementId: ID
   value: Float!
-  apparatus: [Apparatus!]!
-  description: String
 }
 ```
 
@@ -235,12 +236,15 @@ type ArtistryComponent {
 }
 ```
 
-### MasteryComposition
+### Mastery (embedded)
 
 ```graphql
-type MasteryComposition {
-  bases: [Base!]!
-  criteria: [DACriteria!]!
+type Mastery {
+  baseIds: [ID!]!
+  criteriaIds: [ID!]!
+  rotationId: ID
+  value: Float!
+  isAcro: Boolean!
 }
 ```
 
@@ -253,7 +257,7 @@ type RoutineItem {
   order: Int!
   bodyElement: BodyElement
   risk: Risk
-  mastery: MasteryComposition
+  mastery: Mastery
   artistryComponent: ArtistryComponent
 }
 ```
@@ -262,10 +266,9 @@ type RoutineItem {
 
 ```graphql
 type MissingRequirement {
-  code: String!
+  id: ID!
   domain: String!
   message: String!
-  severity: ValidationSeverity!
 }
 
 type ValidationResult {
@@ -319,9 +322,6 @@ Returns the authenticated coach's profile.
 bodyElements(apparatus: Apparatus, category: String): [BodyElement!]!
 bodyElement(id: ID!): BodyElement
 requirements(ageCategory: AgeCategory!): Requirement
-
-risks(apparatus: Apparatus): [Risk!]!
-risk(id: ID!): Risk
 
 bases(apparatus: Apparatus!): [Base!]!
 daCriteria(apparatus: Apparatus!, baseId: ID): [DACriteria!]!

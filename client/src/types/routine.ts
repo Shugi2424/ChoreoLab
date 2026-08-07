@@ -4,10 +4,9 @@ export interface ValidationResult {
   daValid: boolean;
   artistryValid: boolean;
   missingRequirements: Array<{
-    code: string;
+    id: string;
     domain: string;
     message: string;
-    severity: "error" | "warning";
   }>;
   calculatedAt: string;
 }

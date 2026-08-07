@@ -1,12 +1,40 @@
 import { Schema, model, Types } from "mongoose";
 import { AGE_CATEGORIES, APPARATUS } from "../types/enums.js";
 
+const riskRotationSchema = new Schema(
+  {
+    rotationId: { type: String, required: true },
+    count: { type: Number, required: true, min: 1 },
+  },
+  { _id: false },
+);
+
+const riskSchema = new Schema(
+  {
+    criteriaIds: { type: [String], default: [] },
+    rotations: { type: [riskRotationSchema], default: [] },
+    bodyElementId: { type: String },
+    value: { type: Number, default: 0.2 },
+  },
+  { _id: false },
+);
+
+const masterySchema = new Schema(
+  {
+    baseIds: { type: [String], required: true },
+    criteriaIds: { type: [String], required: true },
+    rotationId: { type: String },
+    value: { type: Number, default: 0 },
+    isAcro: { type: Boolean, default: false },
+  },
+  { _id: false },
+);
+
 const missingRequirementSchema = new Schema(
   {
-    code: { type: String, required: true },
+    id: { type: String, required: true },
     domain: { type: String, required: true },
     message: { type: String, required: true },
-    severity: { type: String, enum: ["error", "warning"], required: true },
   },
   { _id: false },
 );
@@ -23,6 +51,22 @@ const validationResultSchema = new Schema(
   { _id: false },
 );
 
+const routineItemSchema = new Schema(
+  {
+    type: {
+      type: String,
+      enum: ["body_element", "risk", "mastery", "artistry"],
+      required: true,
+    },
+    order: { type: Number, required: true },
+    bodyElementId: { type: String },
+    risk: { type: riskSchema },
+    mastery: { type: masterySchema },
+    artistryComponentId: { type: String },
+  },
+  { _id: true },
+);
+
 const routineSchema = new Schema(
   {
     coach: {
@@ -34,7 +78,7 @@ const routineSchema = new Schema(
     gymnastName: { type: String, required: true, trim: true },
     apparatus: { type: String, enum: APPARATUS, required: true },
     ageCategory: { type: String, enum: AGE_CATEGORIES, required: true },
-    timeline: { type: [Schema.Types.Mixed], default: [] },
+    timeline: { type: [routineItemSchema], default: [] },
     dbScore: { type: Number, default: 0 },
     daScore: { type: Number, default: 0 },
     validation: {
@@ -69,10 +113,9 @@ export interface RoutineDocument {
     daValid: boolean;
     artistryValid: boolean;
     missingRequirements: Array<{
-      code: string;
+      id: string;
       domain: string;
       message: string;
-      severity: "error" | "warning";
     }>;
     calculatedAt: Date;
   };

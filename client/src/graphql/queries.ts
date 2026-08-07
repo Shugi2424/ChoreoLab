@@ -87,10 +87,9 @@ export const ROUTINE_QUERY = gql`
         daValid
         artistryValid
         missingRequirements {
-          code
+          id
           domain
           message
-          severity
         }
         calculatedAt
       }

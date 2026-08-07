@@ -1,14 +1,8 @@
 export const routineTypeDefs = `#graphql
-  enum ValidationSeverity {
-    error
-    warning
-  }
-
   type MissingRequirement {
-    code: String!
+    id: ID!
     domain: String!
     message: String!
-    severity: ValidationSeverity!
   }
 
   type ValidationResult {

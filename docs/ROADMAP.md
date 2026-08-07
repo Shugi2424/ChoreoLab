@@ -139,7 +139,6 @@ Each milestone is **independently testable** and should be completed before movi
 - [x] `Base` and `DACriteria` models and seed (34 bases, 7 criteria)
 - [x] `RCriteria` and `Rotation` models and seed (15 criteria, 16 rotation groups)
 - [x] `ArtistryComponent` model and seed (4 types)
-- [ ] `CoPRequirement`
 - [ ] `referenceDataService`
 
 ### Documentation
@@ -199,9 +198,8 @@ Each milestone is **independently testable** and should be completed before movi
 
 ### Server
 
-- [ ] `validationService` — rule handlers for each `ruleType`
+- [ ] `validationService` — rule handlers against `requirements` collection
 - [ ] Integrate into routine mutations alongside scoring
-- [ ] Populate `coprequirements` seed data (with product owner)
 
 ### Client
 

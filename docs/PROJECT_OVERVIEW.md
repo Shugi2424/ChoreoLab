@@ -77,16 +77,14 @@ My Routines (open, edit, delete)
 | Routine           | `routines`           | Coach-owned routine with timeline and scores |
 | RoutineItem       | embedded             | One timeline entry                           |
 | BodyElement       | `bodyelements`       | Body difficulty reference                    |
-| Risk              | `risks`              | Risk reference                               |
 | Base              | `bases`              | DA mastery base                              |
 | DACriteria        | `dacriteria`         | DA criterion                                 |
-| RCriteria         | `rcriteria`          | Rotation-linked criterion                    |
-| Rotation          | `rotations`          | Acrobatic rotation limits                    |
+| RCriteria         | `rcriteria`          | Risk criteria                                |
+| Rotation          | `rotations`          | Rotation groups (v1–v3, acro-1…13)           |
 | ArtistryComponent | `artistrycomponents` | Artistry reference                           |
-| Requirement       | `requirements`       | Age-category limits (DB, DA, artistry)       |
-| CoPRequirement    | `coprequirements`    | Validation rule                              |
+| Requirement       | `requirements`       | Age-category limits (DB, DA, A)              |
 
-Mastery is a composition (bases + criteria), not a separate collection.
+Risk and Mastery are compositions embedded in `RoutineItem`, not separate collections.
 
 ## Scoring Domains
 

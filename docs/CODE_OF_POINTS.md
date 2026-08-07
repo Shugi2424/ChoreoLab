@@ -12,7 +12,7 @@ Detailed catalogs and rules live in the domain docs — this file is the index.
 | -------------------- | ---- | ----------------------------- | ------------------------------------------------ |
 | Body Difficulty      | DB   | Body elements and risks       | [domains/DB.md](./domains/DB.md)                 |
 | Apparatus Difficulty | DA   | Masteries (bases + criteria)  | [domains/DA.md](./domains/DA.md)                 |
-| Artistry             | —    | Artistry components           | [domains/ARTISTRY.md](./domains/ARTISTRY.md)     |
+| Artistry             | A    | Artistry components           | [domains/ARTISTRY.md](./domains/ARTISTRY.md)     |
 | Validation           | —    | Cross-domain CoP requirements | [domains/VALIDATION.md](./domains/VALIDATION.md) |
 
 ---
@@ -22,7 +22,7 @@ Detailed catalogs and rules live in the domain docs — this file is the index.
 Rules vary by:
 
 - **Apparatus** — hoop, ball, clubs, ribbon
-- **Age category** — senior, junior `[TBD: additional categories]`
+- **Age category** — senior, junior
 
 Each routine has exactly one apparatus and one age category.
 
@@ -35,25 +35,27 @@ Each routine has exactly one apparatus and one age category.
 | `body_element` | `bodyelements`         | DB score                     |
 | `risk`         | `risks`                | DB score + risk requirements |
 | `mastery`      | `bases` + `dacriteria` | DA score                     |
-| `artistry`     | `artistrycomponents`   | Artistry validation          |
+| `artistry`     | `artistrycomponents`   | A validation (no score)      |
 
 ---
 
 ## Scoring summary
 
-| Score        | Calculation                                                                     |
-| ------------ | ------------------------------------------------------------------------------- |
-| **DB**       | Sum of `BodyElement.value` + `Risk.value` for all timeline items of those types |
-| **DA**       | Sum of `DACriteria.value` across all mastery items                              |
-| **Artistry** | `[TBD — see domains/ARTISTRY.md]`                                               |
+ChoreoLab calculates **numeric scores for DB and DA only**. Artistry (A) has no score — it is checked by the validation engine.
 
-Scores are recalculated server-side on every routine change.
+| Score  | Calculation                                                                     |
+| ------ | ------------------------------------------------------------------------------- |
+| **DB** | Sum of `BodyElement.value` + `Risk.value` for all timeline items of those types |
+| **DA** | Sum of `DACriteria.value` across all mastery items                              |
+| **A**  | No calculation — requirement counts validated against `requirements.A`          |
+
+DB and DA are recalculated server-side on every routine change.
 
 ---
 
 ## Validation summary
 
-The validation engine loads active rules from `coprequirements` filtered by apparatus and age category, then evaluates each rule against the routine timeline.
+The validation engine loads the `requirements` document for the routine's age category and evaluates the timeline in `validationService`.
 
 See [domains/VALIDATION.md](./domains/VALIDATION.md) for rule types and catalogs.
 
@@ -63,10 +65,10 @@ See [domains/VALIDATION.md](./domains/VALIDATION.md) for rule types and catalogs
 
 Both engines live in the service layer:
 
-- `scoringService` — DB and DA calculation
-- `validationService` — CoP requirement checking
+- `scoringService` — DB and DA calculation only
+- `validationService` — CoP requirement checking (including artistry / A rules)
 
-Rules are **data-driven** where possible (stored in `coprequirements`), not hardcoded.
+Rules are evaluated in `validationService` against the `requirements` collection (age-category limits) plus CoP logic in code handlers.
 
 ---
 
@@ -80,13 +82,8 @@ Rules are **data-driven** where possible (stored in `coprequirements`), not hard
 
 ---
 
-## Open questions
+## Domain documentation
 
-Track these in domain docs as we fill them in together:
+Detailed catalogs and rules live in [docs/domains/](./domains/). Phase 0 domain docs (DB, DA, Artistry, Validation) are complete.
 
-- [ ] Body element catalog per apparatus → [domains/DB.md](./domains/DB.md)
-- [ ] Risk catalog per apparatus → [domains/DB.md](./domains/DB.md)
-- [ ] Base and DA criteria catalogs → [domains/DA.md](./domains/DA.md)
-- [ ] Rotation limits and R criteria → [domains/DA.md](./domains/DA.md)
-- [ ] Artistry requirements → [domains/ARTISTRY.md](./domains/ARTISTRY.md)
-- [ ] Full validation rule set → [domains/VALIDATION.md](./domains/VALIDATION.md)
+Remaining **implementation** work (seed data, scoring/validation handlers, UI) is tracked in [ROADMAP.md](./ROADMAP.md) — not here.

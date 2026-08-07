@@ -63,13 +63,12 @@ These hold the detailed CoP data that drives seed files and validation rules.
 | Risk              | `risks`                | Reference | Risk element                                 |
 | Base              | `bases`                | Reference | DA mastery base                              |
 | DACriteria        | `dacriteria`           | Reference | DA criterion                                 |
-| RCriteria         | `rcriteria`            | Reference | Rotation-linked criterion                    |
-| Rotation          | `rotations`            | Reference | Acrobatic rotation definition and limits     |
+| RCriteria         | `rcriteria`            | Reference | Risk criteria (throw / catch / general)      |
+| Rotation          | `rotations`            | Reference | Rotation groups (v1–v3, acro-1…13)           |
 | ArtistryComponent | `artistrycomponents`   | Reference | Artistry component                           |
-| Requirement       | `requirements`         | Reference | Age-category DB/DA/artistry limits           |
-| CoPRequirement    | `coprequirements`      | Reference | Validation rule                              |
+| Requirement       | `requirements`         | Reference | Age-category DB/DA/A limits                  |
 
-**Mastery** is not a collection — it is a composition (bases + criteria) embedded in a `RoutineItem`.
+**Risk** and **Mastery** are not collections — they are compositions embedded in a `RoutineItem`.
 
 ---
 

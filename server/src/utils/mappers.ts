@@ -121,10 +121,9 @@ export function toGraphQLValidationResult(doc: {
   daValid: boolean;
   artistryValid: boolean;
   missingRequirements: Array<{
-    code: string;
+    id: string;
     domain: string;
     message: string;
-    severity: string;
   }>;
   calculatedAt?: Date;
 }) {
@@ -134,10 +133,9 @@ export function toGraphQLValidationResult(doc: {
     daValid: doc.daValid,
     artistryValid: doc.artistryValid,
     missingRequirements: doc.missingRequirements.map((item) => ({
-      code: item.code,
+      id: item.id,
       domain: item.domain,
       message: item.message,
-      severity: item.severity,
     })),
     calculatedAt: doc.calculatedAt?.toISOString() ?? new Date().toISOString(),
   };
@@ -157,10 +155,9 @@ export function toGraphQLRoutine(doc: {
     daValid: boolean;
     artistryValid: boolean;
     missingRequirements: Array<{
-      code: string;
+      id: string;
       domain: string;
       message: string;
-      severity: string;
     }>;
     calculatedAt?: Date;
   };
