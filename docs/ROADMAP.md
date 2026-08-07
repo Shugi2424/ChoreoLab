@@ -64,21 +64,21 @@ Each milestone is **independently testable** and should be completed before movi
 
 ### Server
 
-- [ ] `Coach` Mongoose model
-- [ ] `authService` — register, login, JWT issue/verify, password hashing (bcrypt)
-- [ ] Auth middleware — extract JWT, attach `coachId` to context
-- [ ] GraphQL mutations: `signUp`, `login`
-- [ ] GraphQL query: `me`
-- [ ] Protected operation enforcement
+- [x] `Coach` Mongoose model
+- [x] `authService` — register, login, JWT issue/verify, password hashing (bcrypt)
+- [x] Auth middleware — extract JWT, attach `coachId` to context
+- [x] GraphQL mutations: `signUp`, `login`
+- [x] GraphQL query: `me`
+- [x] Protected operation enforcement
 
 ### Client
 
-- [ ] Auth context / token storage
-- [ ] Apollo auth link
-- [ ] Login page
-- [ ] Sign up page
-- [ ] Protected route wrapper
-- [ ] Redirect unauthenticated users to login
+- [x] Auth context / token storage
+- [x] Apollo auth link
+- [x] Login page
+- [x] Sign up page
+- [x] Protected route wrapper
+- [x] Redirect unauthenticated users to login
 
 **Test:** Sign up → login → `me` query returns coach → unauthenticated requests to protected ops fail.
 
@@ -294,4 +294,4 @@ M6 and M7 can be developed in parallel after M5.
 
 ## Next Step
 
-**Phase 0 and Milestone 0 complete.** Next: **Milestone 1 — Authentication** (Coach model, JWT, login/signup, protected routes).
+**Milestone 1 complete.** Next: **Milestone 2 — Password Reset & Profile**.

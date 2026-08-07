@@ -27,7 +27,7 @@ export const enumTypeDefs = `#graphql
   enum ArtistryType {
     character
     dance
-    dynamic-change
+    dynamicChange
     effect
   }
 `;

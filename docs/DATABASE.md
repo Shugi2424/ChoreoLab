@@ -114,7 +114,7 @@ Risk criteria from CoP §4.8–4.10. See [domains/DB.md](./domains/DB.md).
 {
   id: string;
   name: string;
-  type: "character" | "dance" | "dynamic-change" | "effect";
+  type: "character" | "dance" | "dynamicChange" | "effect";
 }
 ```
 
@@ -302,7 +302,7 @@ Reference collections are **not** embedded in routines. Timeline items store **O
 | `rotations`          | ✅ Seeded (16 groups)                              |
 | `artistrycomponents` | ✅ Seeded (4 types)                                |
 | `coprequirements`    | ❌ Not created                                     |
-| `coaches`            | ❌ Not created                                     |
+| `coaches`            | ✅ Created on sign-up                              |
 | `routines`           | ❌ Not created                                     |
 
 > **Note:** The legacy `elements` collection from the initial scaffold has been removed. Use `bodyelements` only.

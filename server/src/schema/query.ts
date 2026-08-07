@@ -1,6 +1,7 @@
 export const queryTypeDefs = `#graphql
   type Query {
     health: String!
+    me: Coach!
     bodyElements(category: BodyCategory): [BodyElement!]!
     bodyElement(id: ID!): BodyElement
     requirements(ageCategory: AgeCategory!): Requirement

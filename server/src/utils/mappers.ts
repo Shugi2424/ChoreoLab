@@ -96,3 +96,21 @@ export function toGraphQLArtistryComponent(doc: {
     type: doc.type,
   };
 }
+
+export function toGraphQLCoach(doc: {
+  _id: { toString(): string };
+  email: string;
+  firstName: string;
+  lastName: string;
+  club?: string | null;
+  createdAt?: Date;
+}) {
+  return {
+    id: doc._id.toString(),
+    email: doc.email,
+    firstName: doc.firstName,
+    lastName: doc.lastName,
+    club: doc.club ?? null,
+    createdAt: doc.createdAt?.toISOString() ?? new Date().toISOString(),
+  };
+}

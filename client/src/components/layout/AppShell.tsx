@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { AppBar, Box, Button, Container, Toolbar, Typography } from "@mui/material";
 import { Link as RouterLink, useLocation } from "react-router-dom";
+import { useAuth } from "../../auth/AuthContext";
 
 const navItems = [
   { label: "Dashboard", path: "/dashboard" },
@@ -10,6 +11,7 @@ const navItems = [
 
 export function AppShell() {
   const location = useLocation();
+  const { coach, logout } = useAuth();
 
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
@@ -28,6 +30,11 @@ export function AppShell() {
           >
             ChoreoLab
           </Typography>
+          {coach && (
+            <Typography sx={{ mr: 2, opacity: 0.9 }}>
+              {coach.firstName} {coach.lastName}
+            </Typography>
+          )}
           {navItems.map((item) => (
             <Button
               key={item.path}
@@ -42,6 +49,9 @@ export function AppShell() {
               {item.label}
             </Button>
           ))}
+          <Button color="inherit" onClick={() => void logout()} sx={{ ml: 1 }}>
+            Log out
+          </Button>
         </Toolbar>
       </AppBar>
       <Container maxWidth="lg" sx={{ py: 4 }}>

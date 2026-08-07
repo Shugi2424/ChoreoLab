@@ -1,10 +1,74 @@
-import { PlaceholderPage } from "../components/layout/PlaceholderPage";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
+import {
+  AuthPageShell,
+  AuthSubmitButton,
+  AuthTextField,
+} from "../components/auth/AuthPageShell";
+import { Alert } from "@mui/material";
+import { useMutation } from "@apollo/client";
+import { FormEvent, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { LOGIN_MUTATION } from "../graphql/mutations";
 
 export function LoginPage() {
+  const navigate = useNavigate();
+  const { loginWithToken, isAuthenticated } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const [login, { loading }] = useMutation(LOGIN_MUTATION);
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    setErrorMessage(null);
+
+    try {
+      const { data } = await login({
+        variables: { input: { email, password } },
+      });
+      loginWithToken(data.login.token);
+      navigate("/dashboard", { replace: true });
+    } catch {
+      setErrorMessage("Invalid email or password.");
+    }
+  };
+
   return (
-    <PlaceholderPage
+    <AuthPageShell
       title="Login"
-      description="Coach login will be implemented in Milestone 1."
-    />
+      subtitle="Sign in to build and manage your routines."
+      footerText="Don't have an account?"
+      footerLinkLabel="Sign up"
+      footerLinkTo="/signup"
+    >
+      <form onSubmit={handleSubmit}>
+        {errorMessage && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {errorMessage}
+          </Alert>
+        )}
+        <AuthTextField
+          label="Email"
+          type="email"
+          autoComplete="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+        />
+        <AuthTextField
+          label="Password"
+          type="password"
+          autoComplete="current-password"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+        />
+        <AuthSubmitButton loading={loading} label="Log in" />
+      </form>
+    </AuthPageShell>
   );
 }

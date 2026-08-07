@@ -6,9 +6,9 @@ import express, { type RequestHandler } from "express";
 import http from "node:http";
 import { loadConfig } from "./config/env.js";
 import { connectDb } from "./db.js";
+import { buildGraphQLContext } from "./middleware/context.js";
 import { resolvers } from "./resolvers/index.js";
 import { typeDefs } from "./schema/index.js";
-import { createContext } from "./types/context.js";
 
 async function main() {
   const config = loadConfig();
@@ -29,7 +29,7 @@ async function main() {
     cors({ origin: config.corsOrigin, credentials: true }),
     express.json(),
     expressMiddleware(server, {
-      context: async () => createContext(),
+      context: async ({ req }) => buildGraphQLContext(req, config.jwtSecret),
     }) as unknown as RequestHandler,
   );
 

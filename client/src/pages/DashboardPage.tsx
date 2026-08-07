@@ -1,9 +1,11 @@
 import { Alert, Box, Grid, Typography } from "@mui/material";
 import { useQuery } from "@apollo/client";
+import { useAuth } from "../auth/AuthContext";
 import { NavCard } from "../components/layout/PlaceholderPage";
 import { HEALTH_QUERY } from "../graphql/queries";
 
 export function DashboardPage() {
+  const { coach } = useAuth();
   const { data, loading, error } = useQuery(HEALTH_QUERY);
 
   return (
@@ -12,7 +14,9 @@ export function DashboardPage() {
         Dashboard
       </Typography>
       <Typography color="text.secondary" sx={{ mb: 3 }}>
-        Build competition routines with live DB, DA, and CoP validation.
+        {coach
+          ? `Welcome back, ${coach.firstName}. Build competition routines with live DB, DA, and CoP validation.`
+          : "Build competition routines with live DB, DA, and CoP validation."}
       </Typography>
 
       {loading && (

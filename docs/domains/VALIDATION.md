@@ -34,7 +34,7 @@ Two documents — one per age category:
 
 `minElements: 3` = one element from each required body group (jump, balance, pivot).
 
-`minDynamicEffects` counts `dynamic-change` and `effect` artistry items combined.
+`minDynamicEffects` counts `dynamicChange` and `effect` artistry items combined.
 
 ---
 

@@ -225,7 +225,7 @@ type Rotation {
 enum ArtistryType {
   character
   dance
-  dynamic-change
+  dynamicChange
   effect
 }
 
@@ -448,14 +448,15 @@ Every routine mutation recalculates `dbScore`, `daScore`, and `validation` befor
 | Operation                                  | Status              |
 | ------------------------------------------ | ------------------- |
 | `health`                                   | ✅ Implemented      |
-| `bodyElements` / `bodyElement`             | ✅ Implemented      |
+| `signUp` / `login` / `me`                  | ✅ Implemented      |
+| `bodyElements` / `bodyElement`             | ✅ Implemented (auth required) |
 | `requirements`                             | ✅ Implemented      |
 | `bases` / `base`                           | ✅ Implemented      |
 | `rCriteria` / `rCriterion`                 | ✅ Implemented      |
 | `rotations` / `rotation`                   | ✅ Implemented      |
 | `artistryComponents` / `artistryComponent` | ✅ Implemented      |
 | `daCriteria` / `daCriterion`               | ✅ Implemented      |
-| All auth operations                        | ❌ Not implemented  |
+| All auth operations (M1)                   | ✅ Implemented      |
 | All routine operations                     | ❌ Not implemented  |
 | Reference data queries                     | ❌ Not implemented  |
 | Mutations                                  | ❌ None implemented |
