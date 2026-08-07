@@ -1,193 +1,49 @@
-import { BodyElement } from "../models/BodyElement.js";
-import { Requirement } from "../models/Requirement.js";
-import { Base, DACriteria, RCriteria, Rotation, ArtistryComponent } from "../models/reference.js";
+import { bodyElementService } from "../services/bodyElementService.js";
+import { requirementService } from "../services/requirementService.js";
+import { referenceDataService } from "../services/referenceDataService.js";
 
 export const resolvers = {
   Query: {
     health: () => "ChoreoLab API is running",
 
-    bodyElements: async (
-      _: unknown,
-      { category }: { category?: string },
-    ) => {
-      const filter = category ? { category } : {};
-      const docs = await BodyElement.find(filter).sort({ id: 1 }).lean();
-      return docs.map(toGraphQLBodyElement);
-    },
+    bodyElements: (_: unknown, { category }: { category?: string }) =>
+      bodyElementService.list(category),
 
-    bodyElement: async (_: unknown, { id }: { id: string }) => {
-      const doc = await BodyElement.findOne({ id }).lean();
-      return doc ? toGraphQLBodyElement(doc) : null;
-    },
+    bodyElement: (_: unknown, { id }: { id: string }) =>
+      bodyElementService.getById(id),
 
-    requirements: async (
-      _: unknown,
-      { ageCategory }: { ageCategory: string },
-    ) => {
-      const doc = await Requirement.findOne({ ageCategory }).lean();
-      return doc ? toGraphQLRequirement(doc) : null;
-    },
+    requirements: (_: unknown, { ageCategory }: { ageCategory: string }) =>
+      requirementService.getByAgeCategory(ageCategory),
 
-    daCriteria: async () => {
-      const docs = await DACriteria.find().sort({ id: 1 }).lean();
-      return docs.map(toGraphQLDACriteria);
-    },
+    daCriteria: () => referenceDataService.listDACriteria(),
 
-    daCriterion: async (_: unknown, { id }: { id: string }) => {
-      const doc = await DACriteria.findOne({ id }).lean();
-      return doc ? toGraphQLDACriteria(doc) : null;
-    },
+    daCriterion: (_: unknown, { id }: { id: string }) =>
+      referenceDataService.getDACriterion(id),
 
-    bases: async (_: unknown, { apparatus }: { apparatus?: string }) => {
-      const filter = apparatus ? { apparatuses: apparatus } : {};
-      const docs = await Base.find(filter).sort({ id: 1 }).lean();
-      return docs.map(toGraphQLBase);
-    },
+    bases: (_: unknown, { apparatus }: { apparatus?: string }) =>
+      referenceDataService.listBases(apparatus),
 
-    base: async (_: unknown, { id }: { id: string }) => {
-      const doc = await Base.findOne({ id }).lean();
-      return doc ? toGraphQLBase(doc) : null;
-    },
+    base: (_: unknown, { id }: { id: string }) =>
+      referenceDataService.getBase(id),
 
-    rCriteria: async (
+    rCriteria: (
       _: unknown,
       { apparatus, type }: { apparatus?: string; type?: string },
-    ) => {
-      const filter: Record<string, unknown> = {};
-      if (apparatus) filter.apparatuses = apparatus;
-      if (type) filter.type = type;
-      const docs = await RCriteria.find(filter).sort({ id: 1 }).lean();
-      return docs.map(toGraphQLRCriteria);
-    },
+    ) => referenceDataService.listRCriteria(apparatus, type),
 
-    rCriterion: async (_: unknown, { id }: { id: string }) => {
-      const doc = await RCriteria.findOne({ id }).lean();
-      return doc ? toGraphQLRCriteria(doc) : null;
-    },
+    rCriterion: (_: unknown, { id }: { id: string }) =>
+      referenceDataService.getRCriterion(id),
 
-    rotations: async (_: unknown, { group }: { group?: string }) => {
-      const filter = group ? { group } : {};
-      const docs = await Rotation.find(filter).sort({ id: 1 }).lean();
-      return docs.map(toGraphQLRotation);
-    },
+    rotations: (_: unknown, { group }: { group?: string }) =>
+      referenceDataService.listRotations(group),
 
-    rotation: async (_: unknown, { id }: { id: string }) => {
-      const doc = await Rotation.findOne({ id }).lean();
-      return doc ? toGraphQLRotation(doc) : null;
-    },
+    rotation: (_: unknown, { id }: { id: string }) =>
+      referenceDataService.getRotation(id),
 
-    artistryComponents: async (_: unknown, { type }: { type?: string }) => {
-      const filter = type ? { type } : {};
-      const docs = await ArtistryComponent.find(filter).sort({ id: 1 }).lean();
-      return docs.map(toGraphQLArtistryComponent);
-    },
+    artistryComponents: (_: unknown, { type }: { type?: string }) =>
+      referenceDataService.listArtistryComponents(type),
 
-    artistryComponent: async (_: unknown, { id }: { id: string }) => {
-      const doc = await ArtistryComponent.findOne({ id }).lean();
-      return doc ? toGraphQLArtistryComponent(doc) : null;
-    },
+    artistryComponent: (_: unknown, { id }: { id: string }) =>
+      referenceDataService.getArtistryComponent(id),
   },
 };
-
-function toGraphQLBodyElement(doc: {
-  id: string;
-  name: string;
-  category: string;
-  value: number;
-}) {
-  return {
-    id: doc.id,
-    name: doc.name,
-    category: doc.category,
-    value: doc.value,
-  };
-}
-
-function toGraphQLRequirement(doc: {
-  id: string;
-  ageCategory: string;
-  DB: {
-    minElements: number;
-    maxElements: number;
-    requiredElements: string[];
-    maxRisks: number;
-  };
-  DA: {
-    minMasteries: number;
-    maxMasteries: number;
-    maxAcrobatics: number;
-  };
-  A: {
-    minCharacterMoves: number;
-    minDanceSteps: number;
-    minDynamicEffects: number;
-  };
-}) {
-  return {
-    id: doc.id,
-    ageCategory: doc.ageCategory,
-    DB: doc.DB,
-    DA: doc.DA,
-    A: doc.A,
-  };
-}
-
-function toGraphQLDACriteria(doc: { id: string; name: string }) {
-  return { id: doc.id, name: doc.name };
-}
-
-function toGraphQLBase(doc: {
-  id: string;
-  name: string;
-  value: number;
-  apparatuses: string[];
-  allowedCriteria: string[];
-}) {
-  return {
-    id: doc.id,
-    name: doc.name,
-    value: doc.value,
-    apparatuses: doc.apparatuses,
-    allowedCriteria: doc.allowedCriteria,
-  };
-}
-
-function toGraphQLRCriteria(doc: {
-  id: string;
-  name: string;
-  type: string;
-  value: number;
-  apparatuses: string[];
-}) {
-  return {
-    id: doc.id,
-    name: doc.name,
-    type: doc.type,
-    value: doc.value,
-    apparatuses: doc.apparatuses,
-  };
-}
-
-function toGraphQLRotation(doc: {
-  id: string;
-  name: string;
-  group: string;
-}) {
-  return {
-    id: doc.id,
-    name: doc.name,
-    group: doc.group,
-  };
-}
-
-function toGraphQLArtistryComponent(doc: {
-  id: string;
-  name: string;
-  type: string;
-}) {
-  return {
-    id: doc.id,
-    name: doc.name,
-    type: doc.type,
-  };
-}

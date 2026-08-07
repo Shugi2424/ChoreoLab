@@ -1,23 +1,53 @@
 import "dotenv/config";
 import { ApolloServer } from "@apollo/server";
-import { startStandaloneServer } from "@apollo/server/standalone";
+import { expressMiddleware } from "@apollo/server/express4";
+import cors from "cors";
+import express, { type RequestHandler } from "express";
+import http from "node:http";
+import { loadConfig } from "./config/env.js";
 import { connectDb } from "./db.js";
 import { resolvers } from "./resolvers/index.js";
-import { typeDefs } from "./schema.js";
-
-const PORT = Number(process.env.PORT ?? 4000);
-const MONGODB_URI =
-  process.env.MONGODB_URI ?? "mongodb://localhost:27017/choreolab";
+import { typeDefs } from "./schema/index.js";
+import { createContext } from "./types/context.js";
 
 async function main() {
-  await connectDb(MONGODB_URI);
+  const config = loadConfig();
+  await connectDb(config.mongodbUri);
+
+  const app = express();
+  const httpServer = http.createServer(app);
 
   const server = new ApolloServer({ typeDefs, resolvers });
-  const { url } = await startStandaloneServer(server, {
-    listen: { port: PORT },
+  await server.start();
+
+  app.get("/health", (_req, res) => {
+    res.json({ status: "ok", service: "choreolab-api" });
   });
 
-  console.log(`GraphQL server ready at ${url}`);
+  app.use(
+    "/graphql",
+    cors({ origin: config.corsOrigin, credentials: true }),
+    express.json(),
+    expressMiddleware(server, {
+      context: async () => createContext(),
+    }) as unknown as RequestHandler,
+  );
+
+  await new Promise<void>((resolve) => {
+    httpServer.listen(config.port, resolve);
+  });
+
+  console.log(`Health check ready at http://localhost:${config.port}/health`);
+  console.log(`GraphQL ready at http://localhost:${config.port}/graphql`);
+
+  const shutdown = async (signal: string) => {
+    console.log(`${signal} received — shutting down`);
+    await server.stop();
+    httpServer.close(() => process.exit(0));
+  };
+
+  process.on("SIGTERM", () => void shutdown("SIGTERM"));
+  process.on("SIGINT", () => void shutdown("SIGINT"));
 }
 
 main().catch((err) => {

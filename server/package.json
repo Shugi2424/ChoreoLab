@@ -11,11 +11,15 @@
   },
   "dependencies": {
     "@apollo/server": "^4.11.3",
+    "cors": "^2.8.6",
     "dotenv": "^16.4.7",
+    "express": "^5.2.1",
     "graphql": "^16.10.0",
     "mongoose": "^8.9.5"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
     "@types/node": "^22.10.7",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"
