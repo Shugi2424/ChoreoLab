@@ -11,6 +11,8 @@ import {
   Typography,
 } from "@mui/material";
 import type { Routine } from "../../types/routine";
+import { TIMELINE_TYPE_COLORS } from "../../types/routine";
+import { formatCopValue } from "../../utils/formatCopValue";
 
 interface ScorePanelProps {
   routine: Routine;
@@ -30,16 +32,22 @@ export function ScorePanel({ routine }: ScorePanelProps) {
           <Typography variant="body2" color="text.secondary">
             DB
           </Typography>
+          <Typography variant="caption" color="text.secondary" sx={{ display: "block" }}>
+            Difficulty of Body
+          </Typography>
           <Typography variant="h3" color="primary.main" sx={{ fontWeight: 700 }}>
-            {dbScore.toFixed(1)}
+            {formatCopValue(dbScore)}
           </Typography>
         </Box>
         <Box>
           <Typography variant="body2" color="text.secondary">
             DA
           </Typography>
+          <Typography variant="caption" color="text.secondary" sx={{ display: "block" }}>
+            Difficulty of Apparatus
+          </Typography>
           <Typography variant="h3" color="secondary.main" sx={{ fontWeight: 700 }}>
-            {daScore.toFixed(1)}
+            {formatCopValue(daScore)}
           </Typography>
         </Box>
       </Box>
@@ -58,7 +66,12 @@ export function ScorePanel({ routine }: ScorePanelProps) {
               <ErrorOutlinedIcon color="error" fontSize="small" />
             )}
           </ListItemIcon>
-          <ListItemText primary="Difficulty (DB)" />
+          <ListItemText
+            primary="Difficulty of Body (DB)"
+            slotProps={{
+              primary: { sx: { color: TIMELINE_TYPE_COLORS.body_element } },
+            }}
+          />
         </ListItem>
         <ListItem disableGutters>
           <ListItemIcon sx={{ minWidth: 36 }}>
@@ -68,7 +81,12 @@ export function ScorePanel({ routine }: ScorePanelProps) {
               <ErrorOutlinedIcon color="error" fontSize="small" />
             )}
           </ListItemIcon>
-          <ListItemText primary="Difficulty Appreciation (DA)" />
+          <ListItemText
+            primary="Difficulty of Apparatus (DA)"
+            slotProps={{
+              primary: { sx: { color: TIMELINE_TYPE_COLORS.mastery } },
+            }}
+          />
         </ListItem>
         <ListItem disableGutters>
           <ListItemIcon sx={{ minWidth: 36 }}>
@@ -78,7 +96,12 @@ export function ScorePanel({ routine }: ScorePanelProps) {
               <ErrorOutlinedIcon color="error" fontSize="small" />
             )}
           </ListItemIcon>
-          <ListItemText primary="Artistry (A)" />
+          <ListItemText
+            primary="Artistry (A)"
+            slotProps={{
+              primary: { sx: { color: TIMELINE_TYPE_COLORS.artistry } },
+            }}
+          />
         </ListItem>
       </List>
 

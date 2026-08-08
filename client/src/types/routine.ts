@@ -1,3 +1,5 @@
+import { formatCopValue } from "../utils/formatCopValue";
+
 export type RoutineItemType = "body_element" | "risk" | "mastery" | "artistry";
 
 export interface BodyElementRef {
@@ -21,7 +23,6 @@ export interface RiskRotation {
 export interface RiskData {
   criteriaIds: string[];
   rotations: RiskRotation[];
-  bodyElementId?: string | null;
   value: number;
 }
 
@@ -97,30 +98,41 @@ export function formatAgeCategory(ageCategory: AgeCategory): string {
   );
 }
 
-export function getRoutineItemLabel(item: RoutineItem): string {
-  switch (item.type) {
-    case "body_element":
-      return item.bodyElement?.name ?? item.bodyElementId ?? "Body element";
-    case "artistry":
-      return item.artistryComponent?.name ?? item.artistryComponentId ?? "Artistry";
-    case "risk":
-      return `Risk (${item.risk?.value.toFixed(1) ?? "0.0"})`;
-    case "mastery":
-      return `Mastery (${item.mastery?.value.toFixed(1) ?? "0.0"})`;
-    default:
-      return item.type;
-  }
-}
-
 export function getRoutineItemTypeLabel(type: RoutineItemType): string {
   switch (type) {
     case "body_element":
-      return "Body element";
+      return "Body (DB)";
     case "risk":
-      return "Risk";
+      return "Risk (DB)";
     case "mastery":
-      return "Mastery";
+      return "Apparatus (DA)";
     case "artistry":
-      return "Artistry";
+      return "Artistry (A)";
+  }
+}
+
+/** Timeline accent colors — DB blue, DA purple, Artistry orange. */
+export const TIMELINE_TYPE_COLORS: Record<RoutineItemType, string> = {
+  body_element: "#1976D2",
+  risk: "#1976D2",
+  mastery: "#7B2D8E",
+  artistry: "#E65100",
+};
+
+export function getRoutineItemLabel(item: RoutineItem): string {
+  switch (item.type) {
+    case "body_element": {
+      const name = item.bodyElement?.name ?? item.bodyElementId ?? "Body element";
+      const value = item.bodyElement?.value;
+      return value != null ? `${name} (${formatCopValue(value)})` : name;
+    }
+    case "artistry":
+      return item.artistryComponent?.name ?? item.artistryComponentId ?? "Artistry";
+    case "risk":
+      return `Risk (${formatCopValue(item.risk?.value ?? 0.2)})`;
+    case "mastery":
+      return `Mastery (${formatCopValue(item.mastery?.value ?? 0)})`;
+    default:
+      return item.type;
   }
 }

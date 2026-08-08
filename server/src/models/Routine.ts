@@ -13,7 +13,6 @@ const riskSchema = new Schema(
   {
     criteriaIds: { type: [String], default: [] },
     rotations: { type: [riskRotationSchema], default: [] },
-    bodyElementId: { type: String },
     value: { type: Number, default: 0.2 },
   },
   { _id: false },

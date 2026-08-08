@@ -111,16 +111,15 @@ Numerical requirements tracked alongside body and apparatus difficulty.
 
 ## Current State
 
-The repository contains a **working scaffold**. Documentation is being refined before code milestones begin.
+The application is **functional through Milestone 5**:
 
-- Apollo GraphQL server connected to MongoDB Atlas
-- React client with Apollo Client
-- `BodyElement` model and 163 seeded body elements
-- `requirements` collection (senior + junior)
-- Git on `master`; repo at https://github.com/Shugi2424/ChoreoLab
-- Full documentation in `docs/` including domain docs for collaborative CoP input
+- Authentication, profile, password reset (Resend email)
+- Dashboard, routine CRUD, My Routines list
+- Reference data seeded and queryable (163 body elements, bases, criteria, risks, rotations, artistry)
+- **Routine Builder** — inventory panel, timeline drag-and-drop, all four item types, risk/mastery composition validation
+- MUI theme, React Router, layered server services
 
-**Not yet implemented:** authentication, layered services, full domain models, scoring engine, validation engine, MUI, React Router, Routine Builder UI, deployment configuration.
+**Not yet implemented:** live DB/DA scoring recalculation (M6), full CoP validation engine (M7), UI polish pass (M8), deployment (M9).
 
 See [ROADMAP.md](./ROADMAP.md) for the milestone plan.
 
@@ -134,9 +133,9 @@ See [ROADMAP.md](./ROADMAP.md) for the milestone plan.
 | [API.md](./API.md)                               | GraphQL schema conventions and operations         |
 | [CODE_OF_POINTS.md](./CODE_OF_POINTS.md)         | CoP overview and domain doc index                 |
 | [domains/DB.md](./domains/DB.md)                 | Body elements and risks                           |
-| [domains/DA.md](./domains/DA.md)                 | Masteries, bases, criteria `[TBD]`                |
-| [domains/ARTISTRY.md](./domains/ARTISTRY.md)     | Artistry components `[TBD]`                       |
-| [domains/VALIDATION.md](./domains/VALIDATION.md) | Validation rules `[TBD]`                          |
+| [domains/DA.md](./domains/DA.md)                 | Masteries, bases, criteria                        |
+| [domains/ARTISTRY.md](./domains/ARTISTRY.md)     | Artistry components                               |
+| [domains/VALIDATION.md](./domains/VALIDATION.md) | Validation rules                                  |
 | [UI_UX.md](./UI_UX.md)                           | Design system, layouts, components                |
 | [ROADMAP.md](./ROADMAP.md)                       | Milestone plan                                    |
 | [AI_RULES.md](./AI_RULES.md)                     | Rules for AI-assisted development                 |

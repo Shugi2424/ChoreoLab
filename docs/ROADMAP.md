@@ -150,7 +150,7 @@ Each milestone is **independently testable** and should be completed before movi
 
 ---
 
-## Milestone 5 — Routine Builder (Timeline)
+## Milestone 5 — Routine Builder (Timeline) ✅
 
 **Goal:** Coaches can build a routine timeline with all item types.
 
@@ -158,16 +158,24 @@ Each milestone is **independently testable** and should be completed before movi
 
 - [x] `RoutineItem` embedded schema with all types
 - [x] `addRoutineItem`, `removeRoutineItem`, `reorderRoutineItems`, `updateRoutineItem` mutations
-- [x] Mastery composition validation (combination rules)
+- [x] Optional `insertIndex` on `addRoutineItem` for drag-to-position inserts
+- [x] `routineTimelineService` — timeline CRUD, risk/mastery payload building
+- [x] Risk composition validation and value calculation (`riskValidation.ts`)
+- [x] Mastery composition validation and value calculation (`masteryValidation.ts`)
 
 ### Client
 
-- [x] Routine Builder page (three-panel layout)
-- [x] Timeline panel — **drag-and-drop reorder** (primary interaction), select, remove
+- [x] Routine Builder page — inventory + timeline + score panels
+- [x] **Inventory panel** — pick body elements, risks, masteries, artistry; compose risk/mastery inline
+- [x] Timeline panel — **drag-and-drop reorder** (primary), select, remove
+- [x] Drag body elements and artistry from inventory into timeline at drop position
+- [x] Drag risks/masteries from inventory as pre-composed items
 - [x] Up/down reorder buttons as keyboard and accessibility fallback
-- [x] Editing panel — forms per item type with reference data dropdowns
-- [x] Add item flow for all four types
-- [x] Use `@dnd-kit/core` (or equivalent) for accessible drag-and-drop
+- [x] Live client-side risk/mastery validation mirrors server rules
+- [x] Timeline type colors: DB blue, DA purple, Artistry orange
+- [x] CoP value display via `formatCopValue()` (one decimal place)
+- [x] Auto-save on every mutation with saving indicator
+- [x] `@dnd-kit/core` for accessible drag-and-drop
 
 **Test:** Create routine → add body element, risk, mastery, artistry → drag to reorder → remove → timeline persists on reload.
 

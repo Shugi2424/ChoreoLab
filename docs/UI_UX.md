@@ -116,17 +116,17 @@ The most important screen. Three-panel layout on desktop:
 ```
 ┌──────────────┬──────────────────────┬──────────────────┐
 │              │                      │                  │
-│   Timeline   │    Editing Panel     │   Score Panel    │
+│   Timeline   │   Inventory Panel    │   Score Panel    │
 │   (left)     │    (center)          │   (right)        │
 │              │                      │                  │
-│  Ordered     │  Form for selected   │   DB: 3.2       │
-│  list of     │  item type:          │   DA: 1.8       │
-│  items       │  - pick element      │                  │
-│              │  - pick bases/crit   │   Validation     │
-│  Drag to     │  - pick artistry     │   Panel          │
-│  reorder     │                      │   ✓ 6 elements  │
-│              │  Add item buttons    │   ✗ Missing risk│
-│  Click to    │  at bottom           │   ✗ Need balance│
+│  Ordered     │  Pick item type,     │   DB: 0.0       │
+│  list of     │  compose risk/       │   DA: 0.0       │
+│  items       │  mastery, drag to    │                  │
+│              │  timeline            │   Validation     │
+│  Drag to     │                      │   Panel          │
+│  reorder     │  Edit selected     │   (placeholder   │
+│              │  item inline         │    until M7)     │
+│  Click to    │                      │                  │
 │  select      │                      │                  │
 │              │                      │                  │
 └──────────────┴──────────────────────┴──────────────────┘
@@ -135,33 +135,38 @@ The most important screen. Three-panel layout on desktop:
 ### Timeline (left panel)
 
 - Vertical ordered list of routine items
-- Each item shows: order number, type icon, name/code
-- Click to select → populates editing panel
+- Each item shows: order number, type label, name/value
+- Color-coded by domain: **DB** (body + risk) blue `#1976D2`, **DA** (mastery) purple `#7B2D8E`, **Artistry** orange `#E65100`
+- Click to select → populates inventory panel for editing
 - **Drag-and-drop reorder** is the primary way to change item order (drag handle on each row)
+- Drop indicator matches the dragged item's type color
 - Up/down buttons as fallback for keyboard users and touch devices without drag
 - Remove button per item
-- "Add item" buttons at bottom: Body Element, Risk, Mastery, Artistry
+- Accept drops from inventory (body elements, artistry) at insert position
 
-**Implementation note:** Use a dedicated drag-and-drop library (e.g. `@dnd-kit/core`) for accessible reordering; persist order via `reorderRoutineItems` mutation on drop.
+**Implementation:** `@dnd-kit/core` + `@dnd-kit/sortable`; persist order via `reorderRoutineItems` mutation on drop.
 
-### Editing Panel (center)
+### Inventory Panel (center)
 
-- Shows form for the **selected** timeline item
-- Body Element: searchable dropdown filtered by apparatus and category
-- Risk: searchable dropdown filtered by apparatus
-- Mastery: base selector + criteria selector with live validation of combination rules
-- Artistry: searchable dropdown of artistry components
-- Empty state when no item selected: "Select an item from the timeline or add a new one"
+- Tab or type selector for **Body (DB)**, **Risk (DB)**, **Apparatus (DA)**, **Artistry (A)**
+- **Body Element:** searchable dropdown filtered by apparatus and category; drag row to timeline
+- **Risk:** criteria multi-select + rotation rows; live validation; drag composed risk to timeline
+- **Mastery:** base + criteria pickers with combination rules; optional rotation; drag composed mastery to timeline
+- **Artistry:** searchable dropdown; drag row to timeline
+- When a timeline item is selected, the panel switches to edit mode for that item
+- Compact picker styling (`compactPickerStyles.ts`) — readable but space-efficient
+- CoP values displayed with one decimal place (`formatCopValue`)
 
 ### Score Panel (right)
 
-- **DB Score** — large pink number, updates live
-- **DA Score** — large purple number, updates live
-- **Validation Panel** below scores:
+- **DB Score** — large pink number (live recalculation in M6)
+- **DA Score** — large purple number (live recalculation in M6)
+- **Validation Panel** below scores (full engine in M7):
   - Green checkmarks for met requirements
   - Red X for missing requirements
   - Amber warnings where applicable
   - Grouped by domain (DB, DA, Artistry)
+- Auto-save indicator when mutations are in flight
 
 ### Mobile Layout
 
@@ -179,11 +184,11 @@ Use MUI `useMediaQuery` or `Grid` breakpoints.
 
 | Action              | Behavior                                                        |
 | ------------------- | --------------------------------------------------------------- |
-| Add item            | Mutation → server recalculates → UI updates scores + validation |
-| Remove item         | Confirmation dialog → mutation → recalculate                    |
-| Reorder             | **Drag-and-drop** (primary) or up/down buttons → mutation → recalculate |
-| Change item content | Mutation on save/select → recalculate                           |
-| Save routine        | Auto-saved on every change (no explicit save button needed)     |
+| Add item            | Compose in inventory → drag to timeline or submit → mutation → UI updates |
+| Remove item         | Confirmation dialog → mutation                                  |
+| Reorder             | **Drag-and-drop** (primary) or up/down buttons → mutation       |
+| Change item content | Edit in inventory panel → mutation on save                      |
+| Save routine        | Auto-saved on every change (saving indicator in score panel)    |
 | Navigate away       | No unsaved warning needed (auto-save)                           |
 
 ---
@@ -210,15 +215,15 @@ Use MUI `useMediaQuery` or `Grid` breakpoints.
 
 | Area            | Status                                                 |
 | --------------- | ------------------------------------------------------ |
-| MUI theme       | ❌ Not created                                         |
-| React Router    | ❌ Not installed                                       |
-| App shell / nav | ❌ Not created                                         |
-| Auth pages      | ❌ Not created                                         |
-| Dashboard       | ❌ Not created                                         |
-| Routine Builder | ❌ Not created                                         |
-| Current UI      | Plain HTML/CSS demo showing API health + elements list |
-
-The existing `App.tsx` will be replaced by the routed page structure defined here.
+| MUI theme       | ✅ Implemented                                         |
+| React Router    | ✅ Implemented                                         |
+| App shell / nav | ✅ Implemented                                         |
+| Auth pages      | ✅ Implemented                                         |
+| Dashboard       | ✅ Implemented                                         |
+| My Routines     | ✅ Implemented                                         |
+| Profile         | ✅ Implemented                                         |
+| Routine Builder | ✅ Implemented (M5 — inventory, timeline DnD, validation) |
+| Visual polish   | ❌ Milestone 8                                         |
 
 ---
 
@@ -246,4 +251,4 @@ const theme = createTheme({
 });
 ```
 
-This will be implemented in Milestone 0 (Foundation). A dedicated visual and UX pass is **Milestone 8 — Client UI Polish** in [ROADMAP.md](./ROADMAP.md).
+This theme was implemented in Milestone 0. A dedicated visual and UX pass is **Milestone 8 — Client UI Polish** in [ROADMAP.md](./ROADMAP.md).

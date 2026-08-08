@@ -22,7 +22,6 @@ export const routineTypeDefs = `#graphql
   type Risk {
     criteriaIds: [ID!]!
     rotations: [RiskRotation!]!
-    bodyElementId: ID
     value: Float!
   }
 
@@ -80,7 +79,6 @@ export const routineTypeDefs = `#graphql
   input RiskInput {
     criteriaIds: [ID!]!
     rotations: [RiskRotationInput!]!
-    bodyElementId: ID
   }
 
   input MasteryInput {

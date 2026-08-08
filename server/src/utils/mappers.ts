@@ -150,7 +150,6 @@ export function toGraphQLRoutineItem(item: unknown) {
     risk?: {
       criteriaIds: string[];
       rotations: Array<{ rotationId: string; count: number }>;
-      bodyElementId?: string | null;
       value: number;
     } | null;
     mastery?: {

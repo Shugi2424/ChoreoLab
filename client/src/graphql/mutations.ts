@@ -124,7 +124,6 @@ const ROUTINE_BUILDER_FIELDS = gql`
           rotationId
           count
         }
-        bodyElementId
         value
       }
       mastery {
@@ -147,8 +146,12 @@ const ROUTINE_BUILDER_FIELDS = gql`
 
 export const ADD_ROUTINE_ITEM_MUTATION = gql`
   ${ROUTINE_BUILDER_FIELDS}
-  mutation AddRoutineItem($routineId: ID!, $input: AddRoutineItemInput!) {
-    addRoutineItem(routineId: $routineId, input: $input) {
+  mutation AddRoutineItem(
+    $routineId: ID!
+    $input: AddRoutineItemInput!
+    $insertIndex: Int
+  ) {
+    addRoutineItem(routineId: $routineId, input: $input, insertIndex: $insertIndex) {
       ...RoutineBuilderFields
     }
   }

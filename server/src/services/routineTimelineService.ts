@@ -12,19 +12,18 @@ import {
   validateMasteryInput,
   type MasteryInput,
 } from "../utils/masteryValidation.js";
+import {
+  calculateRiskValue,
+  normalizeRiskCriteriaIds,
+  validateRiskComposition,
+  type RiskInput,
+  type RiskRotationInput,
+} from "../utils/riskValidation.js";
+
 import type { Apparatus } from "../types/enums.js";
 import { toGraphQLRoutine } from "../utils/mappers.js";
 
-export interface RiskRotationInput {
-  rotationId: string;
-  count: number;
-}
-
-export interface RiskInput {
-  criteriaIds: string[];
-  rotations: RiskRotationInput[];
-  bodyElementId?: string;
-}
+export type { RiskInput, RiskRotationInput };
 
 export interface AddRoutineItemInput {
   type: "body_element" | "risk" | "mastery" | "artistry";
@@ -75,12 +74,10 @@ async function validateArtistryComponentId(id: string) {
 }
 
 async function buildRiskPayload(input: RiskInput, apparatus: string) {
-  const criteriaIds = input.criteriaIds ?? [];
+  const criteriaIds = normalizeRiskCriteriaIds(input.criteriaIds ?? []);
   const rotations = input.rotations ?? [];
 
-  if (rotations.length === 0) {
-    throw new UserInputError("Risk must include at least one rotation.");
-  }
+  validateRiskComposition({ criteriaIds, rotations });
 
   const criteria = await RCriteria.find({ id: { $in: criteriaIds } }).lean();
   if (criteria.length !== criteriaIds.length) {
@@ -96,29 +93,15 @@ async function buildRiskPayload(input: RiskInput, apparatus: string) {
   }
 
   const rotationIds = rotations.map((r) => r.rotationId);
-  const rotationDocs = await Rotation.find({ id: { $in: rotationIds } }).lean();
-  if (rotationDocs.length !== rotationIds.length) {
+  const uniqueRotationIds = [...new Set(rotationIds)];
+  const rotationDocs = await Rotation.find({ id: { $in: uniqueRotationIds } }).lean();
+  if (rotationDocs.length !== uniqueRotationIds.length) {
     throw new UserInputError("One or more rotations were not found.");
   }
 
-  for (const rotation of rotations) {
-    if (rotation.count < 1) {
-      throw new UserInputError("Rotation count must be at least 1.");
-    }
-  }
-
-  let bodyElementId: string | undefined;
-  if (input.bodyElementId) {
-    const element = await validateBodyElementId(input.bodyElementId);
-    if (element.value < 0.2) {
-      throw new UserInputError(
-        "Optional body element for a risk must have value at least 0.20.",
-      );
-    }
-    bodyElementId = element.id;
-  }
-
-  const criteriaValue = criteria.reduce((sum, c) => sum + c.value, 0);
+  const criteriaValueMap = new Map(criteria.map((c) => [c.id, c.value]));
+  const totalRotationCount = rotations.reduce((sum, r) => sum + r.count, 0);
+  const value = calculateRiskValue(criteriaIds, criteriaValueMap, totalRotationCount);
 
   return {
     criteriaIds,
@@ -126,8 +109,7 @@ async function buildRiskPayload(input: RiskInput, apparatus: string) {
       rotationId: r.rotationId,
       count: r.count,
     })),
-    bodyElementId,
-    value: 0.2 + criteriaValue,
+    value,
   };
 }
 
@@ -143,7 +125,7 @@ async function buildMasteryPayload(input: MasteryInput, apparatus: string) {
     isAcro = rotation.group.startsWith("acro-");
   }
 
-  const value = await calculateMasteryValue(validated.baseIds);
+  const value = await calculateMasteryValue(validated.baseIds, validated.criteriaIds);
 
   return {
     baseIds: validated.baseIds,
@@ -211,15 +193,21 @@ function findTimelineItem(routine: RoutineDocument, itemId: string) {
 }
 
 export const routineTimelineService = {
-  async addItem(coachId: string, routineId: string, input: AddRoutineItemInput) {
+  async addItem(
+    coachId: string,
+    routineId: string,
+    input: AddRoutineItemInput,
+    insertIndex?: number,
+  ) {
     const routine = await getRoutineDocForCoach(routineId, coachId);
-    const item = await buildTimelineItem(
-      input,
-      routine.timeline.length,
-      routine.apparatus,
-    );
-    routine.timeline.push(item);
+    const index = insertIndex ?? routine.timeline.length;
+    if (index < 0 || index > routine.timeline.length) {
+      throw new UserInputError("Invalid insert position.");
+    }
+    const item = await buildTimelineItem(input, index, routine.apparatus);
+    routine.timeline.splice(index, 0, item);
     renormalizeOrder(routine.timeline);
+    routine.markModified("timeline");
     await routine.save();
     return toGraphQLRoutine(routine.toObject());
   },

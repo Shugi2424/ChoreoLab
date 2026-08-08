@@ -2,7 +2,7 @@
 
 FIG Rhythmic Gymnastics Code of Points **2025–2028** — individual senior & junior.
 
-> **Status:** Requirements seeded in `requirements` collection. Rule engine not yet implemented.
+> **Status:** Requirements seeded in `requirements` collection. Full rule engine planned for M7. Risk and mastery **composition** rules are enforced at save time in M5 (`riskValidation.ts`, `masteryValidation.ts`).
 
 Validation reports **what is missing** — ChoreoLab does not apply CoP penalties to scores.
 
@@ -38,7 +38,20 @@ Two documents — one per age category:
 
 ---
 
-## Validation engine (planned)
+## Implemented in M5 (composition validation only)
+
+Before a risk or mastery is saved on the timeline, `routineTimelineService` validates composition:
+
+| Domain | Rules enforced at save |
+| ------ | ---------------------- |
+| Risk   | Min 2 rotations, apparatus criteria, direct-catch mutual exclusion, throw-after-roll pairing — see [DB.md](./DB.md) |
+| Mastery | Base/criteria counts, apparatus eligibility, catch-from-high-throw pairing, alternate-catch exclusion — see [DA.md](./DA.md) |
+
+Routine-level limits (max risks, required body groups, artistry counts) are **not** yet evaluated — those require M7.
+
+---
+
+## Validation engine (planned — M7)
 
 On every routine change, compare the timeline against the `requirements` document for the routine's `ageCategory`:
 

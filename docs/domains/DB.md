@@ -66,7 +66,8 @@ Risk rotations may come from:
 
 - Pre-acrobatic elements (walkover, cartwheel, roll, etc.) — groups `acro-1` … `acro-13`
 - Vertical rotations (chainé, passé pivot, etc.) — groups `v1`, `v2`, `v3`
-- DB pivots/jumps with rotation ≥ 360° and value ≥ 0.20 (max 1 per R)
+
+Rotations are chosen individually in the builder (each maps to a `Rotation` reference entry). The general R criterion `rotation` (+0.1 for 360° during throw/flight/catch) is tracked separately from the rotation entries that satisfy the minimum 2×360° requirement.
 
 ### RCriteria (reference collection: `rcriteria`)
 
@@ -111,6 +112,67 @@ Ribbon has no apparatus-specific throw/catch criteria — only general and share
 | `v2`                 | Seated/kneeling                                        | max 1 R               |
 | `v3`                 | Lateral roll                                           | max 1 R               |
 | `acro-1` … `acro-13` | Pre-acrobatic groups (walkover, cartwheel, roll, etc.) | max 1 R per group     |
+
+---
+
+## Risk evaluation specification (CoP §4, ChoreoLab)
+
+ChoreoLab calculates and validates Risks as follows (aligned with FIG RG CoP 2025–2028 §4.8–4.10).
+
+### Valid Risk composition
+
+A Risk (**R**) must include:
+
+1. **High throw** (implicit in every R entry).
+2. **Minimum 2 base rotations** (360° each) performed under the flight — counted from individual `Rotation` entries (each builder row = 1 rotation; same rotation type may be listed multiple times).
+3. **Catch** (implicit; apparatus-specific catch criteria are optional add-ons).
+
+### Value formula
+
+```
+R value = 0.20 (base, includes 2×360° rotations)
+        + (total rotations − 2) × 0.10   ← additional 360° rotations (CoP §4.8.1)
+        + Σ (selected throw/catch/general criteria values, each once)
+```
+
+CoP notation: **R2** = 0.20 p. (2 rotations only), **R3** = 0.30 p. (3 rotations), etc.
+
+Example (ball): outside visual field throw (+0.10) + catch with 1 hand (+0.10) + change of axis (+0.10) + 3 rotations (base 0.20 + 1 additional × 0.10) = **0.60 p.**
+
+- Base **0.20** includes the minimum 2 base rotations under the flight.
+- Each **additional** complete 360° rotation beyond 2 adds **+0.10** (the `rotation` criterion in §4.8.1). Rotation entries in the builder map to this — the `rotation` general criterion is not selected separately.
+- Throw, catch, and other general criteria from §4.8–4.10 add their `value` once each (deduplicated).
+
+### Composition rules enforced in ChoreoLab
+
+| Rule | Detail |
+| ---- | ------ |
+| Throw after roll | If `throw-after-roll-on-floor` is selected, `without-hands-throw` must also be selected on the throw. |
+| Direct catch (max 1) | At most **one** of: rolling, passing, rotation on body, rebound, one-hand ball, 2-clubs. Basic catch criteria (outside visual field, without hands) **may** combine with one direct catch — except hand catches (ball 1 hand, 2 clubs) **cannot** combine with without-hands on catch. |
+| Apparatus | Throw/catch criteria must apply to the routine apparatus. |
+| Min rotations | Total rotation count ≥ 2. |
+
+### Routine limits (evaluation, not value)
+
+| Age category | Max Risks counted |
+| ------------ | ----------------- |
+| Senior       | 4                 |
+| Junior       | 3                 |
+
+Rotation **groups** also have per-routine limits when Risks are evaluated (see Rotation table above); full enforcement is planned for the validation engine (M6).
+
+### Seeded criterion reference (ball catch)
+
+| ID | Name |
+| -- | ---- |
+| `catch-ball-one-hand` | Catch of the Ball with 1 hand, without additional support of the body or other hand |
+
+### Implementation
+
+Risk composition validation and value calculation are implemented in:
+
+- `server/src/utils/riskValidation.ts` — server-side enforcement on save
+- `client/src/utils/riskValidation.ts` — live UI feedback in the inventory panel
 
 ---
 

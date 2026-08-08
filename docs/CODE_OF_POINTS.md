@@ -33,7 +33,7 @@ Each routine has exactly one apparatus and one age category.
 | Type           | Source collection      | Contributes to               |
 | -------------- | ---------------------- | ---------------------------- |
 | `body_element` | `bodyelements`         | DB score                     |
-| `risk`         | `risks`                | DB score + risk requirements |
+| `risk`         | `rcriteria` + `rotations` (composed) | DB score + risk requirements |
 | `mastery`      | `bases` + `dacriteria` | DA score                     |
 | `artistry`     | `artistrycomponents`   | A validation (no score)      |
 
@@ -46,7 +46,7 @@ ChoreoLab calculates **numeric scores for DB and DA only**. Artistry (A) has no 
 | Score  | Calculation                                                                     |
 | ------ | ------------------------------------------------------------------------------- |
 | **DB** | Sum of `BodyElement.value` + `Risk.value` for all timeline items of those types |
-| **DA** | Sum of `DACriteria.value` across all mastery items                              |
+| **DA** | Sum of `Mastery.value` across all mastery timeline items |
 | **A**  | No calculation — requirement counts validated against `requirements.A`          |
 
 DB and DA are recalculated server-side on every routine change.

@@ -4,6 +4,12 @@ import { UserInputError } from "./errors.js";
 
 const CATCH_FROM_HIGH_THROW_ID = "catch-from-high-throw";
 
+export const ALTERNATE_CATCH_BASE_IDS = [
+  "catch-one-hand-high-throw",
+  "catch-one-club-held",
+  "simultaneous-catch-2-unlocked",
+] as const;
+
 export interface MasteryInput {
   baseIds: string[];
   criteriaIds: string[];
@@ -59,6 +65,15 @@ export async function validateMasteryInput(
     );
   }
 
+  if (
+    baseIds.includes(CATCH_FROM_HIGH_THROW_ID) &&
+    baseIds.some((id) => (ALTERNATE_CATCH_BASE_IDS as readonly string[]).includes(id))
+  ) {
+    throw new UserInputError(
+      "Alternate catch bases (one-hand ball, club in same hand, or 2 clubs) cannot combine with Catch from a High Throw.",
+    );
+  }
+
   return {
     baseIds,
     criteriaIds,
@@ -66,7 +81,23 @@ export async function validateMasteryInput(
   };
 }
 
-export async function calculateMasteryValue(baseIds: string[]): Promise<number> {
+export async function calculateMasteryValue(
+  baseIds: string[],
+  criteriaIds: string[],
+): Promise<number> {
   const bases = await Base.find({ id: { $in: baseIds } }).lean();
-  return bases.reduce((sum, base) => sum + base.value, 0);
+  if (bases.length === 0) {
+    return 0;
+  }
+
+  if (baseIds.length === 1 && criteriaIds.length === 2) {
+    return bases[0].value;
+  }
+
+  if (baseIds.length === 2 && criteriaIds.length === 1) {
+    const highestBase = Math.max(...bases.map((base) => base.value));
+    return highestBase + 0.1;
+  }
+
+  return Math.max(...bases.map((base) => base.value));
 }

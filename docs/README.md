@@ -60,7 +60,7 @@ These hold the detailed CoP data that drives seed files and validation rules.
 | Routine           | `routines`             | User      | Coach-owned routine with timeline and scores |
 | RoutineItem       | embedded in `routines` | User      | One item in the timeline                     |
 | BodyElement       | `bodyelements`         | Reference | Body difficulty element                      |
-| Risk              | `risks`                | Reference | Risk element                                 |
+| Risk              | composed in timeline | Reference | Risk composition (rcriteria + rotations)       |
 | Base              | `bases`                | Reference | DA mastery base                              |
 | DACriteria        | `dacriteria`           | Reference | DA criterion                                 |
 | RCriteria         | `rcriteria`            | Reference | Risk criteria (throw / catch / general)      |

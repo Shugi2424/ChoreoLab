@@ -104,15 +104,14 @@ export const ROUTINE_QUERY = gql`
           category
           value
         }
-        risk {
-          criteriaIds
-          rotations {
-            rotationId
-            count
-          }
-          bodyElementId
-          value
+      risk {
+        criteriaIds
+        rotations {
+          rotationId
+          count
         }
+        value
+      }
         mastery {
           baseIds
           criteriaIds

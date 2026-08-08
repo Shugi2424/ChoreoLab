@@ -4,7 +4,6 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import {
   Box,
-  Button,
   ButtonGroup,
   IconButton,
   List,
@@ -13,37 +12,48 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import {
-  DndContext,
-  KeyboardSensor,
-  PointerSensor,
-  closestCenter,
-  type DragEndEvent,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
+import { useDroppable } from "@dnd-kit/core";
 import {
   SortableContext,
-  sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { Routine, RoutineItem, RoutineItemType } from "../../types/routine";
+import { useEffect, useMemo, useState } from "react";
+import type { Routine, RoutineItem } from "../../types/routine";
 import {
   getRoutineItemLabel,
   getRoutineItemTypeLabel,
+  TIMELINE_TYPE_COLORS,
 } from "../../types/routine";
 
 interface TimelinePanelProps {
   routine: Routine;
   selectedItemId: string | null;
   onSelectItem: (itemId: string) => void;
-  onAddItem: (type: RoutineItemType) => void;
   onRemoveItem: (itemId: string) => void;
   onMoveItem: (itemId: string, direction: "up" | "down") => void;
-  onReorder: (itemIds: string[]) => void;
+  localItemIds: string[];
+  dropInsertIndex: number | null;
+  dropIndicatorColor?: string | null;
   busy: boolean;
+}
+
+function DropSlotIndicator({ color }: { color?: string | null }) {
+  const lineColor = color ?? "#1976D2";
+  return (
+    <Box
+      sx={{
+        height: 4,
+        borderRadius: 1,
+        bgcolor: lineColor,
+        opacity: 0.9,
+        my: 0.5,
+        mx: 0.5,
+        boxShadow: `0 0 0 2px ${lineColor}33`,
+      }}
+    />
+  );
 }
 
 interface SortableTimelineRowProps {
@@ -57,6 +67,34 @@ interface SortableTimelineRowProps {
   canMoveUp: boolean;
   canMoveDown: boolean;
   disabled: boolean;
+}
+
+function TimelineRowContent({
+  item,
+  index,
+  selected,
+}: {
+  item: RoutineItem;
+  index: number;
+  selected: boolean;
+}) {
+  const accent = TIMELINE_TYPE_COLORS[item.type];
+  return (
+    <ListItemText
+      primary={`${index + 1}. ${getRoutineItemLabel(item)}`}
+      secondary={getRoutineItemTypeLabel(item.type)}
+      slotProps={{
+        primary: {
+          variant: "body2",
+          sx: { fontWeight: selected ? 600 : 400, color: accent },
+        },
+        secondary: {
+          variant: "caption",
+          sx: { color: accent, opacity: 0.75 },
+        },
+      }}
+    />
+  );
 }
 
 function SortableTimelineRow({
@@ -75,9 +113,9 @@ function SortableTimelineRow({
     useSortable({ id: item.id, disabled });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
+    transform: CSS.Translate.toString(transform),
+    transition: isDragging ? undefined : transition,
+    opacity: isDragging ? 0.35 : 1,
   };
 
   return (
@@ -91,6 +129,8 @@ function SortableTimelineRow({
         mb: 0.5,
         alignItems: "flex-start",
         pr: 1,
+        borderLeft: "4px solid",
+        borderLeftColor: TIMELINE_TYPE_COLORS[item.type],
       }}
     >
       <IconButton
@@ -104,16 +144,7 @@ function SortableTimelineRow({
       >
         <DragIndicatorIcon fontSize="small" />
       </IconButton>
-      <ListItemText
-        primary={`${index + 1}. ${getRoutineItemLabel(item)}`}
-        secondary={getRoutineItemTypeLabel(item.type)}
-        slotProps={{
-          primary: {
-            variant: "body2",
-            sx: { fontWeight: selected ? 600 : 400 },
-          },
-        }}
-      />
+      <TimelineRowContent item={item} index={index} selected={selected} />
       <ButtonGroup size="small" orientation="vertical" sx={{ mr: 0.5 }}>
         <IconButton
           size="small"
@@ -158,92 +189,97 @@ export function TimelinePanel({
   routine,
   selectedItemId,
   onSelectItem,
-  onAddItem,
   onRemoveItem,
   onMoveItem,
-  onReorder,
+  localItemIds,
+  dropInsertIndex,
+  dropIndicatorColor,
   busy,
 }: TimelinePanelProps) {
-  const items = [...routine.timeline].sort((a, b) => a.order - b.order);
-  const itemIds = items.map((item) => item.id);
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
+  const sortedItems = useMemo(
+    () => [...routine.timeline].sort((a, b) => a.order - b.order),
+    [routine.timeline],
   );
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) {
-      return;
-    }
-    const oldIndex = itemIds.indexOf(String(active.id));
-    const newIndex = itemIds.indexOf(String(over.id));
-    if (oldIndex < 0 || newIndex < 0) {
-      return;
-    }
-    const reordered = [...itemIds];
-    const [moved] = reordered.splice(oldIndex, 1);
-    reordered.splice(newIndex, 0, moved);
-    onReorder(reordered);
-  };
+  const displayItems = useMemo(() => {
+    const byId = new Map(sortedItems.map((item) => [item.id, item]));
+    return localItemIds
+      .map((id) => byId.get(id))
+      .filter((item): item is RoutineItem => item !== undefined);
+  }, [localItemIds, sortedItems]);
 
-  const addButtons: { type: RoutineItemType; label: string }[] = [
-    { type: "body_element", label: "Body Element" },
-    { type: "risk", label: "Risk" },
-    { type: "mastery", label: "Mastery" },
-    { type: "artistry", label: "Artistry" },
-  ];
+  const { setNodeRef, isOver } = useDroppable({ id: "timeline-drop" });
 
   return (
-    <Paper sx={{ p: 2, height: "100%", display: "flex", flexDirection: "column" }}>
+    <Paper
+      ref={setNodeRef}
+      sx={{
+        p: 2,
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        minHeight: 0,
+        outline: isOver ? "2px dashed" : "2px dashed transparent",
+        outlineColor: isOver ? "primary.main" : "transparent",
+        transition: "outline-color 0.15s ease",
+      }}
+    >
       <Typography variant="h6" gutterBottom>
         Timeline
       </Typography>
 
-      {items.length === 0 ? (
-        <Typography color="text.secondary" variant="body2" sx={{ mb: 2 }}>
-          No items yet. Add body elements, risks, masteries, or artistry components below.
-        </Typography>
-      ) : (
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
-            <List dense disablePadding sx={{ flex: 1, overflow: "auto", mb: 2 }}>
-              {items.map((item, index) => (
-                <SortableTimelineRow
-                  key={item.id}
-                  item={item}
-                  index={index}
-                  selected={selectedItemId === item.id}
-                  onSelect={() => onSelectItem(item.id)}
-                  onRemove={() => onRemoveItem(item.id)}
-                  onMoveUp={() => onMoveItem(item.id, "up")}
-                  onMoveDown={() => onMoveItem(item.id, "down")}
-                  canMoveUp={index > 0}
-                  canMoveDown={index < items.length - 1}
-                  disabled={busy}
-                />
+      <Box sx={{ flex: 1, minHeight: 120, overflow: "auto" }}>
+        {displayItems.length === 0 ? (
+          <Box sx={{ py: 2 }}>
+            {dropInsertIndex === 0 ? <DropSlotIndicator color={dropIndicatorColor} /> : null}
+            <Typography color="text.secondary" variant="body2">
+              Drag body elements or artistry here, or use Add from the inventory panel.
+            </Typography>
+          </Box>
+        ) : (
+          <SortableContext items={localItemIds} strategy={verticalListSortingStrategy}>
+            <List dense disablePadding>
+              {displayItems.map((item, index) => (
+                <Box key={item.id}>
+                  {dropInsertIndex === index ? (
+                    <DropSlotIndicator color={dropIndicatorColor} />
+                  ) : null}
+                  <SortableTimelineRow
+                    item={item}
+                    index={index}
+                    selected={selectedItemId === item.id}
+                    onSelect={() => onSelectItem(item.id)}
+                    onRemove={() => onRemoveItem(item.id)}
+                    onMoveUp={() => onMoveItem(item.id, "up")}
+                    onMoveDown={() => onMoveItem(item.id, "down")}
+                    canMoveUp={index > 0}
+                    canMoveDown={index < displayItems.length - 1}
+                    disabled={busy}
+                  />
+                </Box>
               ))}
+              {dropInsertIndex === displayItems.length ? (
+                <DropSlotIndicator color={dropIndicatorColor} />
+              ) : null}
             </List>
           </SortableContext>
-        </DndContext>
-      )}
-
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: "auto" }}>
-        {addButtons.map(({ type, label }) => (
-          <Button
-            key={type}
-            size="small"
-            variant="outlined"
-            disabled={busy}
-            onClick={() => onAddItem(type)}
-          >
-            + {label}
-          </Button>
-        ))}
+        )}
       </Box>
     </Paper>
   );
+}
+
+export function useTimelineOrder(timeline: Routine["timeline"]) {
+  const sortedItems = useMemo(
+    () => [...timeline].sort((a, b) => a.order - b.order),
+    [timeline],
+  );
+  const serverItemIds = useMemo(() => sortedItems.map((item) => item.id), [sortedItems]);
+  const [localItemIds, setLocalItemIds] = useState(serverItemIds);
+
+  useEffect(() => {
+    setLocalItemIds(serverItemIds);
+  }, [serverItemIds]);
+
+  return { localItemIds, setLocalItemIds, sortedItems };
 }

@@ -211,8 +211,7 @@ Not a separate collection. A Risk is a **composition** of R criteria and rotatio
     rotationId: string;    // ref Rotation.id
     count: number;
   }[];
-  bodyElementId?: string;    // optional ref BodyElement.id (pivot/jump ≥ 0.20, max 1 per R)
-  value: number;             // calculated: 0.20 base + criteria values
+  value: number;             // calculated: 0.20 + max(0, totalRotations − 2) × 0.10 + Σ criteria values
 }
 ```
 
@@ -352,6 +351,7 @@ Detailed element values and CoP rules are defined in [docs/domains/](./domains/)
 
 1. A coach can only read/write routines where `routine.coach === context.coachId`
 2. Timeline `order` values must be contiguous integers starting at 0
-3. Mastery compositions must satisfy DA combination rules before being saved
-4. Reference data is replaced on seed — no soft-delete `active` flag on reference collections
-5. Scores and validation on a routine are always recalculated server-side — never trusted from the client
+3. Risk compositions must satisfy CoP §4.8–4.10 rules before being saved (`riskValidation.ts`)
+4. Mastery compositions must satisfy DA combination rules before being saved (`masteryValidation.ts`)
+5. Reference data is replaced on seed — no soft-delete `active` flag on reference collections
+6. Scores and validation on a routine are always recalculated server-side — never trusted from the client

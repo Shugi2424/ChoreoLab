@@ -66,9 +66,19 @@ export const mutationResolvers = {
 
   addRoutineItem: (
     _: unknown,
-    { routineId, input }: { routineId: string; input: AddRoutineItemInput },
+    {
+      routineId,
+      input,
+      insertIndex,
+    }: { routineId: string; input: AddRoutineItemInput; insertIndex?: number | null },
     context: GraphQLContext,
-  ) => routineTimelineService.addItem(requireAuth(context), routineId, input),
+  ) =>
+    routineTimelineService.addItem(
+      requireAuth(context),
+      routineId,
+      input,
+      insertIndex ?? undefined,
+    ),
 
   removeRoutineItem: (
     _: unknown,

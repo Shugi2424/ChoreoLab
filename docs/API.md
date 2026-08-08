@@ -165,7 +165,6 @@ type RiskRotation {
 type Risk {
   criteriaIds: [ID!]!
   rotations: [RiskRotation!]!
-  bodyElementId: ID
   value: Float!
 }
 ```
@@ -395,7 +394,7 @@ updateRoutine(id: ID!, input: UpdateRoutineInput!): Routine!
 
 deleteRoutine(id: ID!): MessagePayload!
 
-addRoutineItem(routineId: ID!, input: AddRoutineItemInput!): Routine!
+addRoutineItem(routineId: ID!, input: AddRoutineItemInput!, insertIndex: Int): Routine!
 
 removeRoutineItem(routineId: ID!, itemId: ID!): Routine!
 
@@ -433,7 +432,6 @@ input RiskRotationInput {
 input RiskInput {
   criteriaIds: [ID!]!
   rotations: [RiskRotationInput!]!
-  bodyElementId: ID
 }
 
 input MasteryInput {
@@ -450,7 +448,14 @@ input UpdateRoutineItemInput {
 }
 ```
 
-Every routine mutation recalculates `dbScore`, `daScore`, and `validation` before returning.
+`insertIndex` on `addRoutineItem` is optional (0-based). When omitted, the item is appended. Used when dragging from the inventory panel into a specific timeline position.
+
+Risk and mastery inputs are validated server-side in `routineTimelineService` before save:
+
+- **Risk** — minimum 2 rotations, apparatus-specific criteria, direct-catch mutual exclusion, throw-after-roll requires without-hands throw. Value = `0.20 + max(0, totalRotations − 2) × 0.10 + Σ criteria values`.
+- **Mastery** — valid base/criteria combinations per CoP §5.1.3, apparatus eligibility, alternate-catch base exclusion. Value calculated from bases + criteria combo.
+
+Every routine mutation recalculates `dbScore`, `daScore`, and `validation` before returning (scoring and full validation engines are M6/M7 — values remain 0 / placeholder until then).
 
 ---
 

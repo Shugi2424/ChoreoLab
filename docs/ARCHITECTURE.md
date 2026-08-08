@@ -85,6 +85,7 @@ All business logic lives here. Planned services:
 | `authService`          | Sign up, login, JWT issue/verify, password reset |
 | `coachService`         | Profile CRUD                                     |
 | `routineService`       | Routine CRUD, timeline management                |
+| `routineTimelineService` | Timeline add/remove/reorder/update, risk/mastery validation (M5) |
 | `scoringService`       | DB and DA calculation                            |
 | `validationService`    | CoP requirement checking                         |
 | `referenceDataService` | Read-only access to all reference collections (M4) |
@@ -137,12 +138,12 @@ client/src/
 ├── pages/            Top-level page components
 ├── components/       Reusable UI components
 │   ├── layout/       App shell, nav, protected route
-│   ├── routine/      Timeline, editor, score panel
+│   ├── routine/      Timeline, inventory panel, score panel (M5)
 │   └── auth/         Login, signup, reset password forms
 ├── hooks/            Custom React hooks
 ├── graphql/          Queries, mutations, fragments
 ├── types/            Shared TypeScript interfaces
-└── utils/            Formatting, validation helpers
+└── utils/            Formatting, risk/mastery validation helpers (M5)
 ```
 
 ### State Management
@@ -200,20 +201,21 @@ CORS on the server must allow the Vercel domain in production.
 
 ## Existing Code — Migration Notes
 
-Completed:
+Completed through Milestone 5:
 
 - `BodyElement` model replaces the legacy `Element` scaffold
 - `bodyelements` collection seeded; legacy `elements` collection removed
+- Layered services (`authService`, `routineService`, `routineTimelineService`, `referenceDataService`)
+- GraphQL schema split by domain; auth context on all protected operations
+- Routine Builder UI with inventory panel, timeline drag-and-drop, and composition validation
 
-Remaining before feature work:
+Remaining:
 
-1. Introduce `server/src/services/` directory
-2. Move DB access from resolvers into services
-3. Split `schema.ts` into domain modules as it grows
-4. Add GraphQL context for auth
-5. Add `client/.env.example` with `VITE_GRAPHQL_URL`
+- `scoringService` and live score recalculation (M6)
+- `validationService` and live requirement checking (M7)
+- UI polish pass (M8)
 
-These refactors are scheduled in [ROADMAP.md](./ROADMAP.md) Milestone 0.
+See [ROADMAP.md](./ROADMAP.md) for the full milestone plan.
 
 ## Confirmed Decisions
 

@@ -78,7 +78,7 @@
   },
   {
     "id": "catch-ball-one-hand",
-    "name": "Catch of the Ball with 1 hand or the other, without additional support of the body or other hand",
+    "name": "Catch of the Ball with 1 hand, without additional support of the body or other hand",
     "type": "catch",
     "value": 0.1,
     "apparatuses": ["ball"]

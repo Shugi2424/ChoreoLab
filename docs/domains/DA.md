@@ -32,6 +32,7 @@ Validation rules:
 1. All bases must belong to the routine's apparatus
 2. Criteria must be eligible for their paired base(s) (`allowedCriteria` on Base)
 3. If 2 bases: one must be catch-from-high-throw
+4. Alternate catch bases (`catch-one-hand-high-throw`, `catch-one-club-held`, `simultaneous-catch-2-unlocked`) cannot combine with `catch-from-high-throw` in the same mastery
 
 ---
 
@@ -99,6 +100,11 @@ DA does **not** contribute to DB score — separate difficulty component.
 
 ---
 
-## Next steps
+## Implementation
 
-- Implement mastery composition validation in `routineService`
+Mastery composition validation is implemented in:
+
+- `server/src/utils/masteryValidation.ts` — server-side enforcement on save
+- `client/src/utils/masteryValidation.ts` — live UI feedback in the inventory panel
+
+Value calculation: 1 base + 2 criteria → base value; catch-from-high-throw + 2nd base + 1 criterion → highest base + 0.10.

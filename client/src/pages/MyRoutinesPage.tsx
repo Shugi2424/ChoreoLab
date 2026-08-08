@@ -1,3 +1,5 @@
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import { formatCopValue } from "../utils/formatCopValue";
 import {
   Alert,
   Box,
@@ -8,6 +10,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  IconButton,
   Paper,
   Table,
   TableBody,
@@ -15,6 +18,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { useMutation, useQuery } from "@apollo/client";
@@ -27,19 +31,7 @@ import {
   formatAgeCategory,
   formatApparatus,
 } from "../types/routine";
-
-function getGraphQLErrorMessage(error: unknown, fallback: string): string {
-  if (
-    typeof error === "object" &&
-    error !== null &&
-    "graphQLErrors" in error &&
-    Array.isArray(error.graphQLErrors) &&
-    error.graphQLErrors[0]?.message
-  ) {
-    return String(error.graphQLErrors[0].message);
-  }
-  return fallback;
-}
+import { getGraphQLErrorMessage } from "../utils/graphqlErrors";
 
 export function MyRoutinesPage() {
   const navigate = useNavigate();
@@ -97,7 +89,7 @@ export function MyRoutinesPage() {
             My Routines
           </Typography>
           <Typography color="text.secondary">
-            Open, edit, or delete saved routines.
+            Click a row to open. Use the delete icon to remove a routine.
           </Typography>
         </Box>
         <Button component={RouterLink} to="/routines/new" variant="contained" color="primary">
@@ -134,35 +126,36 @@ export function MyRoutinesPage() {
                 <TableCell align="right">DB</TableCell>
                 <TableCell align="right">DA</TableCell>
                 <TableCell>Status</TableCell>
-                <TableCell align="right">Actions</TableCell>
+                <TableCell align="right" sx={{ width: 56 }} />
               </TableRow>
             </TableHead>
             <TableBody>
               {routines.map((routine) => (
-                <TableRow key={routine.id} hover>
+                <TableRow
+                  key={routine.id}
+                  hover
+                  sx={{ cursor: "pointer" }}
+                  onClick={() => navigate(`/routines/${routine.id}`)}
+                >
                   <TableCell>{routine.gymnastName}</TableCell>
                   <TableCell>{formatApparatus(routine.apparatus)}</TableCell>
                   <TableCell>{formatAgeCategory(routine.ageCategory)}</TableCell>
-                  <TableCell align="right">{routine.dbScore.toFixed(1)}</TableCell>
-                  <TableCell align="right">{routine.daScore.toFixed(1)}</TableCell>
+                  <TableCell align="right">{formatCopValue(routine.dbScore)}</TableCell>
+                  <TableCell align="right">{formatCopValue(routine.daScore)}</TableCell>
                   <TableCell>
                     {routine.validation.isValid ? "Valid" : "Incomplete"}
                   </TableCell>
-                  <TableCell align="right">
-                    <Button
-                      size="small"
-                      onClick={() => navigate(`/routines/${routine.id}`)}
-                      sx={{ mr: 1 }}
-                    >
-                      Open
-                    </Button>
-                    <Button
-                      size="small"
-                      color="error"
-                      onClick={() => setRoutineToDelete(routine)}
-                    >
-                      Delete
-                    </Button>
+                  <TableCell align="right" onClick={(event) => event.stopPropagation()}>
+                    <Tooltip title="Delete routine">
+                      <IconButton
+                        size="small"
+                        color="error"
+                        aria-label={`Delete routine for ${routine.gymnastName}`}
+                        onClick={() => setRoutineToDelete(routine)}
+                      >
+                        <DeleteOutlinedIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
                   </TableCell>
                 </TableRow>
               ))}
