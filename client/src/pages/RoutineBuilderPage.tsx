@@ -11,28 +11,12 @@ import {
 import { useMutation, useQuery } from "@apollo/client";
 import { FormEvent, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { RoutineBuilder } from "../components/routine/RoutineBuilder";
 import { CREATE_ROUTINE_MUTATION } from "../graphql/mutations";
 import { ROUTINE_QUERY } from "../graphql/queries";
 import type { AgeCategory, Apparatus, Routine } from "../types/routine";
-import {
-  AGE_CATEGORY_OPTIONS,
-  APPARATUS_OPTIONS,
-  formatAgeCategory,
-  formatApparatus,
-} from "../types/routine";
-
-function getGraphQLErrorMessage(error: unknown, fallback: string): string {
-  if (
-    typeof error === "object" &&
-    error !== null &&
-    "graphQLErrors" in error &&
-    Array.isArray(error.graphQLErrors) &&
-    error.graphQLErrors[0]?.message
-  ) {
-    return String(error.graphQLErrors[0].message);
-  }
-  return fallback;
-}
+import { AGE_CATEGORY_OPTIONS, APPARATUS_OPTIONS } from "../types/routine";
+import { getGraphQLErrorMessage } from "../utils/graphqlErrors";
 
 function CreateRoutineForm() {
   const navigate = useNavigate();
@@ -130,36 +114,6 @@ function CreateRoutineForm() {
   );
 }
 
-function RoutineDetailView({ routine }: { routine: Routine }) {
-  return (
-    <Box>
-      <Typography variant="h4" color="secondary.main" gutterBottom>
-        {routine.gymnastName}
-      </Typography>
-      <Typography color="text.secondary" sx={{ mb: 3 }}>
-        {formatApparatus(routine.apparatus)} · {formatAgeCategory(routine.ageCategory)}
-      </Typography>
-
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          Scores
-        </Typography>
-        <Typography>
-          DB: <strong>{routine.dbScore.toFixed(1)}</strong> · DA:{" "}
-          <strong>{routine.daScore.toFixed(1)}</strong>
-        </Typography>
-        <Typography color="text.secondary" sx={{ mt: 1 }}>
-          Status: {routine.validation.isValid ? "Valid" : "Incomplete"}
-        </Typography>
-      </Paper>
-
-      <Alert severity="info">
-        The timeline builder with drag-and-drop reordering will be available in Milestone 5.
-      </Alert>
-    </Box>
-  );
-}
-
 export function RoutineBuilderPage() {
   const { id } = useParams();
   const isNew = id === "new";
@@ -194,5 +148,5 @@ export function RoutineBuilderPage() {
     );
   }
 
-  return <RoutineDetailView routine={data.routine} />;
+  return <RoutineBuilder routine={data.routine} />;
 }

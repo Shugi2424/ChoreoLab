@@ -9,6 +9,11 @@ import {
   routineService,
   type CreateRoutineInput,
 } from "../services/routineService.js";
+import {
+  routineTimelineService,
+  type AddRoutineItemInput,
+  type UpdateRoutineItemInput,
+} from "../services/routineTimelineService.js";
 import type { GraphQLContext } from "../types/context.js";
 import { requireAuth } from "../utils/errors.js";
 
@@ -58,4 +63,39 @@ export const mutationResolvers = {
 
   deleteRoutine: (_: unknown, { id }: { id: string }, context: GraphQLContext) =>
     routineService.delete(requireAuth(context), id),
+
+  addRoutineItem: (
+    _: unknown,
+    { routineId, input }: { routineId: string; input: AddRoutineItemInput },
+    context: GraphQLContext,
+  ) => routineTimelineService.addItem(requireAuth(context), routineId, input),
+
+  removeRoutineItem: (
+    _: unknown,
+    { routineId, itemId }: { routineId: string; itemId: string },
+    context: GraphQLContext,
+  ) => routineTimelineService.removeItem(requireAuth(context), routineId, itemId),
+
+  reorderRoutineItems: (
+    _: unknown,
+    { routineId, itemIds }: { routineId: string; itemIds: string[] },
+    context: GraphQLContext,
+  ) =>
+    routineTimelineService.reorderItems(requireAuth(context), routineId, itemIds),
+
+  updateRoutineItem: (
+    _: unknown,
+    {
+      routineId,
+      itemId,
+      input,
+    }: { routineId: string; itemId: string; input: UpdateRoutineItemInput },
+    context: GraphQLContext,
+  ) =>
+    routineTimelineService.updateItem(
+      requireAuth(context),
+      routineId,
+      itemId,
+      input,
+    ),
 };

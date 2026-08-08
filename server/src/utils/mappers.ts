@@ -141,39 +141,76 @@ export function toGraphQLValidationResult(doc: {
   };
 }
 
-export function toGraphQLRoutine(doc: {
-  _id: { toString(): string };
-  gymnastName: string;
-  apparatus: string;
-  ageCategory: string;
-  timeline?: unknown[];
-  dbScore: number;
-  daScore: number;
-  validation: {
-    isValid: boolean;
-    dbValid: boolean;
-    daValid: boolean;
-    artistryValid: boolean;
-    missingRequirements: Array<{
-      id: string;
-      domain: string;
-      message: string;
-    }>;
-    calculatedAt?: Date;
+export function toGraphQLRoutineItem(item: unknown) {
+  const entry = item as {
+    _id: { toString(): string };
+    type: string;
+    order: number;
+    bodyElementId?: string | null;
+    risk?: {
+      criteriaIds: string[];
+      rotations: Array<{ rotationId: string; count: number }>;
+      bodyElementId?: string | null;
+      value: number;
+    } | null;
+    mastery?: {
+      baseIds: string[];
+      criteriaIds: string[];
+      rotationId?: string | null;
+      value: number;
+      isAcro: boolean;
+    } | null;
+    artistryComponentId?: string | null;
   };
-  createdAt?: Date;
-  updatedAt?: Date;
-}) {
+
   return {
-    id: doc._id.toString(),
-    gymnastName: doc.gymnastName,
-    apparatus: doc.apparatus,
-    ageCategory: doc.ageCategory,
-    timeline: [],
-    dbScore: doc.dbScore,
-    daScore: doc.daScore,
-    validation: toGraphQLValidationResult(doc.validation),
-    createdAt: doc.createdAt?.toISOString() ?? new Date().toISOString(),
-    updatedAt: doc.updatedAt?.toISOString() ?? new Date().toISOString(),
+    id: entry._id.toString(),
+    type: entry.type,
+    order: entry.order,
+    bodyElementId: entry.bodyElementId ?? null,
+    risk: entry.risk ?? null,
+    mastery: entry.mastery ?? null,
+    artistryComponentId: entry.artistryComponentId ?? null,
+  };
+}
+
+export function toGraphQLRoutine(doc: unknown) {
+  const routine = doc as {
+    _id: { toString(): string };
+    gymnastName: string;
+    apparatus: string;
+    ageCategory: string;
+    timeline?: unknown[];
+    dbScore: number;
+    daScore: number;
+    validation: {
+      isValid: boolean;
+      dbValid: boolean;
+      daValid: boolean;
+      artistryValid: boolean;
+      missingRequirements: Array<{
+        id: string;
+        domain: string;
+        message: string;
+      }>;
+      calculatedAt?: Date;
+    };
+    createdAt?: Date;
+    updatedAt?: Date;
+  };
+
+  return {
+    id: routine._id.toString(),
+    gymnastName: routine.gymnastName,
+    apparatus: routine.apparatus,
+    ageCategory: routine.ageCategory,
+    timeline: (routine.timeline ?? []).map((item) =>
+      toGraphQLRoutineItem(item as Parameters<typeof toGraphQLRoutineItem>[0]),
+    ),
+    dbScore: routine.dbScore,
+    daScore: routine.daScore,
+    validation: toGraphQLValidationResult(routine.validation),
+    createdAt: routine.createdAt?.toISOString() ?? new Date().toISOString(),
+    updatedAt: routine.updatedAt?.toISOString() ?? new Date().toISOString(),
   };
 }

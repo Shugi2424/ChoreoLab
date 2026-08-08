@@ -14,6 +14,38 @@ export const routineTypeDefs = `#graphql
     calculatedAt: String!
   }
 
+  type RiskRotation {
+    rotationId: ID!
+    count: Int!
+  }
+
+  type Risk {
+    criteriaIds: [ID!]!
+    rotations: [RiskRotation!]!
+    bodyElementId: ID
+    value: Float!
+  }
+
+  type Mastery {
+    baseIds: [ID!]!
+    criteriaIds: [ID!]!
+    rotationId: ID
+    value: Float!
+    isAcro: Boolean!
+  }
+
+  type RoutineItem {
+    id: ID!
+    type: RoutineItemType!
+    order: Int!
+    bodyElementId: ID
+    bodyElement: BodyElement
+    risk: Risk
+    mastery: Mastery
+    artistryComponentId: ID
+    artistryComponent: ArtistryComponent
+  }
+
   type Routine {
     id: ID!
     gymnastName: String!
@@ -27,12 +59,6 @@ export const routineTypeDefs = `#graphql
     updatedAt: String!
   }
 
-  type RoutineItem {
-    id: ID!
-    type: RoutineItemType!
-    order: Int!
-  }
-
   enum RoutineItemType {
     body_element
     risk
@@ -44,5 +70,37 @@ export const routineTypeDefs = `#graphql
     gymnastName: String!
     apparatus: Apparatus!
     ageCategory: AgeCategory!
+  }
+
+  input RiskRotationInput {
+    rotationId: ID!
+    count: Int!
+  }
+
+  input RiskInput {
+    criteriaIds: [ID!]!
+    rotations: [RiskRotationInput!]!
+    bodyElementId: ID
+  }
+
+  input MasteryInput {
+    baseIds: [ID!]!
+    criteriaIds: [ID!]!
+    rotationId: ID
+  }
+
+  input AddRoutineItemInput {
+    type: RoutineItemType!
+    bodyElementId: ID
+    risk: RiskInput
+    mastery: MasteryInput
+    artistryComponentId: ID
+  }
+
+  input UpdateRoutineItemInput {
+    bodyElementId: ID
+    risk: RiskInput
+    mastery: MasteryInput
+    artistryComponentId: ID
   }
 `;

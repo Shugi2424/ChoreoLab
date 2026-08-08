@@ -156,18 +156,18 @@ Each milestone is **independently testable** and should be completed before movi
 
 ### Server
 
-- [ ] `RoutineItem` embedded schema with all types
-- [ ] `addRoutineItem`, `removeRoutineItem`, `reorderRoutineItems`, `updateRoutineItem` mutations
-- [ ] Mastery composition validation (combination rules)
+- [x] `RoutineItem` embedded schema with all types
+- [x] `addRoutineItem`, `removeRoutineItem`, `reorderRoutineItems`, `updateRoutineItem` mutations
+- [x] Mastery composition validation (combination rules)
 
 ### Client
 
-- [ ] Routine Builder page (three-panel layout)
-- [ ] Timeline panel — **drag-and-drop reorder** (primary interaction), select, remove
-- [ ] Up/down reorder buttons as keyboard and accessibility fallback
-- [ ] Editing panel — forms per item type with reference data dropdowns
-- [ ] Add item flow for all four types
-- [ ] Use `@dnd-kit/core` (or equivalent) for accessible drag-and-drop
+- [x] Routine Builder page (three-panel layout)
+- [x] Timeline panel — **drag-and-drop reorder** (primary interaction), select, remove
+- [x] Up/down reorder buttons as keyboard and accessibility fallback
+- [x] Editing panel — forms per item type with reference data dropdowns
+- [x] Add item flow for all four types
+- [x] Use `@dnd-kit/core` (or equivalent) for accessible drag-and-drop
 
 **Test:** Create routine → add body element, risk, mastery, artistry → drag to reorder → remove → timeline persists on reload.
 
@@ -341,4 +341,4 @@ M6 and M7 can be developed in parallel after M5.
 
 ## Next Step
 
-**Milestone 4 complete.** Next: **Milestone 5 — Routine Builder (Timeline)**.
+**Milestone 5 complete.** Next: **Milestone 6 — Scoring Engine**.

@@ -74,9 +74,9 @@ These hold the detailed CoP data that drives seed files and validation rules.
 
 ## Current phase
 
-**Milestone 4 complete** — reference data seeded and queryable via `referenceDataService`.
+**Milestone 5 complete** — routine timeline builder with drag-and-drop reordering and all four item types.
 
-Next: **Milestone 5 — Routine Builder** ([ROADMAP.md](./ROADMAP.md)).
+Next: **Milestone 6 — Scoring Engine** ([ROADMAP.md](./ROADMAP.md)).
 
 ### Local dev shortcuts (Windows)
 

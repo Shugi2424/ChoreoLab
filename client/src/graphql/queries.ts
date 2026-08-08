@@ -93,8 +93,95 @@ export const ROUTINE_QUERY = gql`
         }
         calculatedAt
       }
+      timeline {
+        id
+        type
+        order
+        bodyElementId
+        bodyElement {
+          id
+          name
+          category
+          value
+        }
+        risk {
+          criteriaIds
+          rotations {
+            rotationId
+            count
+          }
+          bodyElementId
+          value
+        }
+        mastery {
+          baseIds
+          criteriaIds
+          rotationId
+          value
+          isAcro
+        }
+        artistryComponentId
+        artistryComponent {
+          id
+          name
+          type
+        }
+      }
       createdAt
       updatedAt
+    }
+  }
+`;
+
+export const BASES_QUERY = gql`
+  query Bases($apparatus: Apparatus) {
+    bases(apparatus: $apparatus) {
+      id
+      name
+      value
+      apparatuses
+      allowedCriteria
+    }
+  }
+`;
+
+export const DA_CRITERIA_QUERY = gql`
+  query DaCriteria {
+    daCriteria {
+      id
+      name
+    }
+  }
+`;
+
+export const R_CRITERIA_QUERY = gql`
+  query RCriteria($apparatus: Apparatus) {
+    rCriteria(apparatus: $apparatus) {
+      id
+      name
+      type
+      value
+      apparatuses
+    }
+  }
+`;
+
+export const ROTATIONS_QUERY = gql`
+  query Rotations {
+    rotations {
+      id
+      name
+      group
+    }
+  }
+`;
+
+export const ARTISTRY_COMPONENTS_QUERY = gql`
+  query ArtistryComponents {
+    artistryComponents {
+      id
+      name
+      type
     }
   }
 `;

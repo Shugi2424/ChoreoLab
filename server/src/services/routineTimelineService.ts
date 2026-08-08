@@ -1,0 +1,332 @@
+import { Types } from "mongoose";
+import { BodyElement } from "../models/BodyElement.js";
+import { Routine, type RoutineDocument } from "../models/Routine.js";
+import { RCriteria, Rotation, ArtistryComponent } from "../models/reference.js";
+import {
+  ForbiddenError,
+  NotFoundError,
+  UserInputError,
+} from "../utils/errors.js";
+import {
+  calculateMasteryValue,
+  validateMasteryInput,
+  type MasteryInput,
+} from "../utils/masteryValidation.js";
+import type { Apparatus } from "../types/enums.js";
+import { toGraphQLRoutine } from "../utils/mappers.js";
+
+export interface RiskRotationInput {
+  rotationId: string;
+  count: number;
+}
+
+export interface RiskInput {
+  criteriaIds: string[];
+  rotations: RiskRotationInput[];
+  bodyElementId?: string;
+}
+
+export interface AddRoutineItemInput {
+  type: "body_element" | "risk" | "mastery" | "artistry";
+  bodyElementId?: string;
+  risk?: RiskInput;
+  mastery?: MasteryInput;
+  artistryComponentId?: string;
+}
+
+export interface UpdateRoutineItemInput {
+  bodyElementId?: string;
+  risk?: RiskInput;
+  mastery?: MasteryInput;
+  artistryComponentId?: string;
+}
+
+async function getRoutineDocForCoach(id: string, coachId: string) {
+  const routine = await Routine.findById(id);
+  if (!routine) {
+    throw new NotFoundError("Routine not found");
+  }
+  if (routine.coach.toString() !== coachId) {
+    throw new ForbiddenError();
+  }
+  return routine;
+}
+
+function renormalizeOrder(timeline: RoutineDocument["timeline"]) {
+  timeline.forEach((item, index) => {
+    (item as { order: number }).order = index;
+  });
+}
+
+async function validateBodyElementId(id: string) {
+  const element = await BodyElement.findOne({ id }).lean();
+  if (!element) {
+    throw new UserInputError("Body element not found.");
+  }
+  return element;
+}
+
+async function validateArtistryComponentId(id: string) {
+  const component = await ArtistryComponent.findOne({ id }).lean();
+  if (!component) {
+    throw new UserInputError("Artistry component not found.");
+  }
+  return component;
+}
+
+async function buildRiskPayload(input: RiskInput, apparatus: string) {
+  const criteriaIds = input.criteriaIds ?? [];
+  const rotations = input.rotations ?? [];
+
+  if (rotations.length === 0) {
+    throw new UserInputError("Risk must include at least one rotation.");
+  }
+
+  const criteria = await RCriteria.find({ id: { $in: criteriaIds } }).lean();
+  if (criteria.length !== criteriaIds.length) {
+    throw new UserInputError("One or more risk criteria were not found.");
+  }
+
+  for (const criterion of criteria) {
+    if (!criterion.apparatuses.includes(apparatus as Apparatus)) {
+      throw new UserInputError(
+        `Risk criterion "${criterion.name}" is not valid for this apparatus.`,
+      );
+    }
+  }
+
+  const rotationIds = rotations.map((r) => r.rotationId);
+  const rotationDocs = await Rotation.find({ id: { $in: rotationIds } }).lean();
+  if (rotationDocs.length !== rotationIds.length) {
+    throw new UserInputError("One or more rotations were not found.");
+  }
+
+  for (const rotation of rotations) {
+    if (rotation.count < 1) {
+      throw new UserInputError("Rotation count must be at least 1.");
+    }
+  }
+
+  let bodyElementId: string | undefined;
+  if (input.bodyElementId) {
+    const element = await validateBodyElementId(input.bodyElementId);
+    if (element.value < 0.2) {
+      throw new UserInputError(
+        "Optional body element for a risk must have value at least 0.20.",
+      );
+    }
+    bodyElementId = element.id;
+  }
+
+  const criteriaValue = criteria.reduce((sum, c) => sum + c.value, 0);
+
+  return {
+    criteriaIds,
+    rotations: rotations.map((r) => ({
+      rotationId: r.rotationId,
+      count: r.count,
+    })),
+    bodyElementId,
+    value: 0.2 + criteriaValue,
+  };
+}
+
+async function buildMasteryPayload(input: MasteryInput, apparatus: string) {
+  const validated = await validateMasteryInput(input, apparatus);
+  let isAcro = false;
+
+  if (validated.rotationId) {
+    const rotation = await Rotation.findOne({ id: validated.rotationId }).lean();
+    if (!rotation) {
+      throw new UserInputError("Rotation not found.");
+    }
+    isAcro = rotation.group.startsWith("acro-");
+  }
+
+  const value = await calculateMasteryValue(validated.baseIds);
+
+  return {
+    baseIds: validated.baseIds,
+    criteriaIds: validated.criteriaIds,
+    rotationId: validated.rotationId,
+    value,
+    isAcro,
+  };
+}
+
+async function buildTimelineItem(
+  input: AddRoutineItemInput,
+  order: number,
+  apparatus: string,
+) {
+  const base = {
+    type: input.type,
+    order,
+  };
+
+  switch (input.type) {
+    case "body_element": {
+      if (!input.bodyElementId) {
+        throw new UserInputError("bodyElementId is required for body elements.");
+      }
+      await validateBodyElementId(input.bodyElementId);
+      return { ...base, bodyElementId: input.bodyElementId };
+    }
+    case "artistry": {
+      if (!input.artistryComponentId) {
+        throw new UserInputError(
+          "artistryComponentId is required for artistry items.",
+        );
+      }
+      await validateArtistryComponentId(input.artistryComponentId);
+      return { ...base, artistryComponentId: input.artistryComponentId };
+    }
+    case "risk": {
+      if (!input.risk) {
+        throw new UserInputError("risk input is required for risk items.");
+      }
+      const risk = await buildRiskPayload(input.risk, apparatus);
+      return { ...base, risk };
+    }
+    case "mastery": {
+      if (!input.mastery) {
+        throw new UserInputError("mastery input is required for mastery items.");
+      }
+      const mastery = await buildMasteryPayload(input.mastery, apparatus);
+      return { ...base, mastery };
+    }
+    default:
+      throw new UserInputError("Invalid routine item type.");
+  }
+}
+
+function findTimelineItem(routine: RoutineDocument, itemId: string) {
+  const item = routine.timeline.find(
+    (entry) => (entry as { _id?: Types.ObjectId })._id?.toString() === itemId,
+  );
+  if (!item) {
+    throw new NotFoundError("Timeline item not found");
+  }
+  return item;
+}
+
+export const routineTimelineService = {
+  async addItem(coachId: string, routineId: string, input: AddRoutineItemInput) {
+    const routine = await getRoutineDocForCoach(routineId, coachId);
+    const item = await buildTimelineItem(
+      input,
+      routine.timeline.length,
+      routine.apparatus,
+    );
+    routine.timeline.push(item);
+    renormalizeOrder(routine.timeline);
+    await routine.save();
+    return toGraphQLRoutine(routine.toObject());
+  },
+
+  async removeItem(coachId: string, routineId: string, itemId: string) {
+    const routine = await getRoutineDocForCoach(routineId, coachId);
+    const index = routine.timeline.findIndex(
+      (entry) => (entry as { _id?: Types.ObjectId })._id?.toString() === itemId,
+    );
+    if (index === -1) {
+      throw new NotFoundError("Timeline item not found");
+    }
+    routine.timeline.splice(index, 1);
+    renormalizeOrder(routine.timeline);
+    await routine.save();
+    return toGraphQLRoutine(routine.toObject());
+  },
+
+  async reorderItems(coachId: string, routineId: string, itemIds: string[]) {
+    const routine = await getRoutineDocForCoach(routineId, coachId);
+
+    if (itemIds.length !== routine.timeline.length) {
+      throw new UserInputError("Item list must include every timeline item.");
+    }
+
+    const timelineIds = new Set(
+      routine.timeline.map((entry) =>
+        (entry as { _id: Types.ObjectId })._id.toString(),
+      ),
+    );
+
+    for (const id of itemIds) {
+      if (!timelineIds.has(id)) {
+        throw new UserInputError("Invalid timeline item id in reorder list.");
+      }
+    }
+
+    const orderMap = new Map(itemIds.map((id, index) => [id, index]));
+
+    for (const entry of routine.timeline) {
+      const timelineEntry = entry as { _id: Types.ObjectId; order: number };
+      const nextOrder = orderMap.get(timelineEntry._id.toString());
+      if (nextOrder === undefined) {
+        throw new UserInputError("Invalid timeline item id in reorder list.");
+      }
+      timelineEntry.order = nextOrder;
+    }
+
+    routine.timeline.sort(
+      (a, b) => (a as { order: number }).order - (b as { order: number }).order,
+    );
+    routine.markModified("timeline");
+    await routine.save();
+    return toGraphQLRoutine(routine.toObject());
+  },
+
+  async updateItem(
+    coachId: string,
+    routineId: string,
+    itemId: string,
+    input: UpdateRoutineItemInput,
+  ) {
+    const routine = await getRoutineDocForCoach(routineId, coachId);
+    const item = findTimelineItem(routine, itemId) as {
+      type: string;
+      bodyElementId?: string;
+      risk?: RiskInput;
+      mastery?: MasteryInput;
+      artistryComponentId?: string;
+    };
+
+    switch (item.type) {
+      case "body_element": {
+        if (!input.bodyElementId) {
+          throw new UserInputError("bodyElementId is required.");
+        }
+        await validateBodyElementId(input.bodyElementId);
+        item.bodyElementId = input.bodyElementId;
+        break;
+      }
+      case "artistry": {
+        if (!input.artistryComponentId) {
+          throw new UserInputError("artistryComponentId is required.");
+        }
+        await validateArtistryComponentId(input.artistryComponentId);
+        item.artistryComponentId = input.artistryComponentId;
+        break;
+      }
+      case "risk": {
+        if (!input.risk) {
+          throw new UserInputError("risk input is required.");
+        }
+        item.risk = await buildRiskPayload(input.risk, routine.apparatus);
+        break;
+      }
+      case "mastery": {
+        if (!input.mastery) {
+          throw new UserInputError("mastery input is required.");
+        }
+        item.mastery = await buildMasteryPayload(input.mastery, routine.apparatus);
+        break;
+      }
+      default:
+        throw new UserInputError("Invalid routine item type.");
+    }
+
+    await routine.save();
+    return toGraphQLRoutine(routine.toObject());
+  },
+};

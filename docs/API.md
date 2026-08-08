@@ -420,19 +420,31 @@ input UpdateRoutineInput {
 input AddRoutineItemInput {
   type: RoutineItemType!
   bodyElementId: ID
-  riskId: ID
+  risk: RiskInput
   mastery: MasteryInput
   artistryComponentId: ID
+}
+
+input RiskRotationInput {
+  rotationId: ID!
+  count: Int!
+}
+
+input RiskInput {
+  criteriaIds: [ID!]!
+  rotations: [RiskRotationInput!]!
+  bodyElementId: ID
 }
 
 input MasteryInput {
   baseIds: [ID!]!
   criteriaIds: [ID!]!
+  rotationId: ID
 }
 
 input UpdateRoutineItemInput {
   bodyElementId: ID
-  riskId: ID
+  risk: RiskInput
   mastery: MasteryInput
   artistryComponentId: ID
 }
@@ -459,7 +471,9 @@ Every routine mutation recalculates `dbScore`, `daScore`, and `validation` befor
 | `rotations` / `rotation`                   | ✅ Implemented      |
 | `artistryComponents` / `artistryComponent` | ✅ Implemented      |
 | `daCriteria` / `daCriterion`               | ✅ Implemented      |
-| Timeline / scoring / validation mutations  | ❌ Not implemented (M5+) |
+| `addRoutineItem` / `removeRoutineItem` / `reorderRoutineItems` / `updateRoutineItem` | ✅ Implemented (M5) |
+| Scoring recalculation on timeline change   | ❌ Not implemented (M6) |
+| Live validation recalculation              | ❌ Not implemented (M7) |
 
 ---
 
