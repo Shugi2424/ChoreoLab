@@ -220,9 +220,23 @@ Each milestone is **independently testable** and should be completed before movi
 
 ## Milestone 8 — Client UI Polish
 
-**Goal:** Elevate the client to a polished, professional coaching product — refined visuals, consistent layout, and thoughtful UX across every screen.
+**Goal:** Elevate the client to a polished, professional coaching product — refined visuals, consistent layout, and thoughtful UX across every screen. **Mobile usability is a first-class goal:** the app is usable on phones today but not convenient; timeline and inventory drag-and-drop do not work reliably on touch devices.
 
-Reference: [UI_UX.md](./UI_UX.md) for palette, typography, and component standards.
+Reference: [UI_UX.md](./UI_UX.md) for palette, typography, component standards, and mobile targets.
+
+### Mobile & touch (priority)
+
+The routine builder and core flows must feel **convenient on a phone**, not merely possible.
+
+- [ ] **Touch drag-and-drop** — timeline reorder and inventory → timeline drops work on iOS and Android (`TouchSensor` / delay + tolerance in `@dnd-kit`, or equivalent); no reliance on mouse-only pointer events
+- [ ] **Mobile fallback controls** — when drag is awkward, prominent move-up/move-down, “Add to timeline” buttons, and insert-position picker (no dead-end UX on touch)
+- [ ] **Routine Builder mobile layout** — stacked panels with clear section tabs or accordions; inventory reachable without excessive scrolling; sticky score summary where helpful
+- [ ] **Touch targets** — minimum 44×44 px for handles, buttons, and list actions across all pages
+- [ ] **Inventory pickers on small screens** — full-width inputs, readable font size, dropdowns that don’t clip off-screen
+- [ ] **My Routines & forms** — card layout, thumb-friendly actions, no horizontal overflow
+- [ ] **Manual test matrix** — verify login → create routine → add/reorder items → edit → delete on real phone(s)
+
+**Known gap (M5):** `@dnd-kit` is configured for pointer/keyboard; phone drag fails or is unreliable. Fix in M8, not deferred.
 
 ### Theme & visual identity
 
@@ -252,16 +266,16 @@ Reference: [UI_UX.md](./UI_UX.md) for palette, typography, and component standar
 - [ ] Dashboard — action cards, visual hierarchy
 - [ ] Profile — grouped sections, readable forms
 - [ ] My Routines — list/card layout, filters or sort if needed
-- [ ] Routine Builder — three-panel layout, timeline, editing, score/validation panels
+- [ ] Routine Builder — three-panel layout, timeline, inventory, score/validation panels; **mobile layout and touch DnD** (see Mobile & touch above)
 
 ### Responsive & accessibility
 
-- [ ] Test all flows at mobile, tablet, and desktop breakpoints
-- [ ] Touch-friendly targets and spacing on small screens
+- [ ] Test all flows at mobile, tablet, and desktop breakpoints — **phone must pass the routine-builder test matrix**
+- [ ] Touch-friendly targets and spacing on small screens (see Mobile & touch)
 - [ ] Visible focus rings and keyboard navigation
 - [ ] Color contrast meets WCAG AA for text and controls
 
-**Test:** Full user flow on desktop and mobile feels cohesive, modern, and professional; no raw placeholder styling remains.
+**Test:** Full user flow on desktop and **phone** feels cohesive and convenient; timeline reorder and add-from-inventory work via touch or clear fallbacks; no raw placeholder styling remains.
 
 ---
 

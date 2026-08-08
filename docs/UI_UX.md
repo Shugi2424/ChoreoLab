@@ -170,13 +170,24 @@ The most important screen. Three-panel layout on desktop:
 
 ### Mobile Layout
 
+**Current (M5):** Panels stack on small screens (score → timeline → inventory) via responsive grid, but **drag-and-drop does not work on touch devices** and the stacked layout is usable yet cramped. Up/down reorder buttons exist as a partial fallback.
+
+**Target (M8):** Phone-first convenience — see [ROADMAP.md](./ROADMAP.md) Milestone 8 “Mobile & touch”.
+
 On small screens, panels stack vertically:
 
 1. Score + validation (top — most important feedback)
-2. Timeline
-3. Editing panel
+2. Timeline (reorder via **touch drag** or prominent move buttons)
+3. Inventory panel (compose items; **“Add to timeline”** when drag isn’t used)
 
-Use MUI `useMediaQuery` or `Grid` breakpoints.
+Additional mobile UX:
+
+- Section tabs or collapsible panels so coaches aren’t scrolling through three full panels
+- `@dnd-kit` **TouchSensor** with activation delay so scroll and drag don’t conflict
+- Drag handles sized for fingers (≥ 44 px)
+- Full-width pickers; listbox menus that fit the viewport
+
+Use MUI `useMediaQuery` or `Grid` breakpoints; test on real iOS and Android devices.
 
 ---
 
@@ -186,7 +197,7 @@ Use MUI `useMediaQuery` or `Grid` breakpoints.
 | ------------------- | --------------------------------------------------------------- |
 | Add item            | Compose in inventory → drag to timeline or submit → mutation → UI updates |
 | Remove item         | Confirmation dialog → mutation                                  |
-| Reorder             | **Drag-and-drop** (primary) or up/down buttons → mutation       |
+| Reorder             | **Drag-and-drop** (primary on desktop) or up/down buttons → mutation. **M8:** touch drag on mobile + explicit “move” / “add to timeline” fallbacks |
 | Change item content | Edit in inventory panel → mutation on save                      |
 | Save routine        | Auto-saved on every change (saving indicator in score panel)    |
 | Navigate away       | No unsaved warning needed (auto-save)                           |
@@ -223,7 +234,8 @@ Use MUI `useMediaQuery` or `Grid` breakpoints.
 | My Routines     | ✅ Implemented                                         |
 | Profile         | ✅ Implemented                                         |
 | Routine Builder | ✅ Implemented (M5 — inventory, timeline DnD, validation) |
-| Visual polish   | ❌ Milestone 8                                         |
+| Visual polish       | ❌ Milestone 8                                         |
+| Mobile / touch UX   | ⚠️ Partial — stacks on small screens; **DnD broken on phones** (M8) |
 
 ---
 
