@@ -139,12 +139,12 @@ Each milestone is **independently testable** and should be completed before movi
 - [x] `Base` and `DACriteria` models and seed (34 bases, 7 criteria)
 - [x] `RCriteria` and `Rotation` models and seed (15 criteria, 16 rotation groups)
 - [x] `ArtistryComponent` model and seed (4 types)
-- [ ] `referenceDataService`
+- [x] `referenceDataService`
 
 ### Documentation
 
-- [ ] Domain docs populated (see Phase 0)
-- [ ] Seed JSON files derived from domain docs
+- [x] Domain docs populated (see Phase 0)
+- [x] Seed JSON files derived from domain docs
 
 **Test:** Run seed → query reference data via GraphQL → data matches seed files.
 
@@ -341,4 +341,4 @@ M6 and M7 can be developed in parallel after M5.
 
 ## Next Step
 
-**Milestone 3 complete.** Next: **Milestone 4 — Reference Data & Seeding** (remaining items) or continue to **Milestone 5 — Routine Builder**.
+**Milestone 4 complete.** Next: **Milestone 5 — Routine Builder (Timeline)**.

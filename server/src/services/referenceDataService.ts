@@ -1,3 +1,4 @@
+import { BodyElement } from "../models/BodyElement.js";
 import {
   ArtistryComponent,
   Base,
@@ -5,15 +6,34 @@ import {
   RCriteria,
   Rotation,
 } from "../models/reference.js";
+import { Requirement } from "../models/Requirement.js";
 import {
   toGraphQLArtistryComponent,
   toGraphQLBase,
+  toGraphQLBodyElement,
   toGraphQLDACriteria,
   toGraphQLRCriteria,
+  toGraphQLRequirement,
   toGraphQLRotation,
 } from "../utils/mappers.js";
 
 export const referenceDataService = {
+  async listBodyElements(category?: string) {
+    const filter = category ? { category } : {};
+    const docs = await BodyElement.find(filter).sort({ id: 1 }).lean();
+    return docs.map(toGraphQLBodyElement);
+  },
+
+  async getBodyElement(id: string) {
+    const doc = await BodyElement.findOne({ id }).lean();
+    return doc ? toGraphQLBodyElement(doc) : null;
+  },
+
+  async getRequirements(ageCategory: string) {
+    const doc = await Requirement.findOne({ ageCategory }).lean();
+    return doc ? toGraphQLRequirement(doc) : null;
+  },
+
   async listDACriteria() {
     const docs = await DACriteria.find().sort({ id: 1 }).lean();
     return docs.map(toGraphQLDACriteria);

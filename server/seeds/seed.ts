@@ -60,7 +60,13 @@ async function seedBodyElements() {
     });
   }
 
-  console.log(`Seeded ${elements.length} body elements`);
+  const seededIds = elements.map((element) => element.id);
+  const removed = await BodyElement.deleteMany({ id: { $nin: seededIds } });
+
+  console.log(
+    `Seeded ${elements.length} body elements (removed ${removed.deletedCount} stale)`,
+  );
+  return elements.length;
 }
 
 async function seedRequirements() {
@@ -78,7 +84,13 @@ async function seedRequirements() {
     await Requirement.replaceOne({ id: req.id }, req, { upsert: true });
   }
 
-  console.log(`Seeded ${requirements.length} requirement documents`);
+  const seededIds = requirements.map((req) => req.id);
+  const removed = await Requirement.deleteMany({ id: { $nin: seededIds } });
+
+  console.log(
+    `Seeded ${requirements.length} requirement documents (removed ${removed.deletedCount} stale)`,
+  );
+  return requirements.length;
 }
 
 async function seedDACriteria() {
@@ -91,7 +103,13 @@ async function seedDACriteria() {
     });
   }
 
-  console.log(`Seeded ${criteria.length} DA criteria`);
+  const seededIds = criteria.map((criterion) => criterion.id);
+  const removed = await DACriteria.deleteMany({ id: { $nin: seededIds } });
+
+  console.log(
+    `Seeded ${criteria.length} DA criteria (removed ${removed.deletedCount} stale)`,
+  );
+  return criteria.length;
 }
 
 async function seedBases() {
@@ -115,6 +133,7 @@ async function seedBases() {
   console.log(
     `Seeded ${bases.length} DA bases (removed ${removed.deletedCount} stale)`,
   );
+  return bases.length;
 }
 
 async function seedRCriteria() {
@@ -138,6 +157,7 @@ async function seedRCriteria() {
   console.log(
     `Seeded ${criteria.length} R criteria (removed ${removed.deletedCount} stale)`,
   );
+  return criteria.length;
 }
 
 async function seedRotations() {
@@ -159,6 +179,7 @@ async function seedRotations() {
   console.log(
     `Seeded ${rotations.length} rotations (removed ${removed.deletedCount} stale)`,
   );
+  return rotations.length;
 }
 
 async function seedArtistryComponents() {
@@ -184,6 +205,37 @@ async function seedArtistryComponents() {
   console.log(
     `Seeded ${components.length} artistry components (removed ${removed.deletedCount} stale)`,
   );
+  return components.length;
+}
+
+async function verifyCounts(expected: Record<string, number>) {
+  const actual = {
+    bodyelements: await BodyElement.countDocuments(),
+    requirements: await Requirement.countDocuments(),
+    dacriteria: await DACriteria.countDocuments(),
+    bases: await Base.countDocuments(),
+    rcriteria: await RCriteria.countDocuments(),
+    rotations: await Rotation.countDocuments(),
+    artistrycomponents: await ArtistryComponent.countDocuments(),
+  };
+
+  const mismatches = Object.entries(expected).filter(
+    ([collection, count]) => actual[collection as keyof typeof actual] !== count,
+  );
+
+  if (mismatches.length > 0) {
+    for (const [collection, count] of mismatches) {
+      console.error(
+        `Verification failed: ${collection} expected ${count}, got ${actual[collection as keyof typeof actual]}`,
+      );
+    }
+    throw new Error("Seed verification failed — counts do not match seed files");
+  }
+
+  console.log("Verification passed — all collection counts match seed files");
+  console.log(
+    `  bodyelements: ${actual.bodyelements}, requirements: ${actual.requirements}, dacriteria: ${actual.dacriteria}, bases: ${actual.bases}, rcriteria: ${actual.rcriteria}, rotations: ${actual.rotations}, artistrycomponents: ${actual.artistrycomponents}`,
+  );
 }
 
 async function main() {
@@ -191,25 +243,19 @@ async function main() {
   console.log("Connected to MongoDB");
 
   await dropLegacyCollections();
-  await seedBodyElements();
-  await seedRequirements();
-  await seedDACriteria();
-  await seedBases();
-  await seedRCriteria();
-  await seedRotations();
-  await seedArtistryComponents();
-  await stripVersionKeys();
 
-  const bodyCount = await BodyElement.countDocuments();
-  const reqCount = await Requirement.countDocuments();
-  const criteriaCount = await DACriteria.countDocuments();
-  const baseCount = await Base.countDocuments();
-  const rCriteriaCount = await RCriteria.countDocuments();
-  const rotationCount = await Rotation.countDocuments();
-  const artistryCount = await ArtistryComponent.countDocuments();
-  console.log(
-    `Done. bodyelements: ${bodyCount}, requirements: ${reqCount}, dacriteria: ${criteriaCount}, bases: ${baseCount}, rcriteria: ${rCriteriaCount}, rotations: ${rotationCount}, artistrycomponents: ${artistryCount}`,
-  );
+  const expectedCounts = {
+    bodyelements: await seedBodyElements(),
+    requirements: await seedRequirements(),
+    dacriteria: await seedDACriteria(),
+    bases: await seedBases(),
+    rcriteria: await seedRCriteria(),
+    rotations: await seedRotations(),
+    artistrycomponents: await seedArtistryComponents(),
+  };
+
+  await stripVersionKeys();
+  await verifyCounts(expectedCounts);
 
   await mongoose.disconnect();
 }

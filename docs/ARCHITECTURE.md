@@ -87,7 +87,7 @@ All business logic lives here. Planned services:
 | `routineService`       | Routine CRUD, timeline management                |
 | `scoringService`       | DB and DA calculation                            |
 | `validationService`    | CoP requirement checking                         |
-| `referenceDataService` | Read-only access to BodyElements, Bases, etc.    |
+| `referenceDataService` | Read-only access to all reference collections (M4) |
 
 Services may call other services (composition). They receive `coachId` from context for authorization.
 

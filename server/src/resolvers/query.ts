@@ -1,7 +1,5 @@
 import { authService } from "../services/authService.js";
-import { bodyElementService } from "../services/bodyElementService.js";
 import { referenceDataService } from "../services/referenceDataService.js";
-import { requirementService } from "../services/requirementService.js";
 import { routineService } from "../services/routineService.js";
 import type { GraphQLContext } from "../types/context.js";
 import { AuthenticationError, requireAuth } from "../utils/errors.js";
@@ -24,12 +22,12 @@ export const queryResolvers = {
     context: GraphQLContext,
   ) => {
     requireAuth(context);
-    return bodyElementService.list(category);
+    return referenceDataService.listBodyElements(category);
   },
 
   bodyElement: (_: unknown, { id }: { id: string }, context: GraphQLContext) => {
     requireAuth(context);
-    return bodyElementService.getById(id);
+    return referenceDataService.getBodyElement(id);
   },
 
   requirements: (
@@ -38,7 +36,7 @@ export const queryResolvers = {
     context: GraphQLContext,
   ) => {
     requireAuth(context);
-    return requirementService.getByAgeCategory(ageCategory);
+    return referenceDataService.getRequirements(ageCategory);
   },
 
   daCriteria: (_: unknown, __: unknown, context: GraphQLContext) => {

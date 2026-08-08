@@ -3,6 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "scripts\\run-dev.cmd",
+    "dev:stop": "scripts\\stop-dev.cmd",
     "lint": "eslint client/src server/src",
     "lint:fix": "eslint client/src server/src --fix",
     "format": "prettier --write .",

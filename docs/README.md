@@ -74,6 +74,13 @@ These hold the detailed CoP data that drives seed files and validation rules.
 
 ## Current phase
 
-**Documentation refinement** — filling domain docs collaboratively before Milestone 0 (code foundation).
+**Milestone 4 complete** — reference data seeded and queryable via `referenceDataService`.
 
-See [ROADMAP.md](./ROADMAP.md) for the full plan.
+Next: **Milestone 5 — Routine Builder** ([ROADMAP.md](./ROADMAP.md)).
+
+### Local dev shortcuts (Windows)
+
+Double-click in Explorer:
+
+- [`scripts/run-dev.cmd`](../scripts/run-dev.cmd) — start server + client in two windows
+- [`scripts/stop-dev.cmd`](../scripts/stop-dev.cmd) — stop processes on ports 4000 and 5173
