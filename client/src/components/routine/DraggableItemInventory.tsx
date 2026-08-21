@@ -266,6 +266,7 @@ export function RotationPicker({
   return (
     <Autocomplete
       size="small"
+      sx={compactPickerSx}
       options={rotations}
       getOptionLabel={formatRotationLabel}
       filterOptions={(options, state) => {

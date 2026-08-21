@@ -96,6 +96,8 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
   const [dropInsertIndex, setDropInsertIndex] = useState<number | null>(null);
   const [hiddenInventoryDragId, setHiddenInventoryDragId] = useState<string | null>(null);
 
+  const [scrollToItemId, setScrollToItemId] = useState<string | null>(null);
+
   const { localItemIds, setLocalItemIds } = useTimelineOrder(routine.timeline);
 
   const inventoryMode =
@@ -151,6 +153,9 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
         insertIndex != null
           ? sorted[insertIndex]
           : sorted[sorted.length - 1];
+      if (newItem?.id) {
+        setScrollToItemId(newItem.id);
+      }
       if (PERSIST_ADD_TYPES.has(type)) {
         setAddType(type);
         setSelectedItemId(null);
@@ -410,13 +415,22 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
       dropInsertIndex={dropInsertIndex}
       dropIndicatorColor={dragPreview?.color ?? null}
       busy={busy}
+      scrollToItemId={scrollToItemId}
+      onScrolledToItem={() => setScrollToItemId(null)}
     />
   );
 
   const scoreSection = <ScorePanel routine={routine} />;
 
   return (
-    <Box>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        height: { xs: "auto", md: "calc(100vh - 180px)" },
+        minHeight: { md: 520 },
+      }}
+    >
       <Box
         sx={{
           display: "flex",
@@ -425,6 +439,7 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
           justifyContent: "space-between",
           gap: 1,
           mb: 1,
+          flexShrink: 0,
         }}
       >
         <Typography variant="h4" color="secondary.main">
@@ -441,14 +456,14 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
           variant="outlined"
         />
       </Box>
-      <Typography color="text.secondary" sx={{ mb: 2 }}>
+      <Typography color="text.secondary" sx={{ mb: 2, flexShrink: 0 }}>
         {formatApparatus(routine.apparatus)} · {formatAgeCategory(routine.ageCategory)}
         {" · "}
         Changes save automatically
       </Typography>
 
       {errorMessage && (
-        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setErrorMessage(null)}>
+        <Alert severity="error" sx={{ mb: 2, flexShrink: 0 }} onClose={() => setErrorMessage(null)}>
           {errorMessage}
         </Alert>
       )}
@@ -461,22 +476,36 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
       >
-        <Grid container spacing={2} sx={{ minHeight: 640 }}>
+        <Grid
+          container
+          spacing={2}
+          sx={{
+            flex: 1,
+            minHeight: 0,
+            overflow: { xs: "visible", md: "hidden" },
+          }}
+        >
           {isMobile ? (
             <>
-              <Grid size={12}>{scoreSection}</Grid>
-              <Grid size={12}>{timelineSection}</Grid>
-              <Grid size={12}>{inventorySection}</Grid>
+              <Grid size={12} sx={{ flexShrink: 0 }}>
+                {scoreSection}
+              </Grid>
+              <Grid size={12} sx={{ display: "flex", minHeight: 220, maxHeight: 320 }}>
+                {timelineSection}
+              </Grid>
+              <Grid size={12} sx={{ display: "flex", minHeight: 280, flex: 1 }}>
+                {inventorySection}
+              </Grid>
             </>
           ) : (
             <>
-              <Grid size={{ xs: 12, md: 3 }} sx={{ minHeight: 640 }}>
+              <Grid size={{ xs: 12, md: 3 }} sx={{ display: "flex", minHeight: 0, height: "100%" }}>
                 {inventorySection}
               </Grid>
-              <Grid size={{ xs: 12, md: 6 }} sx={{ minHeight: 640 }}>
+              <Grid size={{ xs: 12, md: 6 }} sx={{ display: "flex", minHeight: 0, height: "100%" }}>
                 {timelineSection}
               </Grid>
-              <Grid size={{ xs: 12, md: 3 }} sx={{ minHeight: 640 }}>
+              <Grid size={{ xs: 12, md: 3 }} sx={{ display: "flex", minHeight: 0, height: "100%" }}>
                 {scoreSection}
               </Grid>
             </>

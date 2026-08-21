@@ -159,8 +159,8 @@ The most important screen. Three-panel layout on desktop:
 
 ### Score Panel (right)
 
-- **DB Score** — large pink number (live recalculation in M6)
-- **DA Score** — large purple number (live recalculation in M6)
+- **DB Score** — large pink number, updates live after each timeline mutation (M6)
+- **DA Score** — large purple number, updates live after each timeline mutation (M6)
 - **Validation Panel** below scores (full engine in M7):
   - Green checkmarks for met requirements
   - Red X for missing requirements

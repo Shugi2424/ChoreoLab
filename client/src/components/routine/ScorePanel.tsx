@@ -23,11 +23,21 @@ export function ScorePanel({ routine }: ScorePanelProps) {
   const missing = validation.missingRequirements;
 
   return (
-    <Paper sx={{ p: 2, height: "100%" }}>
-      <Typography variant="h6" gutterBottom>
+    <Paper
+      sx={{
+        p: 2,
+        height: "100%",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        minHeight: 0,
+        overflow: "hidden",
+      }}
+    >
+      <Typography variant="h6" gutterBottom sx={{ flexShrink: 0 }}>
         Scores
       </Typography>
-      <Box sx={{ display: "flex", gap: 3, mb: 2 }}>
+      <Box sx={{ display: "flex", gap: 3, mb: 2, flexShrink: 0 }}>
         <Box>
           <Typography variant="body2" color="text.secondary">
             DB
@@ -52,11 +62,12 @@ export function ScorePanel({ routine }: ScorePanelProps) {
         </Box>
       </Box>
 
-      <Divider sx={{ my: 2 }} />
+      <Divider sx={{ my: 2, flexShrink: 0 }} />
 
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h6" gutterBottom sx={{ flexShrink: 0 }}>
         Validation
       </Typography>
+      <Box sx={{ flex: 1, minHeight: 0, overflow: "auto", pr: 0.5 }}>
       <List dense disablePadding>
         <ListItem disableGutters>
           <ListItemIcon sx={{ minWidth: 36 }}>
@@ -135,6 +146,7 @@ export function ScorePanel({ routine }: ScorePanelProps) {
           Routine meets all CoP requirements.
         </Typography>
       )}
+      </Box>
     </Paper>
   );
 }

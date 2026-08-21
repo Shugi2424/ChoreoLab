@@ -74,9 +74,9 @@ These hold the detailed CoP data that drives seed files and validation rules.
 
 ## Current phase
 
-**Milestone 5 complete** — routine timeline builder with drag-and-drop reordering and all four item types.
+**Milestone 6 complete** — live DB/DA scoring on every timeline change.
 
-Next: **Milestone 6 — Scoring Engine** ([ROADMAP.md](./ROADMAP.md)).
+Next: **Milestone 7 — Validation Engine** ([ROADMAP.md](./ROADMAP.md)).
 
 ### Local dev shortcuts (Windows)
 

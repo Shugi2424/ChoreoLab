@@ -19,7 +19,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Routine, RoutineItem } from "../../types/routine";
 import {
   getRoutineItemLabel,
@@ -37,6 +37,8 @@ interface TimelinePanelProps {
   dropInsertIndex: number | null;
   dropIndicatorColor?: string | null;
   busy: boolean;
+  scrollToItemId?: string | null;
+  onScrolledToItem?: () => void;
 }
 
 function DropSlotIndicator({ color }: { color?: string | null }) {
@@ -86,13 +88,20 @@ function TimelineRowContent({
       slotProps={{
         primary: {
           variant: "body2",
-          sx: { fontWeight: selected ? 600 : 400, color: accent },
+          sx: {
+            fontWeight: selected ? 600 : 400,
+            color: accent,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          },
         },
         secondary: {
           variant: "caption",
           sx: { color: accent, opacity: 0.75 },
         },
       }}
+      sx={{ minWidth: 0, mr: 1 }}
     />
   );
 }
@@ -195,7 +204,11 @@ export function TimelinePanel({
   dropInsertIndex,
   dropIndicatorColor,
   busy,
+  scrollToItemId,
+  onScrolledToItem,
 }: TimelinePanelProps) {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
   const sortedItems = useMemo(
     () => [...routine.timeline].sort((a, b) => a.order - b.order),
     [routine.timeline],
@@ -210,25 +223,54 @@ export function TimelinePanel({
 
   const { setNodeRef, isOver } = useDroppable({ id: "timeline-drop" });
 
+  useEffect(() => {
+    if (!scrollToItemId) {
+      return;
+    }
+
+    const frame = requestAnimationFrame(() => {
+      const container = scrollContainerRef.current;
+      if (!container) {
+        return;
+      }
+
+      const row = container.querySelector(`[data-timeline-item-id="${scrollToItemId}"]`);
+      if (row) {
+        row.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      } else {
+        container.scrollTo({
+          top: container.scrollTop + 72,
+          behavior: "smooth",
+        });
+      }
+
+      onScrolledToItem?.();
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [scrollToItemId, displayItems, onScrolledToItem]);
+
   return (
     <Paper
       ref={setNodeRef}
       sx={{
         p: 2,
         height: "100%",
+        width: "100%",
         display: "flex",
         flexDirection: "column",
         minHeight: 0,
+        overflow: "hidden",
         outline: isOver ? "2px dashed" : "2px dashed transparent",
         outlineColor: isOver ? "primary.main" : "transparent",
         transition: "outline-color 0.15s ease",
       }}
     >
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h6" gutterBottom sx={{ flexShrink: 0 }}>
         Timeline
       </Typography>
 
-      <Box sx={{ flex: 1, minHeight: 120, overflow: "auto" }}>
+      <Box ref={scrollContainerRef} sx={{ flex: 1, minHeight: 0, overflow: "auto", pr: 0.5 }}>
         {displayItems.length === 0 ? (
           <Box sx={{ py: 2 }}>
             {dropInsertIndex === 0 ? <DropSlotIndicator color={dropIndicatorColor} /> : null}
@@ -240,7 +282,7 @@ export function TimelinePanel({
           <SortableContext items={localItemIds} strategy={verticalListSortingStrategy}>
             <List dense disablePadding>
               {displayItems.map((item, index) => (
-                <Box key={item.id}>
+                <Box key={item.id} data-timeline-item-id={item.id}>
                   {dropInsertIndex === index ? (
                     <DropSlotIndicator color={dropIndicatorColor} />
                   ) : null}

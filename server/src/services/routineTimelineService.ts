@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import { BodyElement } from "../models/BodyElement.js";
 import { Routine, type RoutineDocument } from "../models/Routine.js";
+import type { RoutineScoreTarget } from "../types/routineScoring.js";
 import { RCriteria, Rotation, ArtistryComponent } from "../models/reference.js";
 import {
   ForbiddenError,
@@ -22,6 +23,7 @@ import {
 
 import type { Apparatus } from "../types/enums.js";
 import { toGraphQLRoutine } from "../utils/mappers.js";
+import { scoringService } from "./scoringService.js";
 
 export type { RiskInput, RiskRotationInput };
 
@@ -192,6 +194,12 @@ function findTimelineItem(routine: RoutineDocument, itemId: string) {
   return item;
 }
 
+async function persistRoutine(routine: RoutineScoreTarget) {
+  await scoringService.applyScores(routine);
+  await routine.save();
+  return toGraphQLRoutine(routine.toObject());
+}
+
 export const routineTimelineService = {
   async addItem(
     coachId: string,
@@ -208,8 +216,7 @@ export const routineTimelineService = {
     routine.timeline.splice(index, 0, item);
     renormalizeOrder(routine.timeline);
     routine.markModified("timeline");
-    await routine.save();
-    return toGraphQLRoutine(routine.toObject());
+    return persistRoutine(routine);
   },
 
   async removeItem(coachId: string, routineId: string, itemId: string) {
@@ -222,8 +229,7 @@ export const routineTimelineService = {
     }
     routine.timeline.splice(index, 1);
     renormalizeOrder(routine.timeline);
-    await routine.save();
-    return toGraphQLRoutine(routine.toObject());
+    return persistRoutine(routine);
   },
 
   async reorderItems(coachId: string, routineId: string, itemIds: string[]) {
@@ -260,8 +266,7 @@ export const routineTimelineService = {
       (a, b) => (a as { order: number }).order - (b as { order: number }).order,
     );
     routine.markModified("timeline");
-    await routine.save();
-    return toGraphQLRoutine(routine.toObject());
+    return persistRoutine(routine);
   },
 
   async updateItem(
@@ -314,7 +319,6 @@ export const routineTimelineService = {
         throw new UserInputError("Invalid routine item type.");
     }
 
-    await routine.save();
-    return toGraphQLRoutine(routine.toObject());
+    return persistRoutine(routine);
   },
 };

@@ -86,6 +86,8 @@ Same reference collection as Risks — see [DB.md](./DB.md). A mastery may inclu
 
 DA does **not** contribute to DB score — separate difficulty component.
 
+**Routine DA score (M6):** only the **highest-valued** masteries up to the age-category `maxMasteries` are summed into `daScore` (15 senior / 12 junior).
+
 ---
 
 ## DA limits (from `requirements` collection)

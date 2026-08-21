@@ -86,7 +86,7 @@ All business logic lives here. Planned services:
 | `coachService`         | Profile CRUD                                     |
 | `routineService`       | Routine CRUD, timeline management                |
 | `routineTimelineService` | Timeline add/remove/reorder/update, risk/mastery validation (M5) |
-| `scoringService`       | DB and DA calculation                            |
+| `scoringService`       | DB and DA calculation (M6)                       |
 | `validationService`    | CoP requirement checking                         |
 | `referenceDataService` | Read-only access to all reference collections (M4) |
 
@@ -208,10 +208,10 @@ Completed through Milestone 5:
 - Layered services (`authService`, `routineService`, `routineTimelineService`, `referenceDataService`)
 - GraphQL schema split by domain; auth context on all protected operations
 - Routine Builder UI with inventory panel, timeline drag-and-drop, and composition validation
+- `scoringService` — DB/DA recalculation on every timeline change (M6)
 
 Remaining:
 
-- `scoringService` and live score recalculation (M6)
 - `validationService` and live requirement checking (M7)
 - UI polish pass (M8)
 

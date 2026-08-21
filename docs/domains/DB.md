@@ -143,6 +143,8 @@ Example (ball): outside visual field throw (+0.10) + catch with 1 hand (+0.10) +
 - Each **additional** complete 360° rotation beyond 2 adds **+0.10** (the `rotation` criterion in §4.8.1). Rotation entries in the builder map to this — the `rotation` general criterion is not selected separately.
 - Throw, catch, and other general criteria from §4.8–4.10 add their `value` once each (deduplicated).
 
+**Routine DB score (M6):** only the **highest-valued** risks up to the age-category `maxRisks` are summed into `dbScore` (4 senior / 3 junior). Body elements are deduplicated by id, then the highest values up to `maxElements` are counted.
+
 ### Composition rules enforced in ChoreoLab
 
 | Rule | Detail |

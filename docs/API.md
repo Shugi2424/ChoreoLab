@@ -455,7 +455,22 @@ Risk and mastery inputs are validated server-side in `routineTimelineService` be
 - **Risk** — minimum 2 rotations, apparatus-specific criteria, direct-catch mutual exclusion, throw-after-roll requires without-hands throw. Value = `0.20 + max(0, totalRotations − 2) × 0.10 + Σ criteria values`.
 - **Mastery** — valid base/criteria combinations per CoP §5.1.3, apparatus eligibility, alternate-catch base exclusion. Value calculated from bases + criteria combo.
 
-Every routine mutation recalculates `dbScore`, `daScore`, and `validation` before returning (scoring and full validation engines are M6/M7 — values remain 0 / placeholder until then).
+Every routine mutation recalculates `dbScore` and `daScore` before returning (via `scoringService`). Full CoP **validation** recalculation is M7 — `validation` remains placeholder until then.
+
+### Scoring rules (M6)
+
+**DB** — from `requirements.DB` for the routine's age category:
+
+- Body elements: each distinct `bodyElementId` counted once; take the **highest values** up to `maxElements` (8 senior / 6 junior)
+- Risks: take the **highest `risk.value`** entries up to `maxRisks` (4 senior / 3 junior)
+- `dbScore` = sum of counted body values + counted risk values (rounded to 1 decimal)
+
+**DA** — from `requirements.DA`:
+
+- Masteries: take the **highest `mastery.value`** entries up to `maxMasteries` (15 senior / 12 junior)
+- `daScore` = sum of counted mastery values (rounded to 1 decimal)
+
+Implemented in `server/src/services/scoringService.ts` and `server/src/utils/scoring.ts`. Called from `routineTimelineService` on every timeline save.
 
 ---
 
@@ -477,7 +492,7 @@ Every routine mutation recalculates `dbScore`, `daScore`, and `validation` befor
 | `artistryComponents` / `artistryComponent` | ✅ Implemented      |
 | `daCriteria` / `daCriterion`               | ✅ Implemented      |
 | `addRoutineItem` / `removeRoutineItem` / `reorderRoutineItems` / `updateRoutineItem` | ✅ Implemented (M5) |
-| Scoring recalculation on timeline change   | ❌ Not implemented (M6) |
+| Scoring recalculation on timeline change   | ✅ Implemented (M6) |
 | Live validation recalculation              | ❌ Not implemented (M7) |
 
 ---

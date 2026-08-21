@@ -45,8 +45,8 @@ ChoreoLab calculates **numeric scores for DB and DA only**. Artistry (A) has no 
 
 | Score  | Calculation                                                                     |
 | ------ | ------------------------------------------------------------------------------- |
-| **DB** | Sum of `BodyElement.value` + `Risk.value` for all timeline items of those types |
-| **DA** | Sum of `Mastery.value` across all mastery timeline items |
+| **DB** | Sum of the **highest-valued** body elements (each id once) up to `maxElements`, plus the **highest-valued** risks up to `maxRisks`, for the routine's age category |
+| **DA** | Sum of the **highest-valued** masteries up to `maxMasteries` for the age category |
 | **A**  | No calculation — requirement counts validated against `requirements.A`          |
 
 DB and DA are recalculated server-side on every routine change.

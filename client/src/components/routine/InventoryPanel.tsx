@@ -44,7 +44,9 @@ import {
 import {
   compactListboxSlotProps,
   renderCompactAutocompleteInput,
+  renderCompactMultiValue,
   renderCompactOption,
+  compactPickerSx,
 } from "./compactPickerStyles";
 import {
   DraggableItemInventory,
@@ -481,24 +483,26 @@ export function InventoryPanel({
       sx={{
         p: 1.5,
         height: "100%",
-        minHeight: 640,
+        width: "100%",
         display: "flex",
         flexDirection: "column",
+        minHeight: 0,
         overflow: "hidden",
       }}
     >
       {mode === "idle" ? (
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h6" gutterBottom sx={{ flexShrink: 0 }}>
           Inventory
         </Typography>
       ) : null}
 
       {formError && (
-        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setFormError(null)}>
+        <Alert severity="error" sx={{ mb: 2, flexShrink: 0 }} onClose={() => setFormError(null)}>
           {formError}
         </Alert>
       )}
 
+      <Box sx={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column", overflow: "hidden" }}>
       {showBodyInventory ? (
         <DraggableItemInventory
           title={mode === "edit" ? "Change body element" : "Body elements"}
@@ -550,8 +554,12 @@ export function InventoryPanel({
           </Box>
         </>
       ) : showForm ? (
-        <Box component="form" onSubmit={handleSubmit} sx={{ overflow: "auto", flex: 1 }}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 1 }}>
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column", overflow: "hidden" }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 1, flexShrink: 0 }}>
             <IconButton aria-label="Back to inventory menu" size="small" onClick={onBack} disabled={busy}>
               <ArrowBackIcon fontSize="small" />
             </IconButton>
@@ -562,6 +570,7 @@ export function InventoryPanel({
             </Typography>
           </Box>
 
+          <Box sx={{ flex: 1, minHeight: 0, overflow: "auto", pr: 0.5 }}>
           {activeType === "risk" && (
             <>
               <Typography variant="caption" sx={{ fontWeight: 600, display: "block", mt: 1 }}>
@@ -570,6 +579,7 @@ export function InventoryPanel({
               <Autocomplete
                 multiple
                 size="small"
+                sx={{ mb: 1, ...compactPickerSx }}
                 options={throwCriteria}
                 getOptionLabel={(option: RCriteriaOption) => option.name}
                 value={throwCriteria.filter((c: RCriteriaOption) =>
@@ -577,6 +587,9 @@ export function InventoryPanel({
                 )}
                 onChange={(_event, options) => handleThrowCriteriaChange(options)}
                 slotProps={compactListboxSlotProps}
+                renderValue={(value, getItemProps) =>
+                  renderCompactMultiValue(value, getItemProps, (option: RCriteriaOption) => option.name)
+                }
                 renderOption={(props, option: RCriteriaOption) =>
                   renderCompactOption(props, option.name)
                 }
@@ -594,12 +607,16 @@ export function InventoryPanel({
               <Autocomplete
                 multiple
                 size="small"
+                sx={{ mb: 1, ...compactPickerSx }}
                 options={catchCriteria}
                 getOptionLabel={(option: RCriteriaOption) => option.name}
                 value={catchCriteria.filter((c: RCriteriaOption) =>
                   catchCriteriaIds.includes(c.id),
                 )}
                 onChange={(_event, options) => handleCatchCriteriaChange(options)}
+                renderValue={(value, getItemProps) =>
+                  renderCompactMultiValue(value, getItemProps, (option: RCriteriaOption) => option.name)
+                }
                 getOptionDisabled={(option) => {
                   if (
                     isDirectCatchCriterion(option.id) &&
@@ -652,12 +669,16 @@ export function InventoryPanel({
               <Autocomplete
                 multiple
                 size="small"
+                sx={{ mb: 1, ...compactPickerSx }}
                 options={generalCriteria}
                 getOptionLabel={(option: RCriteriaOption) => option.name}
                 value={generalCriteria.filter((c: RCriteriaOption) =>
                   generalCriteriaIds.includes(c.id),
                 )}
                 onChange={(_event, options) => setGeneralCriteriaIds(options.map((o) => o.id))}
+                renderValue={(value, getItemProps) =>
+                  renderCompactMultiValue(value, getItemProps, (option: RCriteriaOption) => option.name)
+                }
                 slotProps={compactListboxSlotProps}
                 renderOption={(props, option: RCriteriaOption) =>
                   renderCompactOption(props, option.name)
@@ -739,6 +760,7 @@ export function InventoryPanel({
               <Autocomplete
                 multiple
                 size="small"
+                sx={{ mb: 1, ...compactPickerSx }}
                 open={masteryBasesOpen}
                 onOpen={() => setMasteryBasesOpen(true)}
                 onClose={() => setMasteryBasesOpen(false)}
@@ -751,6 +773,13 @@ export function InventoryPanel({
                   handleMasteryBasesChange(options);
                   setMasteryBasesOpen(false);
                 }}
+                renderValue={(value, getItemProps) =>
+                  renderCompactMultiValue(
+                    value,
+                    getItemProps,
+                    (option: BaseOption) => `${option.name} (${formatCopValue(option.value)})`,
+                  )
+                }
                 getOptionDisabled={(option) => {
                   if (masteryBaseIds.length >= 2 && !masteryBaseIds.includes(option.id)) {
                     return true;
@@ -789,6 +818,7 @@ export function InventoryPanel({
               <Autocomplete
                 multiple
                 size="small"
+                sx={{ mb: 1, ...compactPickerSx }}
                 options={allowedMasteryCriteria}
                 getOptionLabel={(option: CriteriaOption) => option.name}
                 value={allowedMasteryCriteria.filter((c: CriteriaOption) =>
@@ -804,6 +834,9 @@ export function InventoryPanel({
                     setMasteryRotationId("");
                   }
                 }}
+                renderValue={(value, getItemProps) =>
+                  renderCompactMultiValue(value, getItemProps, (option: RCriteriaOption) => option.name)
+                }
                 slotProps={compactListboxSlotProps}
                 renderOption={(props, option: CriteriaOption) =>
                   renderCompactOption(props, option.name)
@@ -826,12 +859,14 @@ export function InventoryPanel({
               )}
             </>
           )}
+          </Box>
 
-          <Button type="submit" variant="contained" disabled={busy} sx={{ mt: 2 }}>
+          <Button type="submit" variant="contained" disabled={busy} sx={{ mt: 2, flexShrink: 0 }}>
             {mode === "add" ? "Add to timeline" : "Save changes"}
           </Button>
         </Box>
       ) : null}
+      </Box>
     </Paper>
   );
 }

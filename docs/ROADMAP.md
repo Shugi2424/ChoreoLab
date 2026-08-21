@@ -181,20 +181,20 @@ Each milestone is **independently testable** and should be completed before movi
 
 ---
 
-## Milestone 6 — Scoring Engine
+## Milestone 6 — Scoring Engine ✅
 
 **Goal:** DB and DA scores calculate automatically on every routine change.
 
 ### Server
 
-- [ ] `scoringService` — `calculateDB`, `calculateDA`
-- [ ] Integrate into routine mutations (recalculate on every change)
-- [ ] Persist scores on routine document
+- [x] `scoringService` — `calculateDB`, `calculateDA`
+- [x] Integrate into routine mutations (recalculate on every change)
+- [x] Persist scores on routine document
 
 ### Client
 
-- [ ] Score panel displays live DB and DA values
-- [ ] Updates immediately after any timeline mutation
+- [x] Score panel displays live DB and DA values
+- [x] Updates immediately after any timeline mutation
 
 **Test:** Add elements with known values → DB score matches expected sum. Add masteries → DA score matches expected sum.
 
@@ -363,4 +363,4 @@ M6 and M7 can be developed in parallel after M5.
 
 ## Next Step
 
-**Milestone 5 complete.** Next: **Milestone 6 — Scoring Engine**.
+**Milestone 6 complete.** Next: **Milestone 7 — Validation Engine**.
