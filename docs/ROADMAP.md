@@ -218,7 +218,55 @@ Each milestone is **independently testable** and should be completed before movi
 
 ---
 
-## Milestone 8 — Client UI Polish
+## Milestone 8 — Automated Test Suite
+
+**Goal:** Lock in CoP business logic with fast, repeatable automated tests so scoring, validation, and composition rules do not regress.
+
+Scoring/risk/mastery unit tests can be **drafted during M6–M7**; this milestone completes the suite, client parity tests, and CI. **Must finish before M10 Deployment.**
+
+### Tooling
+
+- [ ] **Vitest** — TypeScript-native test runner for `server/` and shared pure logic (recommended over Jest for ESM + `tsx` parity)
+- [ ] Root `npm test` (and `npm run test:watch`) invoking server + client test scripts
+- [ ] Coverage reporting for `server/src/utils/` and services (`@vitest/coverage-v8` or equivalent)
+- [ ] **GitHub Actions** (or CI of choice) — run `npm test`, `npm run lint`, and `npm run build` on push/PR
+
+### Server — unit tests (priority)
+
+Pure functions and services with **no MongoDB** (or mocked models):
+
+- [ ] `utils/scoring.ts` — DB top-N body elements + risks, DA top-N masteries, `roundCopScore`
+- [ ] `utils/riskValidation.ts` — composition rules, direct-catch exclusion, rotation minimum, value formula
+- [ ] `utils/masteryValidation.ts` — base/criteria counts, catch-from-high-throw pairing, alternate-catch exclusion, value calculation
+- [ ] `validationService` — rule handlers per domain (from M7), using fixture timelines + `requirements` seed data
+
+### Server — integration tests (stretch)
+
+- [ ] `routineTimelineService` + `scoringService` — add/update items recalculate scores (MongoDB Memory Server or test DB)
+- [ ] Auth middleware — JWT required / rejected on protected operations
+
+### Client — unit tests
+
+Mirror server rules where logic is duplicated:
+
+- [ ] `utils/riskValidation.ts` — same cases as server (keep parity documented)
+- [ ] `utils/masteryValidation.ts` — same cases as server
+- [ ] `utils/formatCopValue.ts` — one-decimal formatting edge cases
+
+Component tests (lower priority unless regressions appear):
+
+- [ ] Vitest + `@testing-library/react` for critical UI helpers (optional in first pass)
+
+### Out of scope (later)
+
+- **E2E** (Playwright/Cypress) — manual QA + deployment smoke tests first; add if coach flows need browser automation
+- **Visual regression** — not needed for v1
+
+**Test:** `npm test` passes locally and in CI; scoring/validation suites include at least one case per CoP rule documented in `docs/domains/`; a deliberate rule break fails the test run.
+
+---
+
+## Milestone 9 — Client UI Polish
 
 **Goal:** Elevate the client to a polished, professional coaching product — refined visuals, consistent layout, and thoughtful UX across every screen. **Mobile usability is a first-class goal:** the app is usable on phones today but not convenient; timeline and inventory drag-and-drop do not work reliably on touch devices.
 
@@ -236,7 +284,7 @@ The routine builder and core flows must feel **convenient on a phone**, not mere
 - [ ] **My Routines & forms** — card layout, thumb-friendly actions, no horizontal overflow
 - [ ] **Manual test matrix** — verify login → create routine → add/reorder items → edit → delete on real phone(s)
 
-**Known gap (M5):** `@dnd-kit` is configured for pointer/keyboard; phone drag fails or is unreliable. Fix in M8, not deferred.
+**Known gap (M5):** `@dnd-kit` is configured for pointer/keyboard; phone drag fails or is unreliable. Fix in M9, not deferred.
 
 ### Theme & visual identity
 
@@ -279,7 +327,7 @@ The routine builder and core flows must feel **convenient on a phone**, not mere
 
 ---
 
-## Milestone 9 — Deployment
+## Milestone 10 — Deployment
 
 **Goal:** Application accessible on the internet.
 
@@ -302,11 +350,11 @@ The routine builder and core flows must feel **convenient on a phone**, not mere
 - [ ] IP allowlist for Render
 - [ ] Run seed on production
 
-**Test:** Access app via Vercel URL → sign up → create routine → scores and validation work.
+**Test:** Access app via Vercel URL → sign up → create routine → scores and validation work. CI (`npm test`) passes on `master` before deploy.
 
 ---
 
-## Milestone 10 — Polish & Hardening
+## Milestone 11 — Polish & Hardening
 
 **Goal:** Production-quality finishing touches (server-side and reliability).
 
@@ -332,32 +380,34 @@ The routine builder and core flows must feel **convenient on a phone**, not mere
 | 5 — Routine Builder          | 3–5 days                              |
 | 6 — Scoring Engine           | 2–3 days                              |
 | 7 — Validation Engine        | 3–5 days (depends on CoP rules input) |
-| 8 — Client UI Polish         | 3–5 days                              |
-| 9 — Deployment               | 1–2 days                              |
-| 10 — Polish & Hardening      | 2–3 days                              |
+| 8 — Automated Test Suite     | 2–4 days                              |
+| 9 — Client UI Polish         | 3–5 days                              |
+| 10 — Deployment              | 1–2 days                              |
+| 11 — Polish & Hardening      | 2–3 days                              |
 
-**Total estimate:** 9–14 weeks at a steady pace, depending on CoP data availability.
+**Total estimate:** 10–15 weeks at a steady pace, depending on CoP data availability.
 
 ---
 
 ## Dependency Graph
 
 ```
-Phase 0 Documentation (current)
+Phase 0 Documentation
   └── M0 Foundation
         └── M1 Auth
               └── M2 Password Reset & Profile
                     └── M3 Dashboard & Routine CRUD
                           └── M4 Reference Data
                                 └── M5 Routine Builder
-                                      ├── M6 Scoring Engine
-                                      └── M7 Validation Engine
-                                            └── M8 Client UI Polish
-                                                  └── M9 Deployment
-                                                        └── M10 Polish & Hardening
+                                      ├── M6 Scoring Engine ──┐
+                                      └── M7 Validation Engine ┘ (M6 + M7 in parallel after M5)
+                                            └── M8 Automated Test Suite
+                                                  └── M9 Client UI Polish
+                                                        └── M10 Deployment
+                                                              └── M11 Polish & Hardening
 ```
 
-M6 and M7 can be developed in parallel after M5.
+M6 and M7 can be developed in parallel after M5. Milestones **M8 onward are sequential** — each should complete before the next begins.
 
 ---
 

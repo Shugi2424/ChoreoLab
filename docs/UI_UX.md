@@ -172,7 +172,7 @@ The most important screen. Three-panel layout on desktop:
 
 **Current (M5):** Panels stack on small screens (score → timeline → inventory) via responsive grid, but **drag-and-drop does not work on touch devices** and the stacked layout is usable yet cramped. Up/down reorder buttons exist as a partial fallback.
 
-**Target (M8):** Phone-first convenience — see [ROADMAP.md](./ROADMAP.md) Milestone 8 “Mobile & touch”.
+**Target (M9):** Phone-first convenience — see [ROADMAP.md](./ROADMAP.md) Milestone 9 “Mobile & touch”.
 
 On small screens, panels stack vertically:
 
@@ -197,7 +197,7 @@ Use MUI `useMediaQuery` or `Grid` breakpoints; test on real iOS and Android devi
 | ------------------- | --------------------------------------------------------------- |
 | Add item            | Compose in inventory → drag to timeline or submit → mutation → UI updates |
 | Remove item         | Confirmation dialog → mutation                                  |
-| Reorder             | **Drag-and-drop** (primary on desktop) or up/down buttons → mutation. **M8:** touch drag on mobile + explicit “move” / “add to timeline” fallbacks |
+| Reorder             | **Drag-and-drop** (primary on desktop) or up/down buttons → mutation. **M9:** touch drag on mobile + explicit “move” / “add to timeline” fallbacks |
 | Change item content | Edit in inventory panel → mutation on save                      |
 | Save routine        | Auto-saved on every change (saving indicator in score panel)    |
 | Navigate away       | No unsaved warning needed (auto-save)                           |
@@ -234,8 +234,8 @@ Use MUI `useMediaQuery` or `Grid` breakpoints; test on real iOS and Android devi
 | My Routines     | ✅ Implemented                                         |
 | Profile         | ✅ Implemented                                         |
 | Routine Builder | ✅ Implemented (M5 — inventory, timeline DnD, validation) |
-| Visual polish       | ❌ Milestone 8                                         |
-| Mobile / touch UX   | ⚠️ Partial — stacks on small screens; **DnD broken on phones** (M8) |
+| Visual polish       | ❌ Milestone 9                                         |
+| Mobile / touch UX   | ⚠️ Partial — stacks on small screens; **DnD broken on phones** (M9) |
 
 ---
 
@@ -263,4 +263,4 @@ const theme = createTheme({
 });
 ```
 
-This theme was implemented in Milestone 0. A dedicated visual and UX pass is **Milestone 8 — Client UI Polish** in [ROADMAP.md](./ROADMAP.md).
+This theme was implemented in Milestone 0. A dedicated visual and UX pass is **Milestone 9 — Client UI Polish** in [ROADMAP.md](./ROADMAP.md).

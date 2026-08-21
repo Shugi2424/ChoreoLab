@@ -213,7 +213,7 @@ Completed through Milestone 5:
 Remaining:
 
 - `validationService` and live requirement checking (M7)
-- UI polish pass (M8)
+- UI polish pass (M9)
 
 See [ROADMAP.md](./ROADMAP.md) for the full milestone plan.
 
