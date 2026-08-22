@@ -119,7 +119,9 @@ The application is **functional through Milestone 5**:
 - **Routine Builder** — inventory panel, timeline drag-and-drop, all four item types, risk/mastery composition validation
 - MUI theme, React Router, layered server services
 
-**Not yet implemented:** automated tests (M8), UI polish (M9), deployment (M10).
+**Not yet implemented:** UI polish (M9), deployment (M10).
+
+**Implemented (M8):** Vitest unit tests + GitHub Actions CI — see [TESTING.md](./TESTING.md).
 
 **Implemented:** live DB/DA scoring recalculates on every timeline change (M6).
 

@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { useDraggable } from "@dnd-kit/core";
 import { useMemo, useState } from "react";
+import { sortRotations } from "../../utils/rotationSort";
 import {
   compactListboxSlotProps,
   compactPickerSx,
@@ -266,13 +267,14 @@ export function RotationPicker({
   onChange,
   disabled,
 }: RotationPickerProps) {
-  const selected = rotations.find((rotation) => rotation.id === value) ?? null;
+  const sortedRotations = useMemo(() => sortRotations(rotations), [rotations]);
+  const selected = sortedRotations.find((rotation) => rotation.id === value) ?? null;
 
   return (
     <Autocomplete
       size="small"
       sx={compactPickerSx}
-      options={rotations}
+      options={sortedRotations}
       getOptionLabel={formatRotationLabel}
       filterOptions={(options, state) => {
         const query = state.inputValue.trim().toLowerCase();

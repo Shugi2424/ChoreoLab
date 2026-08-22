@@ -89,9 +89,24 @@ Rules for AI assistants (Cursor, Copilot, etc.) working on this codebase.
 
 ## Testing Expectations
 
-- Each milestone in [ROADMAP.md](./ROADMAP.md) defines its test criteria
-- Manual testing is acceptable for v1 feature work — automated tests are **Milestone 8** in [ROADMAP.md](./ROADMAP.md)
-- When adding a service, verify it works via GraphQL playground or client UI
+**No task is complete until `npm test` and `npm run build` pass from the repo root.**
+
+After every code change that affects behavior:
+
+- Update or add Vitest tests in the same turn — do not leave suites stale or failing.
+- **Shared CoP logic** → `shared/src/cop/*.test.ts`
+- **Server-only** (Mongoose, throws, fouetté/validation orchestration) → `server/src/**/*.test.ts`
+- **Client-only** (UI helpers, preview wrappers) → `client/src/**/*.test.ts`
+
+Commands (see [TESTING.md](./TESTING.md)):
+
+| Command | Purpose |
+| ------- | ------- |
+| `npm test` | All unit tests (shared + server + client) |
+| `npm run build` | Full compile (shared → server → client) |
+| `npm run test:coverage --prefix shared` | Coverage for shared + server utils/services |
+
+Milestone acceptance criteria in [ROADMAP.md](./ROADMAP.md) still apply; automated tests are required for regressions in scoring, validation, and composition rules.
 
 ---
 

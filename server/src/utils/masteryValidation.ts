@@ -1,14 +1,13 @@
+import {
+  ALTERNATE_CATCH_BASE_IDS,
+  CATCH_FROM_HIGH_THROW_BASE_ID,
+  getMasteryBaseCombinationError,
+} from "@choreolab/shared/cop/masteryRules.js";
 import { Base } from "../models/reference.js";
 import type { Apparatus } from "../types/enums.js";
 import { UserInputError } from "./errors.js";
 
-const CATCH_FROM_HIGH_THROW_ID = "catch-from-high-throw";
-
-export const ALTERNATE_CATCH_BASE_IDS = [
-  "catch-one-hand-high-throw",
-  "catch-one-club-held",
-  "simultaneous-catch-2-unlocked",
-] as const;
+export { ALTERNATE_CATCH_BASE_IDS, CATCH_FROM_HIGH_THROW_BASE_ID as CATCH_FROM_HIGH_THROW_ID };
 
 export interface MasteryInput {
   baseIds: string[];
@@ -38,6 +37,11 @@ export async function validateMasteryInput(
     );
   }
 
+  const baseCombinationError = getMasteryBaseCombinationError(baseIds);
+  if (baseCombinationError) {
+    throw new UserInputError(baseCombinationError);
+  }
+
   const bases = await Base.find({ id: { $in: baseIds } }).lean();
   if (bases.length !== baseIds.length) {
     throw new UserInputError("One or more bases were not found.");
@@ -59,18 +63,9 @@ export async function validateMasteryInput(
     }
   }
 
-  if (baseIds.length === 2 && !baseIds.includes(CATCH_FROM_HIGH_THROW_ID)) {
+  if (baseIds.length === 2 && !baseIds.includes(CATCH_FROM_HIGH_THROW_BASE_ID)) {
     throw new UserInputError(
       "Two-base masteries must include Catch from a High Throw.",
-    );
-  }
-
-  if (
-    baseIds.includes(CATCH_FROM_HIGH_THROW_ID) &&
-    baseIds.some((id) => (ALTERNATE_CATCH_BASE_IDS as readonly string[]).includes(id))
-  ) {
-    throw new UserInputError(
-      "Alternate catch bases (one-hand ball, club in same hand, or 2 clubs) cannot combine with Catch from a High Throw.",
     );
   }
 

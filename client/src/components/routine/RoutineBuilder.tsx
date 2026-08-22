@@ -109,6 +109,7 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
   const [pendingPivotDrop, setPendingPivotDrop] = useState<PendingPivotDrop | null>(null);
 
   const [scrollToItemId, setScrollToItemId] = useState<string | null>(null);
+  const [scrollToEnd, setScrollToEnd] = useState(false);
 
   const { data: bodyElementsData } = useQuery(BODY_ELEMENTS_QUERY);
   const bodyElements = bodyElementsData?.bodyElements ?? [];
@@ -176,12 +177,16 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
     if (updated) {
       applyRoutineUpdate(updated);
       const sorted = [...updated.timeline].sort((a, b) => a.order - b.order);
-      const newItem =
-        insertIndex != null
+      const appendToEnd =
+        insertIndex == null || insertIndex >= Math.max(0, sorted.length - 1);
+      const newItem = appendToEnd
+        ? sorted[sorted.length - 1]
+        : insertIndex != null
           ? sorted[insertIndex]
           : sorted[sorted.length - 1];
       if (newItem?.id) {
         setScrollToItemId(newItem.id);
+        setScrollToEnd(appendToEnd);
       }
       if (PERSIST_ADD_TYPES.has(type)) {
         setAddType(type);
@@ -456,7 +461,11 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
       dropIndicatorColor={dragPreview?.color ?? null}
       busy={busy}
       scrollToItemId={scrollToItemId}
-      onScrolledToItem={() => setScrollToItemId(null)}
+      scrollToEnd={scrollToEnd}
+      onScrolledToItem={() => {
+        setScrollToItemId(null);
+        setScrollToEnd(false);
+      }}
     />
   );
 

@@ -26,7 +26,7 @@ import type {
   RoutineItem,
   RoutineItemType,
 } from "../../types/routine";
-import { getRoutineItemTypeLabel, TIMELINE_TYPE_COLORS } from "../../types/routine";
+import { getRoutineItemEditorLabel, TIMELINE_TYPE_COLORS } from "../../types/routine";
 import { formatCopValue } from "../../utils/formatCopValue";
 import {
   calculatePivotValue,
@@ -741,8 +741,8 @@ export function InventoryPanel({
             </IconButton>
             <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
               {mode === "add"
-                ? `Add ${activeType ? getRoutineItemTypeLabel(activeType) : "item"}`
-                : `Edit ${activeType ? getRoutineItemTypeLabel(activeType) : "item"}`}
+                ? `Add ${activeType ? getRoutineItemEditorLabel(activeType) : "item"}`
+                : `Edit ${activeType ? getRoutineItemEditorLabel(activeType) : "item"}`}
             </Typography>
           </Box>
 

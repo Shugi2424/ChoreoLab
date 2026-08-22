@@ -19,13 +19,14 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { Routine, RoutineItem } from "../../types/routine";
 import {
   getRoutineItemTimelineMeta,
   getRoutineItemTimelinePrimary,
   TIMELINE_TYPE_COLORS,
 } from "../../types/routine";
+import { applyTimelineScroll } from "../../utils/timelineScroll";
 
 interface TimelinePanelProps {
   routine: Routine;
@@ -38,6 +39,7 @@ interface TimelinePanelProps {
   dropIndicatorColor?: string | null;
   busy: boolean;
   scrollToItemId?: string | null;
+  scrollToEnd?: boolean;
   onScrolledToItem?: () => void;
 }
 
@@ -207,6 +209,7 @@ export function TimelinePanel({
   dropIndicatorColor,
   busy,
   scrollToItemId,
+  scrollToEnd = false,
   onScrolledToItem,
 }: TimelinePanelProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -225,32 +228,29 @@ export function TimelinePanel({
 
   const { setNodeRef, isOver } = useDroppable({ id: "timeline-drop" });
 
-  useEffect(() => {
-    if (!scrollToItemId) {
+  useLayoutEffect(() => {
+    if (!scrollToItemId && !scrollToEnd) {
       return;
     }
 
-    const frame = requestAnimationFrame(() => {
-      const container = scrollContainerRef.current;
-      if (!container) {
-        return;
-      }
+    const container = scrollContainerRef.current;
+    if (!container) {
+      return;
+    }
 
-      const row = container.querySelector(`[data-timeline-item-id="${scrollToItemId}"]`);
-      if (row) {
-        row.scrollIntoView({ block: "nearest", behavior: "smooth" });
-      } else {
-        container.scrollTo({
-          top: container.scrollTop + 72,
-          behavior: "smooth",
-        });
-      }
-
+    const performScroll = () => {
+      applyTimelineScroll(container, {
+        scrollToEnd,
+        scrollToItemId: scrollToItemId ?? null,
+        sortedItemIds: sortedItems.map((item) => item.id),
+      });
       onScrolledToItem?.();
-    });
+    };
 
-    return () => cancelAnimationFrame(frame);
-  }, [scrollToItemId, displayItems, onScrolledToItem]);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(performScroll);
+    });
+  }, [scrollToItemId, scrollToEnd, sortedItems, onScrolledToItem]);
 
   return (
     <Paper
@@ -321,7 +321,7 @@ export function useTimelineOrder(timeline: Routine["timeline"]) {
   const serverItemIds = useMemo(() => sortedItems.map((item) => item.id), [sortedItems]);
   const [localItemIds, setLocalItemIds] = useState(serverItemIds);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setLocalItemIds(serverItemIds);
   }, [serverItemIds]);
 

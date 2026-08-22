@@ -7,7 +7,8 @@
 3. **Real-time feedback** — routine changes trigger immediate recalculation on the server
 4. **Coach isolation** — every coach accesses only their own routines and profile
 5. **Incremental delivery** — each milestone is independently testable and deployable
-6. **No placeholder code** — every file shipped should be production-quality
+6. **Shared CoP logic** — pure rules in `@choreolab/shared`; server and client import the same source
+7. **No placeholder code** — every file shipped should be production-quality
 
 ## System Diagram
 
@@ -101,20 +102,23 @@ Mongoose schemas and models. One file per collection. Models define:
 - Indexes
 - Virtuals and instance methods (minimal — prefer services)
 
-### 5. Supporting Modules
+### 5. Shared + supporting modules
 
 ```
+shared/src/cop/       Pure CoP rules (@choreolab/shared) — scoring, risk, pivot, mastery
 server/src/
 ├── schema/           GraphQL typeDefs (split by domain)
 ├── resolvers/        Thin resolver maps
 ├── services/         Business logic
 ├── models/           Mongoose schemas
 ├── middleware/       Auth context, error formatting
-├── utils/            Mappers, scoring, validation, pivotRotation, fouetteValidation, risk/mastery rules
+├── utils/            Mappers, server wrappers, fouetteValidation, validation orchestration
 ├── config/           Environment validation
 ├── seeds/            Reference data seed scripts
 └── index.ts          Server bootstrap
 ```
+
+Client `src/utils/` re-exports shared CoP modules; only pivot preview and UI-specific helpers stay client-local.
 
 ## GraphQL Context
 

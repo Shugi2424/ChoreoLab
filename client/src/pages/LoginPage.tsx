@@ -9,6 +9,7 @@ import {
   AuthTextField,
 } from "../components/auth/AuthPageShell";
 import { LOGIN_MUTATION } from "../graphql/mutations";
+import { getLoginErrorMessage } from "../utils/loginErrors";
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -33,8 +34,8 @@ export function LoginPage() {
       });
       loginWithToken(data.login.token);
       navigate("/dashboard", { replace: true });
-    } catch {
-      setErrorMessage("Invalid email or password.");
+    } catch (error) {
+      setErrorMessage(getLoginErrorMessage(error));
     }
   };
 

@@ -123,6 +123,20 @@ export function getRoutineItemTypeLabel(type: RoutineItemType): string {
   }
 }
 
+/** Shorter labels for the inventory add/edit panel headings. */
+export function getRoutineItemEditorLabel(type: RoutineItemType): string {
+  switch (type) {
+    case "body_element":
+      return "body element";
+    case "risk":
+      return "risk";
+    case "mastery":
+      return "mastery";
+    case "artistry":
+      return "artistry";
+  }
+}
+
 /** Timeline accent colors — DB blue, DA purple, Artistry orange. */
 export const TIMELINE_TYPE_COLORS: Record<RoutineItemType, string> = {
   body_element: "#1976D2",

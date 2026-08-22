@@ -43,7 +43,7 @@ Pivot body elements on the timeline store `bodyElementConfig.rotationCount` and 
 
 | Rule | Additional value |
 | ---- | ---------------- |
-| Base 0.10 pivots, Fouetté (3.160x), back split without help (3.1105), rotations on back/stomach (3.1801, 3.1902) | +0.10 per extra 360° |
+| Base 0.10 pivots, Fouetté (3.160x), back split without help (3.1005, 3.1105.x — CoP §12.10), rotations on back/stomach (3.1801, 3.1902) | +0.10 per extra 360° (overrides base ≥ 0.20 rule) |
 | Base ≥ 0.20 pivots (on relevé) | +0.20 per extra 360° |
 | Rotations on other body parts (3.2003) | +0.10 per extra 180° (180° minimum base) |
 | Pivots 3.505, 3.804, 3.805, 3.1405 | +0.20 per extra 180° |

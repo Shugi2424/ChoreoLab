@@ -64,27 +64,21 @@ export const routineService = {
     return toGraphQLRoutine(doc.toObject());
   },
 
+  /** Fresh scores/validation for display; does not write (preserves updatedAt sort order). */
   async listByCoach(coachId: string) {
     const docs = await Routine.find({ coach: coachId }).sort({ updatedAt: -1 });
     await Promise.all(
-      docs.map(async (routine) => {
-        await applyDerivedRoutineFields(routine as unknown as RoutinePersistTarget);
-        routine.markModified("validation");
-        routine.markModified("dbScore");
-        routine.markModified("daScore");
-        await routine.save();
-      }),
+      docs.map((routine) =>
+        applyDerivedRoutineFields(routine as unknown as RoutinePersistTarget),
+      ),
     );
     return docs.map((doc) => toGraphQLRoutine(doc.toObject()));
   },
 
+  /** Fresh scores/validation for the builder; persisted on timeline mutations only. */
   async getById(coachId: string, id: string) {
     const routine = await getRoutineDocForCoach(id, coachId);
     await applyDerivedRoutineFields(routine as unknown as RoutinePersistTarget);
-    routine.markModified("validation");
-    routine.markModified("dbScore");
-    routine.markModified("daScore");
-    await routine.save();
     return toGraphQLRoutine(routine.toObject());
   },
 

@@ -13,6 +13,7 @@ This folder is the **source of truth** for the project. Read these docs before i
 | [CODE_OF_POINTS.md](./CODE_OF_POINTS.md)     | CoP overview and index                   | Stable                              |
 | [UI_UX.md](./UI_UX.md)                       | Design system, layouts, components       | Stable                              |
 | [ROADMAP.md](./ROADMAP.md)                   | Milestone plan                           | Stable                              |
+| [TESTING.md](./TESTING.md)                   | Vitest suites, CI, client/server parity  | Stable                              |
 | [AI_RULES.md](./AI_RULES.md)                 | Development standards                    | Stable                              |
 
 ### Domain docs (collaborative — fill in together)
@@ -74,9 +75,11 @@ These hold the detailed CoP data that drives seed files and validation rules.
 
 ## Current phase
 
-**Milestone 7 complete** — live CoP validation on every timeline change, including Fouetté limits, pivot rotation values (CoP §12), and soft capacity warnings. Scores and validation refresh on load as well as on mutations.
+**Milestone 8 complete** — Vitest unit tests for scoring, validation, risk/mastery/pivot rules, client parity tests, and GitHub Actions CI (`npm test`).
 
-Next: **Milestone 8 — Automated Test Suite** ([ROADMAP.md](./ROADMAP.md)).
+Next: **Milestone 9 — Client UI Polish** ([ROADMAP.md](./ROADMAP.md)).
+
+See [TESTING.md](./TESTING.md) for commands and layout.
 
 ### Local dev shortcuts (Windows)
 

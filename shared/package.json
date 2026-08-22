@@ -1,0 +1,22 @@
+{
+  "name": "@choreolab/shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "exports": {
+    "./cop/scoring.js": "./dist/cop/scoring.js",
+    "./cop/formatCopValue.js": "./dist/cop/formatCopValue.js",
+    "./cop/pivotRotation.js": "./dist/cop/pivotRotation.js",
+    "./cop/riskValidation.js": "./dist/cop/riskValidation.js",
+    "./cop/masteryRules.js": "./dist/cop/masteryRules.js"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "vitest": "^4.1.11"
+  }
+}

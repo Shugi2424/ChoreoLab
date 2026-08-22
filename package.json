@@ -2,13 +2,23 @@
   "name": "choreolab",
   "private": true,
   "type": "module",
+  "workspaces": [
+    "shared",
+    "server",
+    "client"
+  ],
   "scripts": {
     "dev": "scripts\\run-dev.cmd",
     "dev:stop": "scripts\\stop-dev.cmd",
-    "lint": "eslint client/src server/src",
-    "lint:fix": "eslint client/src server/src --fix",
+    "lint": "eslint client/src server/src shared/src",
+    "lint:fix": "eslint client/src server/src shared/src --fix",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "test": "npm run test --prefix shared && npm run test --prefix server && npm run test --prefix client",
+    "test:coverage": "npm run test:coverage --prefix server",
+    "test:watch": "npm run test:watch --prefix shared",
+    "build": "npm run build --prefix shared && npm run build --prefix server && npm run build --prefix client",
+    "postinstall": "npm run build --prefix shared"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.3",

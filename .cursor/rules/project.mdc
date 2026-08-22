@@ -49,6 +49,24 @@ Keep commits small and focused.
 
 Match existing code conventions (naming, folder structure, import style).
 
+## Tests and completion gate
+
+A task is **not finished** until both commands succeed from the repo root:
+
+1. `npm test` — shared, server, and client Vitest suites
+2. `npm run build` — shared, server, and client compile
+
+After **every code change** that affects behavior:
+
+- Update existing tests or add new ones in the same PR/turn (do not leave broken or stale tests).
+- Put CoP rule tests in `shared/src/cop/` when logic lives in `@choreolab/shared`.
+- Put server-only tests in `server/src/**/*.test.ts` (throws, Mongoose, validation orchestration).
+- Put client-only tests in `client/src/**/*.test.ts` (UI helpers, lenient wrappers).
+
+If tests or build fail, fix them before reporting the task complete. Do not skip running them.
+
+See [docs/TESTING.md](docs/TESTING.md) for layout and commands.
+
 ## Dev servers
 
 After changes that need a fresh process — `.env` updates, new dependencies, server config — restart dev servers without asking:

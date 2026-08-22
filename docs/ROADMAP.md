@@ -219,7 +219,7 @@ Each milestone is **independently testable** and should be completed before movi
 
 ---
 
-## Milestone 8 — Automated Test Suite
+## Milestone 8 — Automated Test Suite ✅
 
 **Goal:** Lock in CoP business logic with fast, repeatable automated tests so scoring, validation, and composition rules do not regress.
 
@@ -227,43 +227,40 @@ Scoring/risk/mastery unit tests can be **drafted during M6–M7**; this mileston
 
 ### Tooling
 
-- [ ] **Vitest** — TypeScript-native test runner for `server/` and shared pure logic (recommended over Jest for ESM + `tsx` parity)
-- [ ] Root `npm test` (and `npm run test:watch`) invoking server + client test scripts
-- [ ] Coverage reporting for `server/src/utils/` and services (`@vitest/coverage-v8` or equivalent)
-- [ ] **GitHub Actions** (or CI of choice) — run `npm test`, `npm run lint`, and `npm run build` on push/PR
+- [x] **Vitest** — TypeScript-native test runner for `server/` and shared pure logic (recommended over Jest for ESM + `tsx` parity)
+- [x] Root `npm test` (and `npm run test:watch`) invoking server + client test scripts
+- [x] Coverage reporting for `server/src/utils/` and services (`@vitest/coverage-v8` or equivalent)
+- [x] **GitHub Actions** (or CI of choice) — run `npm test`, `npm run lint`, and `npm run build` on push/PR
 
 ### Server — unit tests (priority)
 
 Pure functions and services with **no MongoDB** (or mocked models):
 
-- [ ] `utils/scoring.ts` — DB top-N body elements + risks, DA top-N masteries, `roundCopScore`
-- [ ] `utils/riskValidation.ts` — composition rules, direct-catch exclusion, rotation minimum, value formula
-- [ ] `utils/masteryValidation.ts` — base/criteria counts, catch-from-high-throw pairing, alternate-catch exclusion, value calculation
-- [ ] `validationService` — rule handlers per domain (from M7), using fixture timelines + `requirements` seed data
-
-### Server — integration tests (stretch)
-
-- [ ] `routineTimelineService` + `scoringService` — add/update items recalculate scores (MongoDB Memory Server or test DB)
-- [ ] Auth middleware — JWT required / rejected on protected operations
+- [x] `utils/scoring.ts` — DB top-N body elements + risks, DA top-N masteries, `roundCopScore`
+- [x] `utils/riskValidation.ts` — composition rules, direct-catch exclusion, rotation minimum, value formula
+- [x] `utils/masteryValidation.ts` — base/criteria counts, catch-from-high-throw pairing, alternate-catch exclusion, value calculation
+- [x] `utils/validation.ts` + `utils/fouetteValidation.ts` + `utils/pivotRotation.ts` — rule handlers per domain (M7), fixture timelines + `requirements` seed data
+- [x] `seeds/data/requirements.json` — schema sanity checks
+- [x] Auth — JWT sign/verify, `buildGraphQLContext`, and `requireAuth` unit tests (no live HTTP)
 
 ### Client — unit tests
 
 Mirror server rules where logic is duplicated:
 
-- [ ] `utils/riskValidation.ts` — same cases as server (keep parity documented)
-- [ ] `utils/masteryValidation.ts` — same cases as server
-- [ ] `utils/formatCopValue.ts` — one-decimal formatting edge cases
+- [x] `utils/riskValidation.ts` — re-export parity with `@choreolab/shared`
+- [x] `utils/masteryValidation.ts` — same cases as server
+- [x] `utils/pivotRotation.ts` — same cases as server (client softens invalid turn counts)
+- [x] `utils/formatCopValue.ts` — one-decimal formatting edge cases
+- [x] `utils/loginErrors.ts` — network vs GraphQL login error messages
 
-Component tests (lower priority unless regressions appear):
+Mocked service tests (no MongoDB):
 
-- [ ] Vitest + `@testing-library/react` for critical UI helpers (optional in first pass)
-
-### Out of scope (later)
-
-- **E2E** (Playwright/Cypress) — manual QA + deployment smoke tests first; add if coach flows need browser automation
-- **Visual regression** — not needed for v1
+- [x] `services/scoringService.ts` — DB/DA calculation and `applyScores`
+- [x] `services/validationService.ts` — timeline validation and `applyValidation`
 
 **Test:** `npm test` passes locally and in CI; scoring/validation suites include at least one case per CoP rule documented in `docs/domains/`; a deliberate rule break fails the test run.
+
+Further test types (MongoDB integration, React components, E2E) are tracked in **M9** and **M11** — not part of M8 scope.
 
 ---
 
@@ -324,6 +321,15 @@ The routine builder and core flows must feel **convenient on a phone**, not mere
 - [ ] Visible focus rings and keyboard navigation
 - [ ] Color contrast meets WCAG AA for text and controls
 
+### UI component tests (Vitest + Testing Library)
+
+Add when polishing screens — guards against UX regressions without full E2E:
+
+- [ ] `ScorePanel` — validation errors vs warnings, score display formatting
+- [ ] `TimelinePanel` — two-line item labels, body-element type/category display
+- [ ] Auth pages — error message rendering (network vs GraphQL)
+- [ ] Routine Builder helpers — insert-position / mobile fallback controls once implemented
+
 **Test:** Full user flow on desktop and **phone** feels cohesive and convenient; timeline reorder and add-from-inventory work via touch or clear fallbacks; no raw placeholder styling remains.
 
 ---
@@ -353,6 +359,12 @@ The routine builder and core flows must feel **convenient on a phone**, not mere
 
 **Test:** Access app via Vercel URL → sign up → create routine → scores and validation work. CI (`npm test`) passes on `master` before deploy.
 
+### Post-deploy smoke checklist (manual)
+
+- [ ] Sign up, log in, reset password flow on production URLs
+- [ ] Create routine → add body element, risk, mastery → scores and validation update
+- [ ] CORS and GraphQL URL correct from Vercel client
+
 ---
 
 ## Milestone 11 — Polish & Hardening
@@ -365,7 +377,16 @@ The routine builder and core flows must feel **convenient on a phone**, not mere
 - [ ] Security review (JWT expiry, password strength, CORS)
 - [ ] Performance: indexes verified, query optimization
 
-**Test:** Full user flow on mobile and desktop without errors; auth and API hardened for production load.
+### Extended automated tests
+
+Run after deployment (M10) when a real environment exists for smoke comparison:
+
+- [ ] **MongoDB integration tests** — `routineTimelineService` add/update/reorder recalculates scores and validation (MongoDB Memory Server or dedicated test DB)
+- [ ] **GraphQL integration tests** — protected mutations reject missing/invalid JWT; coach cannot access another coach's routine
+- [ ] **E2E browser tests** (Playwright or Cypress) — login → create routine → build timeline → verify scores/validation (optional; add if manual QA becomes a bottleneck)
+- [ ] Visual regression — not planned for v1
+
+**Test:** Full user flow on mobile and desktop without errors; auth and API hardened for production load; integration/E2E suite passes in CI when enabled.
 
 ---
 
@@ -414,4 +435,4 @@ M6 and M7 can be developed in parallel after M5. Milestones **M8 onward are sequ
 
 ## Next Step
 
-**Milestone 7 complete.** Next: **Milestone 8 — Automated Test Suite**.
+**Milestone 8 complete.** Next: **Milestone 9 — Client UI Polish**.
