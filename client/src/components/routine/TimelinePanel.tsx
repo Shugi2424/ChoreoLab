@@ -22,8 +22,8 @@ import { CSS } from "@dnd-kit/utilities";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Routine, RoutineItem } from "../../types/routine";
 import {
-  getRoutineItemLabel,
-  getRoutineItemTypeLabel,
+  getRoutineItemTimelineMeta,
+  getRoutineItemTimelinePrimary,
   TIMELINE_TYPE_COLORS,
 } from "../../types/routine";
 
@@ -81,24 +81,26 @@ function TimelineRowContent({
   selected: boolean;
 }) {
   const accent = TIMELINE_TYPE_COLORS[item.type];
+  const wrapsPrimary = item.type === "body_element" || item.type === "artistry";
+
   return (
     <ListItemText
-      primary={`${index + 1}. ${getRoutineItemLabel(item)}`}
-      secondary={getRoutineItemTypeLabel(item.type)}
+      primary={`${index + 1}. ${getRoutineItemTimelinePrimary(item)}`}
+      secondary={getRoutineItemTimelineMeta(item)}
       slotProps={{
         primary: {
           variant: "body2",
           sx: {
             fontWeight: selected ? 600 : 400,
             color: accent,
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
+            ...(wrapsPrimary
+              ? { whiteSpace: "normal", wordBreak: "break-word", lineHeight: 1.4 }
+              : { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }),
           },
         },
         secondary: {
           variant: "caption",
-          sx: { color: accent, opacity: 0.75 },
+          sx: { color: accent, opacity: 0.85, mt: 0.25 },
         },
       }}
       sx={{ minWidth: 0, mr: 1 }}

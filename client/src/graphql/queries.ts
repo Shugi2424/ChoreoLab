@@ -91,6 +91,12 @@ export const ROUTINE_QUERY = gql`
           domain
           message
         }
+        warnings {
+          id
+          domain
+          severity
+          message
+        }
         calculatedAt
       }
       timeline {
@@ -102,6 +108,10 @@ export const ROUTINE_QUERY = gql`
           id
           name
           category
+          value
+        }
+        bodyElementConfig {
+          rotationCount
           value
         }
       risk {

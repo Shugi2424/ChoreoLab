@@ -250,13 +250,21 @@ type Mastery {
 ### RoutineItem
 
 ```graphql
+type BodyElementConfig {
+  rotationCount: Int
+  value: Float!
+}
+
 type RoutineItem {
   id: ID!
   type: RoutineItemType!
   order: Int!
+  bodyElementId: ID
   bodyElement: BodyElement
+  bodyElementConfig: BodyElementConfig
   risk: Risk
   mastery: Mastery
+  artistryComponentId: ID
   artistryComponent: ArtistryComponent
 }
 ```
@@ -270,12 +278,20 @@ type MissingRequirement {
   message: String!
 }
 
+type ValidationWarning {
+  id: ID!
+  domain: String!
+  severity: String!
+  message: String!
+}
+
 type ValidationResult {
   isValid: Boolean!
   dbValid: Boolean!
   daValid: Boolean!
   artistryValid: Boolean!
   missingRequirements: [MissingRequirement!]!
+  warnings: [ValidationWarning!]!
   calculatedAt: String!
 }
 ```
@@ -340,6 +356,8 @@ routine(id: ID!): Routine
 ```
 
 `routine` returns `null` if not found or not owned by the authenticated coach.
+
+`routines` and `routine` recalculate `dbScore`, `daScore`, and `validation` before returning (same rules as timeline mutations).
 
 ---
 
@@ -419,6 +437,7 @@ input UpdateRoutineInput {
 input AddRoutineItemInput {
   type: RoutineItemType!
   bodyElementId: ID
+  rotationCount: Int          # pivot body elements only (CoP §12)
   risk: RiskInput
   mastery: MasteryInput
   artistryComponentId: ID
@@ -442,26 +461,39 @@ input MasteryInput {
 
 input UpdateRoutineItemInput {
   bodyElementId: ID
+  rotationCount: Int          # pivot body elements only
   risk: RiskInput
   mastery: MasteryInput
   artistryComponentId: ID
 }
 ```
 
-`insertIndex` on `addRoutineItem` is optional (0-based). When omitted, the item is appended. Used when dragging from the inventory panel into a specific timeline position.
+`insertIndex` on `addRoutineItem` is optional (0-based). When omitted, the item is appended. Used when dragging body elements or artistry from the inventory panel into a specific timeline position (collision targets timeline rows, not only the panel container).
+
+Pivot body elements accept optional `rotationCount` on add/update **only** for pivot category elements; value is calculated per CoP §12 and stored on `bodyElementConfig`. Non-pivot elements reject `rotationCount` ≠ 1. The client opens a rotation dialog when a pivot is added via **Add** or drag-to-timeline.
 
 Risk and mastery inputs are validated server-side in `routineTimelineService` before save:
 
 - **Risk** — minimum 2 rotations, apparatus-specific criteria, direct-catch mutual exclusion, throw-after-roll requires without-hands throw. Value = `0.20 + max(0, totalRotations − 2) × 0.10 + Σ criteria values`.
 - **Mastery** — valid base/criteria combinations per CoP §5.1.3, apparatus eligibility, alternate-catch base exclusion. Value calculated from bases + criteria combo.
 
-Every routine mutation recalculates `dbScore` and `daScore` before returning (via `scoringService`). Full CoP **validation** recalculation is M7 — `validation` remains placeholder until then.
+Every routine mutation, `createRoutine`, and routine queries (`routines`, `routine`) recalculate `dbScore`, `daScore`, and `validation` before returning (via `routineDerivedFields.ts` → `scoringService` + `validationService`).
+
+### Validation rules (M7)
+
+Evaluated in `validationService` against the `requirements` document for the routine's age category:
+
+- **DB** — required body groups (jump, balance, pivot); excess body elements or risks beyond `maxElements` / `maxRisks`; at most one Fouetté pivot and one Fouetté balance on the timeline (`fouetteValidation.ts`)
+- **DA** — excess masteries beyond `maxMasteries`; consecutive acrobatic masteries beyond `maxAcrobatics`
+- **Artistry (A)** — minimum character moments, dance combinations, and combined dynamic changes + effects
+
+Returns `missingRequirements[]` (errors) and `warnings[]` (info hints when below max countable slots but not required). Implemented in `server/src/services/validationService.ts`, `server/src/utils/validation.ts`, and `server/src/utils/fouetteValidation.ts`.
 
 ### Scoring rules (M6)
 
 **DB** — from `requirements.DB` for the routine's age category:
 
-- Body elements: each distinct `bodyElementId` counted once; take the **highest values** up to `maxElements` (8 senior / 6 junior)
+- Body elements: each distinct `bodyElementId` counted once; take the **highest `bodyElementConfig.value`** (or catalog value) up to `maxElements` (8 senior / 6 junior). Pivot values include additional rotations (`pivotRotation.ts`).
 - Risks: take the **highest `risk.value`** entries up to `maxRisks` (4 senior / 3 junior)
 - `dbScore` = sum of counted body values + counted risk values (rounded to 1 decimal)
 
@@ -493,7 +525,7 @@ Implemented in `server/src/services/scoringService.ts` and `server/src/utils/sco
 | `daCriteria` / `daCriterion`               | ✅ Implemented      |
 | `addRoutineItem` / `removeRoutineItem` / `reorderRoutineItems` / `updateRoutineItem` | ✅ Implemented (M5) |
 | Scoring recalculation on timeline change   | ✅ Implemented (M6) |
-| Live validation recalculation              | ❌ Not implemented (M7) |
+| Live validation recalculation              | ✅ Implemented (M7) |
 
 ---
 

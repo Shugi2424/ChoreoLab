@@ -105,6 +105,12 @@ const ROUTINE_BUILDER_FIELDS = gql`
         domain
         message
       }
+      warnings {
+        id
+        domain
+        severity
+        message
+      }
       calculatedAt
     }
     timeline {
@@ -116,6 +122,10 @@ const ROUTINE_BUILDER_FIELDS = gql`
         id
         name
         category
+        value
+      }
+      bodyElementConfig {
+        rotationCount
         value
       }
       risk {

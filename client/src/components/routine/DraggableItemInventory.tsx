@@ -23,6 +23,7 @@ export interface InventoryItem {
   id: string;
   name: string;
   subtitle?: string;
+  category?: string;
 }
 
 interface DraggableInventoryRowProps {
@@ -226,7 +227,11 @@ export function DraggableItemInventory({
               key={item.id}
               item={item}
               dragId={`${dragIdPrefix}-${item.id}`}
-              dragData={{ type: dragDataType, [dragDataIdKey]: item.id }}
+              dragData={{
+                type: dragDataType,
+                [dragDataIdKey]: item.id,
+                ...(item.category ? { category: item.category } : {}),
+              }}
               selected={selectedItemId === item.id}
               onAdd={() => onAddItem(item.id)}
               disabled={busy}

@@ -5,13 +5,26 @@ export const routineTypeDefs = `#graphql
     message: String!
   }
 
+  type ValidationWarning {
+    id: ID!
+    domain: String!
+    severity: String!
+    message: String!
+  }
+
   type ValidationResult {
     isValid: Boolean!
     dbValid: Boolean!
     daValid: Boolean!
     artistryValid: Boolean!
     missingRequirements: [MissingRequirement!]!
+    warnings: [ValidationWarning!]!
     calculatedAt: String!
+  }
+
+  type BodyElementConfig {
+    rotationCount: Int
+    value: Float!
   }
 
   type RiskRotation {
@@ -39,6 +52,7 @@ export const routineTypeDefs = `#graphql
     order: Int!
     bodyElementId: ID
     bodyElement: BodyElement
+    bodyElementConfig: BodyElementConfig
     risk: Risk
     mastery: Mastery
     artistryComponentId: ID
@@ -90,6 +104,7 @@ export const routineTypeDefs = `#graphql
   input AddRoutineItemInput {
     type: RoutineItemType!
     bodyElementId: ID
+    rotationCount: Int
     risk: RiskInput
     mastery: MasteryInput
     artistryComponentId: ID
@@ -97,6 +112,7 @@ export const routineTypeDefs = `#graphql
 
   input UpdateRoutineItemInput {
     bodyElementId: ID
+    rotationCount: Int
     risk: RiskInput
     mastery: MasteryInput
     artistryComponentId: ID

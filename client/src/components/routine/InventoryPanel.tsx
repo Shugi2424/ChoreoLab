@@ -8,6 +8,7 @@ import {
   Divider,
   IconButton,
   Paper,
+  TextField,
   Typography,
 } from "@mui/material";
 import { useQuery } from "@apollo/client";
@@ -27,6 +28,12 @@ import type {
 } from "../../types/routine";
 import { getRoutineItemTypeLabel, TIMELINE_TYPE_COLORS } from "../../types/routine";
 import { formatCopValue } from "../../utils/formatCopValue";
+import {
+  calculatePivotValue,
+  formatPivotRotationHint,
+  getPivotRotationRule,
+  validatePivotTurnCount,
+} from "../../utils/pivotRotation";
 import {
   MIN_BASE_ROTATIONS,
   THROW_AFTER_ROLL_ON_FLOOR_ID,
@@ -80,6 +87,7 @@ interface RCriteriaOption {
 
 export interface EditingPanelSubmitPayload {
   bodyElementId?: string;
+  rotationCount?: number;
   artistryComponentId?: string;
   risk?: {
     criteriaIds: string[];
@@ -100,7 +108,7 @@ interface InventoryPanelProps {
   onStartAdd: (type: RoutineItemType) => void;
   onBack: () => void;
   onSubmit: (payload: EditingPanelSubmitPayload) => Promise<void>;
-  onAddBodyElement: (bodyElementId: string) => Promise<void>;
+  onAddBodyElement: (bodyElementId: string, rotationCount?: number) => Promise<void>;
   onAddArtistry: (artistryComponentId: string) => Promise<void>;
   busy: boolean;
   hiddenInventoryDragId?: string | null;
@@ -144,6 +152,8 @@ export function InventoryPanel({
   const [masteryRotationId, setMasteryRotationId] = useState("");
   const [masteryBasesOpen, setMasteryBasesOpen] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [pendingPivotId, setPendingPivotId] = useState<string | null>(null);
+  const [pivotRotationCount, setPivotRotationCount] = useState(1);
 
   const throwCriteria = useMemo(
     () => rCriteria.filter((c: RCriteriaOption) => c.type === "throw"),
@@ -173,7 +183,17 @@ export function InventoryPanel({
     setMasteryBaseIds([]);
     setMasteryCriteriaIds([]);
     setMasteryRotationId("");
+    setPendingPivotId(null);
+    setPivotRotationCount(1);
   }, [mode, itemType]);
+
+  useEffect(() => {
+    if (mode !== "edit" || selectedItem?.type !== "body_element") {
+      return;
+    }
+    setPivotRotationCount(selectedItem.bodyElementConfig?.rotationCount ?? 1);
+    setPendingPivotId(null);
+  }, [mode, selectedItem?.id, selectedItem?.type, selectedItem?.bodyElementConfig?.rotationCount]);
 
   useEffect(() => {
     if (mode !== "edit" || !selectedItem) {
@@ -253,9 +273,50 @@ export function InventoryPanel({
   }, [masteryBaseIds]);
 
   const showMasteryRotation = masteryCriteriaIds.includes(ROTATION_CRITERION_ID);
+
+  const activePivotElement = useMemo(() => {
+    const pivotId =
+      pendingPivotId ??
+      (mode === "edit" && selectedItem?.type === "body_element"
+        ? selectedItem.bodyElementId
+        : null);
+    if (!pivotId) {
+      return null;
+    }
+    return (
+      bodyElements.find(
+        (element: { id: string; category: string }) => element.id === pivotId,
+      ) ?? null
+    );
+  }, [bodyElements, mode, pendingPivotId, selectedItem?.bodyElementId, selectedItem?.type]);
+
+  const showPivotConfigurator =
+    activePivotElement?.category === "pivot" &&
+    (pendingPivotId != null ||
+      (mode === "edit" && selectedItem?.type === "body_element"));
+
+  const pivotRotationRule = useMemo(() => {
+    if (!activePivotElement || activePivotElement.category !== "pivot") {
+      return null;
+    }
+    return getPivotRotationRule(activePivotElement.id, activePivotElement.value);
+  }, [activePivotElement]);
+
+  const pivotValuePreview = useMemo(() => {
+    if (!activePivotElement || !pivotRotationRule) {
+      return null;
+    }
+    return calculatePivotValue(
+      activePivotElement.value,
+      pivotRotationRule,
+      pivotRotationCount,
+    );
+  }, [activePivotElement, pivotRotationCount, pivotRotationRule]);
+
   const showBodyInventory =
-    (mode === "add" && itemType === "body_element") ||
-    (mode === "edit" && selectedItem?.type === "body_element");
+    ((mode === "add" && itemType === "body_element") ||
+      (mode === "edit" && selectedItem?.type === "body_element")) &&
+    !pendingPivotId;
   const showArtistryInventory =
     (mode === "add" && itemType === "artistry") ||
     (mode === "edit" && selectedItem?.type === "artistry");
@@ -265,6 +326,7 @@ export function InventoryPanel({
       bodyElements.map((element: { id: string; name: string; category: string; value: number }) => ({
         id: element.id,
         name: element.name,
+        category: element.category,
         subtitle: `${element.category} · ${formatCopValue(element.value)}`,
       })),
     [bodyElements],
@@ -446,6 +508,24 @@ export function InventoryPanel({
   };
 
   const handleBodyElementPick = async (id: string) => {
+    const element = bodyElements.find(
+      (entry: { id: string; category: string }) => entry.id === id,
+    );
+
+    if (element?.category === "pivot") {
+      if (mode === "add") {
+        setPendingPivotId(id);
+        setPivotRotationCount(1);
+        setFormError(null);
+        return;
+      }
+      if (mode === "edit") {
+        setPivotRotationCount(1);
+        await onSubmit({ bodyElementId: id, rotationCount: 1 });
+        return;
+      }
+    }
+
     if (mode === "edit" && selectedItem?.bodyElementId !== id) {
       await onSubmit({ bodyElementId: id });
       return;
@@ -453,6 +533,28 @@ export function InventoryPanel({
     if (mode === "add") {
       await onAddBodyElement(id);
     }
+  };
+
+  const handlePivotConfiguratorSubmit = async () => {
+    if (!activePivotElement || !pivotRotationRule) {
+      return;
+    }
+    const turnError = validatePivotTurnCount(pivotRotationRule, pivotRotationCount);
+    if (turnError) {
+      setFormError(turnError);
+      return;
+    }
+    setFormError(null);
+    if (mode === "add") {
+      await onAddBodyElement(activePivotElement.id, pivotRotationCount);
+      setPendingPivotId(null);
+      setPivotRotationCount(1);
+      return;
+    }
+    await onSubmit({
+      bodyElementId: activePivotElement.id,
+      rotationCount: pivotRotationCount,
+    });
   };
 
   const handleArtistryPick = async (id: string) => {
@@ -503,22 +605,96 @@ export function InventoryPanel({
       )}
 
       <Box sx={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-      {showBodyInventory ? (
-        <DraggableItemInventory
-          title={mode === "edit" ? "Change body element" : "Body elements"}
-          hint="Search, click Add, or drag to timeline."
-          searchPlaceholder="Search elements…"
-          items={bodyInventoryItems}
-          selectedItemId={mode === "edit" ? selectedItem?.bodyElementId : null}
-          dragIdPrefix="inventory-body"
-          dragDataType="body-element"
-          dragDataIdKey="bodyElementId"
-          onAddItem={handleBodyElementPick}
-          onBack={onBack}
-          busy={busy}
-          dragColor={TIMELINE_TYPE_COLORS.body_element}
-          hiddenDragId={hiddenInventoryDragId}
-        />
+      {showBodyInventory || showPivotConfigurator ? (
+        <Box sx={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+          {showBodyInventory ? (
+            <DraggableItemInventory
+              title={mode === "edit" ? "Change body element" : "Body elements"}
+              hint="Search, click Add, or drag to timeline."
+              searchPlaceholder="Search elements…"
+              items={bodyInventoryItems}
+              selectedItemId={mode === "edit" ? selectedItem?.bodyElementId : null}
+              dragIdPrefix="inventory-body"
+              dragDataType="body-element"
+              dragDataIdKey="bodyElementId"
+              onAddItem={handleBodyElementPick}
+              onBack={onBack}
+              busy={busy}
+              dragColor={TIMELINE_TYPE_COLORS.body_element}
+              hiddenDragId={hiddenInventoryDragId}
+            />
+          ) : (
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 1, flexShrink: 0 }}>
+              <IconButton
+                aria-label="Back to body elements"
+                size="small"
+                onClick={() => {
+                  setPendingPivotId(null);
+                  setPivotRotationCount(1);
+                  setFormError(null);
+                }}
+                disabled={busy}
+              >
+                <ArrowBackIcon fontSize="small" />
+              </IconButton>
+              <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                Configure pivot
+              </Typography>
+            </Box>
+          )}
+
+          {showPivotConfigurator && activePivotElement && pivotRotationRule ? (
+            <Box sx={{ mt: showBodyInventory ? 2 : 0, flexShrink: 0 }}>
+              {!showBodyInventory ? (
+                <Typography variant="body2" sx={{ mb: 2 }}>
+                  {activePivotElement.name}
+                </Typography>
+              ) : (
+                <Divider sx={{ mb: 2 }} />
+              )}
+              <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 1 }}>
+                {activePivotElement.name} — CoP §12: {pivotRotationRule.turnLabel}
+                {pivotRotationRule.incrementPerTurn != null
+                  ? ` (+${pivotRotationRule.incrementPerTurn.toFixed(1)} per additional turn)`
+                  : " (fixed value)"}
+              </Typography>
+              <TextField
+                label={pivotRotationRule.turnLabel}
+                type="number"
+                size="small"
+                value={pivotRotationCount}
+                onChange={(event) => {
+                  const next = Number.parseInt(event.target.value, 10);
+                  setPivotRotationCount(Number.isNaN(next) ? 1 : Math.max(1, next));
+                }}
+                slotProps={{
+                  htmlInput: {
+                    min: 1,
+                    step: 1,
+                  },
+                }}
+                disabled={busy || pivotRotationRule.incrementPerTurn == null}
+                sx={{ mb: 1, maxWidth: 200 }}
+              />
+              {pivotValuePreview != null && (
+                <Typography variant="body2" color="primary.main" sx={{ mb: 2 }}>
+                  {formatPivotRotationHint(
+                    activePivotElement.value,
+                    pivotRotationRule,
+                    pivotRotationCount,
+                  )}
+                </Typography>
+              )}
+              <Button
+                variant="contained"
+                onClick={() => void handlePivotConfiguratorSubmit()}
+                disabled={busy}
+              >
+                {mode === "add" ? "Add to timeline" : "Save rotations"}
+              </Button>
+            </Box>
+          ) : null}
+        </Box>
       ) : showArtistryInventory ? (
         <DraggableItemInventory
           title={mode === "edit" ? "Change artistry component" : "Artistry components"}

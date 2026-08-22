@@ -55,9 +55,9 @@ DB and DA are recalculated server-side on every routine change.
 
 ## Validation summary
 
-The validation engine loads the `requirements` document for the routine's age category and evaluates the timeline in `validationService`.
+The validation engine loads the `requirements` document for the routine's age category and evaluates the timeline in `validationService`, with Fouetté limits in `fouetteValidation.ts` and pivot rotation values in `pivotRotation.ts`.
 
-See [domains/VALIDATION.md](./domains/VALIDATION.md) for rule types and catalogs.
+See [domains/VALIDATION.md](./domains/VALIDATION.md) for rule types and catalogs. See [domains/DB.md](./domains/DB.md) for pivot rotation and Fouetté limits.
 
 ---
 
@@ -68,7 +68,7 @@ Both engines live in the service layer:
 - `scoringService` — DB and DA calculation only
 - `validationService` — CoP requirement checking (including artistry / A rules)
 
-Rules are evaluated in `validationService` against the `requirements` collection (age-category limits) plus CoP logic in code handlers.
+Rules are evaluated in `validationService` against the `requirements` collection (age-category limits) plus CoP logic in code handlers (`validation.ts`, `fouetteValidation.ts`, `pivotRotation.ts`).
 
 ---
 

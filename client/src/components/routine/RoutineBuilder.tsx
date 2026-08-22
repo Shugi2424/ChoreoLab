@@ -30,24 +30,26 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
-import { useMutation } from "@apollo/client";
-import { useCallback, useState } from "react";
+import { useMutation, useQuery } from "@apollo/client";
+import { useCallback, useMemo, useState } from "react";
 import {
   ADD_ROUTINE_ITEM_MUTATION,
   REORDER_ROUTINE_ITEMS_MUTATION,
   REMOVE_ROUTINE_ITEM_MUTATION,
   UPDATE_ROUTINE_ITEM_MUTATION,
 } from "../../graphql/mutations";
+import { BODY_ELEMENTS_QUERY } from "../../graphql/queries";
 import type { Routine, RoutineItemType } from "../../types/routine";
 import {
   formatAgeCategory,
   formatApparatus,
-  getRoutineItemLabel,
-  getRoutineItemTypeLabel,
+  getRoutineItemTimelineMeta,
+  getRoutineItemTimelinePrimary,
   TIMELINE_TYPE_COLORS,
 } from "../../types/routine";
 import { getGraphQLErrorMessage } from "../../utils/graphqlErrors";
 import { InventoryPanel, type EditingPanelSubmitPayload } from "./InventoryPanel";
+import { PivotRotationDialog } from "./PivotRotationDialog";
 import { ScorePanel } from "./ScorePanel";
 import { TimelinePanel, useTimelineOrder } from "./TimelinePanel";
 
@@ -78,10 +80,19 @@ function getTimelineInsertIndex(overId: unknown, localItemIds: string[]): number
 const inventoryTimelineCollision: CollisionDetection = (args) => {
   const pointerHits = pointerWithin(args);
   if (pointerHits.length > 0) {
+    const itemHit = pointerHits.find((hit) => String(hit.id) !== "timeline-drop");
+    if (itemHit) {
+      return [itemHit];
+    }
     return pointerHits;
   }
   return closestCenter(args);
 };
+
+interface PendingPivotDrop {
+  bodyElementId: string;
+  insertIndex: number;
+}
 
 export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps) {
   const theme = useTheme();
@@ -95,8 +106,24 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
   const [dragPreview, setDragPreview] = useState<DragPreview | null>(null);
   const [dropInsertIndex, setDropInsertIndex] = useState<number | null>(null);
   const [hiddenInventoryDragId, setHiddenInventoryDragId] = useState<string | null>(null);
+  const [pendingPivotDrop, setPendingPivotDrop] = useState<PendingPivotDrop | null>(null);
 
   const [scrollToItemId, setScrollToItemId] = useState<string | null>(null);
+
+  const { data: bodyElementsData } = useQuery(BODY_ELEMENTS_QUERY);
+  const bodyElements = bodyElementsData?.bodyElements ?? [];
+
+  const pendingPivotElement = useMemo(() => {
+    if (!pendingPivotDrop) {
+      return null;
+    }
+    return (
+      bodyElements.find(
+        (element: { id: string; name: string; value: number }) =>
+          element.id === pendingPivotDrop.bodyElementId,
+      ) ?? null
+    );
+  }, [bodyElements, pendingPivotDrop]);
 
   const { localItemIds, setLocalItemIds } = useTimelineOrder(routine.timeline);
 
@@ -166,8 +193,12 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
     }
   };
 
-  const handleAddBodyElement = async (bodyElementId: string, insertIndex?: number) => {
-    await addTimelineItem("body_element", { bodyElementId }, insertIndex);
+  const handleAddBodyElement = async (
+    bodyElementId: string,
+    rotationCount?: number,
+    insertIndex?: number,
+  ) => {
+    await addTimelineItem("body_element", { bodyElementId, rotationCount }, insertIndex);
   };
 
   const handleAddArtistry = async (artistryComponentId: string, insertIndex?: number) => {
@@ -268,9 +299,12 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
 
     const timelineItem = routine.timeline.find((item) => item.id === id);
     if (timelineItem) {
+      const index = [...routine.timeline]
+        .sort((a, b) => a.order - b.order)
+        .findIndex((item) => item.id === id);
       setDragPreview({
-        label: getRoutineItemLabel(timelineItem),
-        subtitle: getRoutineItemTypeLabel(timelineItem.type),
+        label: `${index + 1}. ${getRoutineItemTimelinePrimary(timelineItem)}`,
+        subtitle: getRoutineItemTimelineMeta(timelineItem),
         color: TIMELINE_TYPE_COLORS[timelineItem.type],
       });
     }
@@ -320,13 +354,19 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
 
     if (String(active.id).startsWith("inventory-body-")) {
       const bodyElementId = active.data.current?.bodyElementId as string | undefined;
+      const category = active.data.current?.category as string | undefined;
       if (bodyElementId && isTimelineDropTarget(over?.id)) {
         if (addType !== "body_element") {
           setAddType("body_element");
           setSelectedItemId(null);
         }
+        const resolvedInsertIndex = insertIndex ?? localItemIds.length;
         try {
-          await handleAddBodyElement(bodyElementId, insertIndex);
+          if (category === "pivot") {
+            setPendingPivotDrop({ bodyElementId, insertIndex: resolvedInsertIndex });
+          } else {
+            await handleAddBodyElement(bodyElementId, undefined, resolvedInsertIndex);
+          }
         } finally {
           setDragPreview(null);
           setHiddenInventoryDragId(null);
@@ -346,7 +386,7 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
           setSelectedItemId(null);
         }
         try {
-          await handleAddArtistry(artistryComponentId, insertIndex);
+          await handleAddArtistry(artistryComponentId, insertIndex ?? localItemIds.length);
         } finally {
           setDragPreview(null);
           setHiddenInventoryDragId(null);
@@ -566,6 +606,21 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
           </Button>
         </DialogActions>
       </Dialog>
+
+      <PivotRotationDialog
+        open={pendingPivotDrop != null}
+        element={pendingPivotElement}
+        busy={busy}
+        onCancel={() => setPendingPivotDrop(null)}
+        onConfirm={async (rotationCount) => {
+          if (!pendingPivotDrop) {
+            return;
+          }
+          const { bodyElementId, insertIndex: dropIndex } = pendingPivotDrop;
+          setPendingPivotDrop(null);
+          await handleAddBodyElement(bodyElementId, rotationCount, dropIndex);
+        }}
+      />
     </Box>
   );
 }

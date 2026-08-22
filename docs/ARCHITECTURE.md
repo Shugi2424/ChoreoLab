@@ -78,17 +78,18 @@ Responsibilities:
 
 ### 3. Services (`server/src/services/`)
 
-All business logic lives here. Planned services:
+All business logic lives here:
 
 | Service                | Responsibility                                   |
 | ---------------------- | ------------------------------------------------ |
 | `authService`          | Sign up, login, JWT issue/verify, password reset |
 | `coachService`         | Profile CRUD                                     |
-| `routineService`       | Routine CRUD, timeline management                |
-| `routineTimelineService` | Timeline add/remove/reorder/update, risk/mastery validation (M5) |
+| `routineService`       | Routine CRUD; refreshes scores/validation on list/get |
+| `routineTimelineService` | Timeline add/remove/reorder/update, risk/mastery validation |
+| `routineDerivedFields` | Shared score + validation recalculation        |
 | `scoringService`       | DB and DA calculation (M6)                       |
-| `validationService`    | CoP requirement checking                         |
-| `referenceDataService` | Read-only access to all reference collections (M4) |
+| `validationService`    | CoP requirement checking (M7)                    |
+| `referenceDataService` | Read-only access to all reference collections    |
 
 Services may call other services (composition). They receive `coachId` from context for authorization.
 
@@ -109,7 +110,7 @@ server/src/
 ├── services/         Business logic
 ├── models/           Mongoose schemas
 ├── middleware/       Auth context, error formatting
-├── utils/            Mappers, token helpers, email
+├── utils/            Mappers, scoring, validation, pivotRotation, fouetteValidation, risk/mastery rules
 ├── config/           Environment validation
 ├── seeds/            Reference data seed scripts
 └── index.ts          Server bootstrap
@@ -156,14 +157,14 @@ No Redux unless complexity demands it later.
 
 ## Scoring & Validation Flow
 
-When a routine changes (add, remove, reorder item):
+When a routine changes (add, remove, reorder item) or is loaded (`routines` / `routine`):
 
 ```
-Client mutation ──▶ routineService.updateTimeline()
+Client mutation or query ──▶ routineTimelineService / routineService
                         │
-                        ├──▶ scoringService.calculateDB(routine)
-                        ├──▶ scoringService.calculateDA(routine)
-                        └──▶ validationService.validate(routine)
+                        ├──▶ routineDerivedFields.applyDerivedRoutineFields()
+                        │         ├──▶ scoringService (DB + DA)
+                        │         └──▶ validationService (requirements + fouetteValidation)
                         │
                         ▼
                    Save updated scores + validation result
@@ -201,18 +202,19 @@ CORS on the server must allow the Vercel domain in production.
 
 ## Existing Code — Migration Notes
 
-Completed through Milestone 5:
+Completed through Milestone 7:
 
 - `BodyElement` model replaces the legacy `Element` scaffold
 - `bodyelements` collection seeded; legacy `elements` collection removed
-- Layered services (`authService`, `routineService`, `routineTimelineService`, `referenceDataService`)
+- Layered services (`authService`, `routineService`, `routineTimelineService`, `referenceDataService`, `routineDerivedFields`)
 - GraphQL schema split by domain; auth context on all protected operations
-- Routine Builder UI with inventory panel, timeline drag-and-drop, and composition validation
-- `scoringService` — DB/DA recalculation on every timeline change (M6)
+- Routine Builder UI with inventory panel, timeline drag-and-drop (insert-at-position for body/artistry; pivot rotation dialog on drag), and composition validation
+- `scoringService` — DB/DA recalculation on every timeline change (M6); pivot rotation values via `pivotRotation.ts`
+- `validationService` — CoP requirement checking (M7), Fouetté limits (`fouetteValidation.ts`), capacity warnings; refreshed on routine load
 
 Remaining:
 
-- `validationService` and live requirement checking (M7)
+- Automated test suite (M8)
 - UI polish pass (M9)
 
 See [ROADMAP.md](./ROADMAP.md) for the full milestone plan.

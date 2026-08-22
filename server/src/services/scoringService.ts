@@ -1,6 +1,6 @@
 import { BodyElement } from "../models/BodyElement.js";
 import { Requirement } from "../models/Requirement.js";
-import type { RoutineScoreTarget, ScoringTimelineEntry } from "../types/routineScoring.js";
+import type { RoutinePersistTarget, ScoringTimelineEntry } from "../types/routineScoring.js";
 import { NotFoundError } from "../utils/errors.js";
 import {
   calculateDAScore,
@@ -32,24 +32,42 @@ async function loadScoringLimits(ageCategory: string): Promise<{
 async function resolveBodyElementValues(
   timeline: readonly ScoringTimelineEntry[],
 ): Promise<number[]> {
-  const uniqueIds = [
+  const bodyItems = timeline.filter(
+    (item) => item.type === "body_element" && item.bodyElementId,
+  );
+
+  if (bodyItems.length === 0) {
+    return [];
+  }
+
+  const idsNeedingCatalog = [
     ...new Set(
-      timeline
-        .filter((item) => item.type === "body_element" && item.bodyElementId)
+      bodyItems
+        .filter((item) => item.bodyElementConfig?.value == null)
         .map((item) => item.bodyElementId as string),
     ),
   ];
 
-  if (uniqueIds.length === 0) {
-    return [];
+  const catalogElements =
+    idsNeedingCatalog.length > 0
+      ? await BodyElement.find({ id: { $in: idsNeedingCatalog } }).lean()
+      : [];
+  const catalogValueById = new Map(catalogElements.map((element) => [element.id, element.value]));
+
+  const maxValueByElementId = new Map<string, number>();
+
+  for (const item of bodyItems) {
+    const id = item.bodyElementId as string;
+    const value =
+      item.bodyElementConfig?.value ?? catalogValueById.get(id);
+    if (value == null) {
+      continue;
+    }
+    const existing = maxValueByElementId.get(id) ?? 0;
+    maxValueByElementId.set(id, Math.max(existing, value));
   }
 
-  const elements = await BodyElement.find({ id: { $in: uniqueIds } }).lean();
-  const valueById = new Map(elements.map((element) => [element.id, element.value]));
-
-  return uniqueIds
-    .map((id) => valueById.get(id))
-    .filter((value): value is number => value != null);
+  return [...maxValueByElementId.values()];
 }
 
 function collectRiskValues(timeline: readonly ScoringTimelineEntry[]): number[] {
@@ -85,7 +103,7 @@ export const scoringService = {
   },
 
   /** Recalculate and write dbScore / daScore on the routine document (does not save). */
-  async applyScores(routine: RoutineScoreTarget): Promise<void> {
+  async applyScores(routine: RoutinePersistTarget): Promise<void> {
     const timeline = routine.timeline;
     const [dbScore, daScore] = await Promise.all([
       this.calculateDB(timeline, routine.ageCategory),

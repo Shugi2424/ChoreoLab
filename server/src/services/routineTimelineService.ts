@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 import { BodyElement } from "../models/BodyElement.js";
 import { Routine, type RoutineDocument } from "../models/Routine.js";
-import type { RoutineScoreTarget } from "../types/routineScoring.js";
+import type { RoutinePersistTarget } from "../types/routineScoring.js";
 import { RCriteria, Rotation, ArtistryComponent } from "../models/reference.js";
 import {
   ForbiddenError,
@@ -23,13 +23,19 @@ import {
 
 import type { Apparatus } from "../types/enums.js";
 import { toGraphQLRoutine } from "../utils/mappers.js";
-import { scoringService } from "./scoringService.js";
+import {
+  calculatePivotValue,
+  getPivotRotationRule,
+  validatePivotTurnCount,
+} from "../utils/pivotRotation.js";
+import { applyDerivedRoutineFields } from "./routineDerivedFields.js";
 
 export type { RiskInput, RiskRotationInput };
 
 export interface AddRoutineItemInput {
   type: "body_element" | "risk" | "mastery" | "artistry";
   bodyElementId?: string;
+  rotationCount?: number;
   risk?: RiskInput;
   mastery?: MasteryInput;
   artistryComponentId?: string;
@@ -37,6 +43,7 @@ export interface AddRoutineItemInput {
 
 export interface UpdateRoutineItemInput {
   bodyElementId?: string;
+  rotationCount?: number;
   risk?: RiskInput;
   mastery?: MasteryInput;
   artistryComponentId?: string;
@@ -73,6 +80,43 @@ async function validateArtistryComponentId(id: string) {
     throw new UserInputError("Artistry component not found.");
   }
   return component;
+}
+
+async function buildBodyElementPayload(bodyElementId: string, rotationCount?: number) {
+  const element = await validateBodyElementId(bodyElementId);
+
+  if (element.category === "pivot") {
+    const count = rotationCount ?? 1;
+    if (!Number.isInteger(count) || count < 1) {
+      throw new UserInputError("rotationCount must be at least 1 for pivot elements.");
+    }
+
+    const rule = getPivotRotationRule(element.id, element.value);
+    const turnError = validatePivotTurnCount(rule, count);
+    if (turnError) {
+      throw new UserInputError(turnError);
+    }
+
+    const value = calculatePivotValue(element.value, rule, count);
+    return {
+      bodyElementId,
+      bodyElementConfig: {
+        rotationCount: count,
+        value,
+      },
+    };
+  }
+
+  if (rotationCount != null && rotationCount !== 1) {
+    throw new UserInputError("rotationCount applies only to pivot body elements.");
+  }
+
+  return {
+    bodyElementId,
+    bodyElementConfig: {
+      value: element.value,
+    },
+  };
 }
 
 async function buildRiskPayload(input: RiskInput, apparatus: string) {
@@ -153,8 +197,11 @@ async function buildTimelineItem(
       if (!input.bodyElementId) {
         throw new UserInputError("bodyElementId is required for body elements.");
       }
-      await validateBodyElementId(input.bodyElementId);
-      return { ...base, bodyElementId: input.bodyElementId };
+      const bodyPayload = await buildBodyElementPayload(
+        input.bodyElementId,
+        input.rotationCount,
+      );
+      return { ...base, ...bodyPayload };
     }
     case "artistry": {
       if (!input.artistryComponentId) {
@@ -194,8 +241,14 @@ function findTimelineItem(routine: RoutineDocument, itemId: string) {
   return item;
 }
 
-async function persistRoutine(routine: RoutineScoreTarget) {
-  await scoringService.applyScores(routine);
+type RoutineDoc = NonNullable<Awaited<ReturnType<typeof getRoutineDocForCoach>>>;
+
+async function persistRoutine(routine: RoutineDoc) {
+  const persistTarget = routine as unknown as RoutinePersistTarget;
+  await applyDerivedRoutineFields(persistTarget);
+  routine.markModified("validation");
+  routine.markModified("dbScore");
+  routine.markModified("daScore");
   await routine.save();
   return toGraphQLRoutine(routine.toObject());
 }
@@ -279,6 +332,7 @@ export const routineTimelineService = {
     const item = findTimelineItem(routine, itemId) as {
       type: string;
       bodyElementId?: string;
+      bodyElementConfig?: { rotationCount?: number; value: number };
       risk?: RiskInput;
       mastery?: MasteryInput;
       artistryComponentId?: string;
@@ -286,11 +340,15 @@ export const routineTimelineService = {
 
     switch (item.type) {
       case "body_element": {
-        if (!input.bodyElementId) {
+        const bodyElementId = input.bodyElementId ?? item.bodyElementId;
+        if (!bodyElementId) {
           throw new UserInputError("bodyElementId is required.");
         }
-        await validateBodyElementId(input.bodyElementId);
-        item.bodyElementId = input.bodyElementId;
+        const rotationCount =
+          input.rotationCount ?? item.bodyElementConfig?.rotationCount;
+        const bodyPayload = await buildBodyElementPayload(bodyElementId, rotationCount);
+        item.bodyElementId = bodyPayload.bodyElementId;
+        item.bodyElementConfig = bodyPayload.bodyElementConfig;
         break;
       }
       case "artistry": {

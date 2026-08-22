@@ -2,7 +2,7 @@
 
 FIG Rhythmic Gymnastics Code of Points **2025–2028** — individual senior & junior.
 
-> **Status:** Requirements seeded in `requirements` collection. Full rule engine planned for M7. Risk and mastery **composition** rules are enforced at save time in M5 (`riskValidation.ts`, `masteryValidation.ts`).
+> **Status:** Requirements seeded in `requirements` collection. **Routine-level validation implemented in M7** (`validationService`, `validation.ts`). Risk and mastery **composition** rules are enforced at save time in M5 (`riskValidation.ts`, `masteryValidation.ts`).
 
 Validation reports **what is missing** — ChoreoLab does not apply CoP penalties to scores.
 
@@ -47,20 +47,23 @@ Before a risk or mastery is saved on the timeline, `routineTimelineService` vali
 | Risk   | Min 2 rotations, apparatus criteria, direct-catch mutual exclusion, throw-after-roll pairing — see [DB.md](./DB.md) |
 | Mastery | Base/criteria counts, apparatus eligibility, catch-from-high-throw pairing, alternate-catch exclusion — see [DA.md](./DA.md) |
 
-Routine-level limits (max risks, required body groups, artistry counts) are **not** yet evaluated — those require M7.
+Routine-level limits (max risks, required body groups, artistry counts) are evaluated on every timeline save in M7.
 
 ---
 
-## Validation engine (planned — M7)
+## Validation engine (M7)
 
 On every routine change, compare the timeline against the `requirements` document for the routine's `ageCategory`:
 
 1. Count body elements by category → check required groups and `maxElements`
 2. Count Risk items → check `maxRisks`
-3. Count Mastery items → check `maxMasteries` and `maxAcrobatics`
+3. Count Mastery items → check `maxMasteries` and consecutive `maxAcrobatics`
 4. Count ArtistryComponent items by type → check A requirements
+5. Fouetté body elements — at most **one** Fouetté pivot and **one** Fouetté balance on the timeline (counting duplicates); both groups may appear in the same routine. Detected by CoP ID prefix in `fouetteValidation.ts` (`3.160` / `2.180`)
 
-Return `missingRequirements[]` with human-readable messages for the validation panel.
+Return `missingRequirements[]` with human-readable messages for the validation panel. Optional `warnings[]` (severity `info`) when counts are below age-category maximums but not required — e.g. fewer body elements, risks, or masteries on the timeline than can count toward the score.
+
+Implemented in `server/src/services/validationService.ts`, `server/src/utils/validation.ts`, and `server/src/utils/fouetteValidation.ts`. Called from `routineDerivedFields.ts` on every timeline save, `createRoutine`, and when loading routines via `routines` / `routine`.
 
 ---
 

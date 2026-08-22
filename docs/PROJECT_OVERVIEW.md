@@ -119,7 +119,7 @@ The application is **functional through Milestone 5**:
 - **Routine Builder** — inventory panel, timeline drag-and-drop, all four item types, risk/mastery composition validation
 - MUI theme, React Router, layered server services
 
-**Not yet implemented:** full CoP validation engine (M7), automated tests (M8), UI polish (M9), deployment (M10).
+**Not yet implemented:** automated tests (M8), UI polish (M9), deployment (M10).
 
 **Implemented:** live DB/DA scoring recalculates on every timeline change (M6).
 

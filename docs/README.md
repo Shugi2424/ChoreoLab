@@ -74,9 +74,9 @@ These hold the detailed CoP data that drives seed files and validation rules.
 
 ## Current phase
 
-**Milestone 6 complete** — live DB/DA scoring on every timeline change.
+**Milestone 7 complete** — live CoP validation on every timeline change, including Fouetté limits, pivot rotation values (CoP §12), and soft capacity warnings. Scores and validation refresh on load as well as on mutations.
 
-Next: **Milestone 7 — Validation Engine** ([ROADMAP.md](./ROADMAP.md)).
+Next: **Milestone 8 — Automated Test Suite** ([ROADMAP.md](./ROADMAP.md)).
 
 ### Local dev shortcuts (Windows)
 

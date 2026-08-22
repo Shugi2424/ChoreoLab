@@ -34,8 +34,28 @@ ChoreoLab uses three body element categories (maps to CoP Tables #9, #11, #13):
 ## DB scoring rules (CoP 2025–2028)
 
 - The **8 highest** body difficulties are counted (senior); **6 highest** (junior).
-- Each box in the CoP tables is a distinct element — repetitions of the same box are not counted twice.
+- Each box in the CoP tables is a distinct element — repetitions of the same box are not counted twice (highest value instance per id).
 - Series of jumps/pivots: each item in the series counts separately if valid.
+
+### Pivot rotation value (CoP §12.2.5–12.2.8)
+
+Pivot body elements on the timeline store `bodyElementConfig.rotationCount` and a calculated `value`:
+
+| Rule | Additional value |
+| ---- | ---------------- |
+| Base 0.10 pivots, Fouetté (3.160x), back split without help (3.1105), rotations on back/stomach (3.1801, 3.1902) | +0.10 per extra 360° |
+| Base ≥ 0.20 pivots (on relevé) | +0.20 per extra 360° |
+| Rotations on other body parts (3.2003) | +0.10 per extra 180° (180° minimum base) |
+| Pivots 3.505, 3.804, 3.805, 3.1405 | +0.20 per extra 180° |
+| Split rotations 3.2101, 3.2202 | No additional value |
+
+Rotation count is not capped except where the element has no additional value. CoP §12.11 limits **Fouetté components** (shapes), not total rotations — component tracking is not implemented in M7.
+
+Implemented in `server/src/utils/pivotRotation.ts`. Non-pivot body elements use the catalog `value` only.
+
+### Fouetté type limits
+
+At most **one Fouetté pivot** and **one Fouetté balance** body element on the timeline (same or different box — only one entry per group). Both groups may appear together. Validated in `fouetteValidation.ts` by CoP ID prefix (`3.160` pivots, `2.180` balances).
 
 ---
 
@@ -161,7 +181,7 @@ Example (ball): outside visual field throw (+0.10) + catch with 1 hand (+0.10) +
 | Senior       | 4                 |
 | Junior       | 3                 |
 
-Rotation **groups** also have per-routine limits when Risks are evaluated (see Rotation table above); full enforcement is planned for the validation engine (M6).
+Rotation **groups** also have per-routine limits when Risks are evaluated (see Rotation table above); per-group caps are not yet enforced in the validation engine.
 
 ### Seeded criterion reference (ball catch)
 

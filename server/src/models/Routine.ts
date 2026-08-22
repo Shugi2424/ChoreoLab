@@ -29,6 +29,24 @@ const masterySchema = new Schema(
   { _id: false },
 );
 
+const bodyElementConfigSchema = new Schema(
+  {
+    rotationCount: { type: Number, min: 1 },
+    value: { type: Number, required: true },
+  },
+  { _id: false },
+);
+
+const validationNoticeSchema = new Schema(
+  {
+    id: { type: String, required: true },
+    domain: { type: String, required: true },
+    severity: { type: String, enum: ["warning", "info"], required: true },
+    message: { type: String, required: true },
+  },
+  { _id: false },
+);
+
 const missingRequirementSchema = new Schema(
   {
     id: { type: String, required: true },
@@ -45,6 +63,7 @@ const validationResultSchema = new Schema(
     daValid: { type: Boolean, default: false },
     artistryValid: { type: Boolean, default: false },
     missingRequirements: { type: [missingRequirementSchema], default: [] },
+    warnings: { type: [validationNoticeSchema], default: [] },
     calculatedAt: { type: Date, default: () => new Date() },
   },
   { _id: false },
@@ -59,6 +78,7 @@ const routineItemSchema = new Schema(
     },
     order: { type: Number, required: true },
     bodyElementId: { type: String },
+    bodyElementConfig: { type: bodyElementConfigSchema },
     risk: { type: riskSchema },
     mastery: { type: masterySchema },
     artistryComponentId: { type: String },
@@ -88,6 +108,7 @@ const routineSchema = new Schema(
         daValid: false,
         artistryValid: false,
         missingRequirements: [],
+        warnings: [],
         calculatedAt: new Date(),
       }),
     },
@@ -114,6 +135,12 @@ export interface RoutineDocument {
     missingRequirements: Array<{
       id: string;
       domain: string;
+      message: string;
+    }>;
+    warnings: Array<{
+      id: string;
+      domain: string;
+      severity: string;
       message: string;
     }>;
     calculatedAt: Date;

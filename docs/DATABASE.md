@@ -192,6 +192,10 @@ Indexes: `{ coach: 1, updatedAt: -1 }`
 
   // type-specific (only one populated per item)
   bodyElementId?: string;         // ref BodyElement.id
+  bodyElementConfig?: {          // calculated on save (all body_element items)
+    rotationCount?: number;      // pivot only — CoP §12 additional turns
+    value: number;               // scored DB value for this timeline entry
+  };
   risk?: Risk;
   mastery?: Mastery;
   artistryComponentId?: string;   // ref ArtistryComponent.id
@@ -238,6 +242,7 @@ Not a separate collection. A Mastery is a **composition** of bases and DA criter
   daValid: boolean;
   artistryValid: boolean;
   missingRequirements: MissingRequirement[];
+  warnings: ValidationWarning[];  // optional-capacity hints (do not affect isValid)
   calculatedAt: Date;
 }
 
@@ -246,9 +251,18 @@ interface MissingRequirement {
   domain: string;  // "db" | "da" | "a"
   message: string; // human-readable text for the validation panel
 }
+
+interface ValidationWarning {
+  id: string;
+  domain: string;  // "db" | "da" | "a"
+  severity: string; // "info"
+  message: string; // e.g. under max countable body elements / risks / masteries
+}
 ```
 
-Validation reads the `requirements` document for the routine's age category and evaluates the timeline in `validationService`. No separate rule collection.
+Validation reads the `requirements` document for the routine's age category and evaluates the timeline in `validationService`, with additional handlers in `fouetteValidation.ts` and `pivotRotation.ts`. No separate rule collection.
+
+Scores and validation are recalculated on every timeline mutation, on `createRoutine`, and when loading routines via `routines` / `routine` queries (`routineDerivedFields.ts`).
 
 ---
 
@@ -355,3 +369,5 @@ Detailed element values and CoP rules are defined in [docs/domains/](./domains/)
 4. Mastery compositions must satisfy DA combination rules before being saved (`masteryValidation.ts`)
 5. Reference data is replaced on seed — no soft-delete `active` flag on reference collections
 6. Scores and validation on a routine are always recalculated server-side — never trusted from the client
+7. At most one Fouetté pivot and one Fouetté balance body element on the timeline (`fouetteValidation.ts`, CoP ID prefixes `3.160` / `2.180`)
+8. Pivot body elements store `bodyElementConfig.rotationCount` and a calculated `value` per CoP §12 (`pivotRotation.ts`); `rotationCount` is rejected for non-pivot elements

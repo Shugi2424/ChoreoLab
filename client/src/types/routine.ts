@@ -34,12 +34,18 @@ export interface MasteryData {
   isAcro: boolean;
 }
 
+export interface BodyElementConfig {
+  rotationCount?: number | null;
+  value: number;
+}
+
 export interface RoutineItem {
   id: string;
   type: RoutineItemType;
   order: number;
   bodyElementId?: string | null;
   bodyElement?: BodyElementRef | null;
+  bodyElementConfig?: BodyElementConfig | null;
   risk?: RiskData | null;
   mastery?: MasteryData | null;
   artistryComponentId?: string | null;
@@ -54,6 +60,12 @@ export interface ValidationResult {
   missingRequirements: Array<{
     id: string;
     domain: string;
+    message: string;
+  }>;
+  warnings: Array<{
+    id: string;
+    domain: string;
+    severity: string;
     message: string;
   }>;
   calculatedAt: string;
@@ -119,19 +131,73 @@ export const TIMELINE_TYPE_COLORS: Record<RoutineItemType, string> = {
   artistry: "#E65100",
 };
 
-export function getRoutineItemLabel(item: RoutineItem): string {
+export function formatBodyCategory(category: string): string {
+  switch (category) {
+    case "jump":
+      return "Jump";
+    case "balance":
+      return "Balance";
+    case "pivot":
+      return "Pivot";
+    default:
+      return category;
+  }
+}
+
+export function getBodyElementDisplayName(item: RoutineItem): string {
+  return item.bodyElement?.name ?? item.bodyElementId ?? "Body element";
+}
+
+export function getRoutineItemTimelinePrimary(item: RoutineItem): string {
   switch (item.type) {
-    case "body_element": {
-      const name = item.bodyElement?.name ?? item.bodyElementId ?? "Body element";
-      const value = item.bodyElement?.value;
-      return value != null ? `${name} (${formatCopValue(value)})` : name;
-    }
+    case "body_element":
+      return getBodyElementDisplayName(item);
     case "artistry":
       return item.artistryComponent?.name ?? item.artistryComponentId ?? "Artistry";
     case "risk":
-      return `Risk (${formatCopValue(item.risk?.value ?? 0.2)})`;
+      return "Risk";
     case "mastery":
-      return `Mastery (${formatCopValue(item.mastery?.value ?? 0)})`;
+      return "Mastery";
+    default:
+      return item.type;
+  }
+}
+
+export function getRoutineItemTimelineMeta(item: RoutineItem): string {
+  switch (item.type) {
+    case "body_element": {
+      const category = item.bodyElement?.category;
+      const categoryLabel = category ? formatBodyCategory(category) : "Body";
+      const value = item.bodyElementConfig?.value ?? item.bodyElement?.value;
+      const rotations = item.bodyElementConfig?.rotationCount;
+      const rotationPart =
+        rotations != null && category === "pivot"
+          ? ` · ${rotations} turn${rotations === 1 ? "" : "s"}`
+          : "";
+      const valuePart = value != null ? ` · ${formatCopValue(value)}` : "";
+      return `Body element (DB) · ${categoryLabel}${rotationPart}${valuePart}`;
+    }
+    case "risk":
+      return `${getRoutineItemTypeLabel("risk")} · ${formatCopValue(item.risk?.value ?? 0.2)}`;
+    case "mastery":
+      return `${getRoutineItemTypeLabel("mastery")} · ${formatCopValue(item.mastery?.value ?? 0)}`;
+    case "artistry":
+      return getRoutineItemTypeLabel("artistry");
+    default:
+      return item.type;
+  }
+}
+
+export function getRoutineItemLabel(item: RoutineItem): string {
+  switch (item.type) {
+    case "body_element":
+      return getBodyElementDisplayName(item);
+    case "artistry":
+      return item.artistryComponent?.name ?? item.artistryComponentId ?? "Artistry";
+    case "risk":
+      return "Risk";
+    case "mastery":
+      return "Mastery";
     default:
       return item.type;
   }

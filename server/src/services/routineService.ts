@@ -5,7 +5,9 @@ import {
   NotFoundError,
   UserInputError,
 } from "../utils/errors.js";
+import type { RoutinePersistTarget } from "../types/routineScoring.js";
 import { toGraphQLRoutine } from "../utils/mappers.js";
+import { applyDerivedRoutineFields } from "./routineDerivedFields.js";
 
 export interface CreateRoutineInput {
   gymnastName: string;
@@ -56,18 +58,33 @@ export const routineService = {
       apparatus: validated.apparatus,
       ageCategory: validated.ageCategory,
     });
+    const persistTarget = doc as unknown as RoutinePersistTarget;
+    await applyDerivedRoutineFields(persistTarget);
+    await doc.save();
     return toGraphQLRoutine(doc.toObject());
   },
 
   async listByCoach(coachId: string) {
-    const docs = await Routine.find({ coach: coachId })
-      .sort({ updatedAt: -1 })
-      .lean();
-    return docs.map(toGraphQLRoutine);
+    const docs = await Routine.find({ coach: coachId }).sort({ updatedAt: -1 });
+    await Promise.all(
+      docs.map(async (routine) => {
+        await applyDerivedRoutineFields(routine as unknown as RoutinePersistTarget);
+        routine.markModified("validation");
+        routine.markModified("dbScore");
+        routine.markModified("daScore");
+        await routine.save();
+      }),
+    );
+    return docs.map((doc) => toGraphQLRoutine(doc.toObject()));
   },
 
   async getById(coachId: string, id: string) {
     const routine = await getRoutineDocForCoach(id, coachId);
+    await applyDerivedRoutineFields(routine as unknown as RoutinePersistTarget);
+    routine.markModified("validation");
+    routine.markModified("dbScore");
+    routine.markModified("daScore");
+    await routine.save();
     return toGraphQLRoutine(routine.toObject());
   },
 

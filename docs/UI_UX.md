@@ -20,7 +20,7 @@ The interface prioritizes clarity and speed: coaches are building routines under
 | Text secondary | Gray `#5A6072`       | Labels, hints                          |
 | Success        | Green `#0F7B4A`      | Valid requirements                     |
 | Error          | Red `#B42318`        | Missing requirements, errors           |
-| Warning        | Amber `#B54708`      | Warnings in validation panel           |
+| Info           | Muted blue `#5A6072` | Soft capacity hints in validation panel |
 
 These will be defined as an MUI theme in `client/src/theme/theme.ts`.
 
@@ -124,8 +124,8 @@ The most important screen. Three-panel layout on desktop:
 │  items       │  mastery, drag to    │                  │
 │              │  timeline            │   Validation     │
 │  Drag to     │                      │   Panel          │
-│  reorder     │  Edit selected     │   (placeholder   │
-│              │  item inline         │    until M7)     │
+│  reorder     │  Edit selected     │   Validation     │
+│              │  item inline         │   (live M7)      │
 │  Click to    │                      │                  │
 │  select      │                      │                  │
 │              │                      │                  │
@@ -135,21 +135,25 @@ The most important screen. Three-panel layout on desktop:
 ### Timeline (left panel)
 
 - Vertical ordered list of routine items
-- Each item shows: order number, type label, name/value
+- Each item shows: order number and name on the first line; second line has domain label, category (body only), turn count (pivot only), and CoP value
+- **Body elements:** line 1 e.g. `1. Tuck jump…`; line 2 e.g. `Body element (DB) · Jump · 0.1`
+- **Risk / mastery / artistry:** same two-line pattern (e.g. line 1 `2. Risk`; line 2 `Risk (DB) · 0.4`)
+- Long body element and artistry names wrap on line 1 (not truncated)
 - Color-coded by domain: **DB** (body + risk) blue `#1976D2`, **DA** (mastery) purple `#7B2D8E`, **Artistry** orange `#E65100`
 - Click to select → populates inventory panel for editing
 - **Drag-and-drop reorder** is the primary way to change item order (drag handle on each row)
 - Drop indicator matches the dragged item's type color
 - Up/down buttons as fallback for keyboard users and touch devices without drag
 - Remove button per item
-- Accept drops from inventory (body elements, artistry) at insert position
+- Accept drops from inventory (body elements, artistry) at insert position; drop indicator shows before the target row
+- **Pivot drag-to-timeline:** opens a rotation-count dialog (CoP §12) before the item is added; jump and balance add immediately on drop
 
-**Implementation:** `@dnd-kit/core` + `@dnd-kit/sortable`; persist order via `reorderRoutineItems` mutation on drop.
+**Implementation:** `@dnd-kit/core` + `@dnd-kit/sortable`; inventory drops use `insertIndex` on `addRoutineItem`; collision detection prefers timeline rows over the panel container. Client: `PivotRotationDialog.tsx`, `TimelinePanel.tsx`, `RoutineBuilder.tsx`.
 
 ### Inventory Panel (center)
 
 - Tab or type selector for **Body (DB)**, **Risk (DB)**, **Apparatus (DA)**, **Artistry (A)**
-- **Body Element:** searchable dropdown filtered by apparatus and category; drag row to timeline
+- **Body Element:** searchable dropdown filtered by apparatus and category; **pivot** elements prompt for rotation count (CoP §12 value preview) before add — via **Add** or **drag to timeline** (`PivotRotationDialog`); jump/balance drag adds at drop position without extra steps
 - **Risk:** criteria multi-select + rotation rows; live validation; drag composed risk to timeline
 - **Mastery:** base + criteria pickers with combination rules; optional rotation; drag composed mastery to timeline
 - **Artistry:** searchable dropdown; drag row to timeline
@@ -161,10 +165,10 @@ The most important screen. Three-panel layout on desktop:
 
 - **DB Score** — large pink number, updates live after each timeline mutation (M6)
 - **DA Score** — large purple number, updates live after each timeline mutation (M6)
-- **Validation Panel** below scores (full engine in M7):
-  - Green checkmarks for met requirements
-  - Red X for missing requirements
-  - Amber warnings where applicable
+- **Validation Panel** below scores:
+  - Green checkmarks per domain (DB, DA, Artistry) when requirements are met
+  - Red errors for missing or excess CoP requirements, nested under each domain
+  - Soft blue info hints when below max countable slots (body elements, risks, masteries) — not errors
   - Grouped by domain (DB, DA, Artistry)
 - Auto-save indicator when mutations are in flight
 
@@ -195,7 +199,7 @@ Use MUI `useMediaQuery` or `Grid` breakpoints; test on real iOS and Android devi
 
 | Action              | Behavior                                                        |
 | ------------------- | --------------------------------------------------------------- |
-| Add item            | Compose in inventory → drag to timeline or submit → mutation → UI updates |
+| Add item            | Compose in inventory → drag to timeline (with `insertIndex`) or submit → mutation → UI updates. Pivot: rotation dialog on drop or Add. |
 | Remove item         | Confirmation dialog → mutation                                  |
 | Reorder             | **Drag-and-drop** (primary on desktop) or up/down buttons → mutation. **M9:** touch drag on mobile + explicit “move” / “add to timeline” fallbacks |
 | Change item content | Edit in inventory panel → mutation on save                      |

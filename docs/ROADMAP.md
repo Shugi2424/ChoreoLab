@@ -168,7 +168,7 @@ Each milestone is **independently testable** and should be completed before movi
 - [x] Routine Builder page — inventory + timeline + score panels
 - [x] **Inventory panel** — pick body elements, risks, masteries, artistry; compose risk/mastery inline
 - [x] Timeline panel — **drag-and-drop reorder** (primary), select, remove
-- [x] Drag body elements and artistry from inventory into timeline at drop position
+- [x] Drag body elements and artistry from inventory into timeline at drop position (`insertIndex`; pivot opens rotation dialog)
 - [x] Drag risks/masteries from inventory as pre-composed items
 - [x] Up/down reorder buttons as keyboard and accessibility fallback
 - [x] Live client-side risk/mastery validation mirrors server rules
@@ -176,6 +176,7 @@ Each milestone is **independently testable** and should be completed before movi
 - [x] CoP value display via `formatCopValue()` (one decimal place)
 - [x] Auto-save on every mutation with saving indicator
 - [x] `@dnd-kit/core` for accessible drag-and-drop
+- [x] Timeline rows — full body element description; two-line layout (domain, category, value on second line)
 
 **Test:** Create routine → add body element, risk, mastery, artistry → drag to reorder → remove → timeline persists on reload.
 
@@ -200,19 +201,19 @@ Each milestone is **independently testable** and should be completed before movi
 
 ---
 
-## Milestone 7 — Validation Engine
+## Milestone 7 — Validation Engine ✅
 
 **Goal:** Code of Points requirements are checked and displayed in real time.
 
 ### Server
 
-- [ ] `validationService` — rule handlers against `requirements` collection
-- [ ] Integrate into routine mutations alongside scoring
+- [x] `validationService` — rule handlers against `requirements` collection
+- [x] Integrate into routine mutations alongside scoring
 
 ### Client
 
-- [ ] Validation panel — green checks, red errors, grouped by domain
-- [ ] Updates immediately after any timeline mutation
+- [x] Validation panel — green checks, red errors, grouped by domain
+- [x] Updates immediately after any timeline mutation
 
 **Test:** Build routine missing a required element → validation shows specific missing requirement. Add it → validation passes.
 
@@ -413,4 +414,4 @@ M6 and M7 can be developed in parallel after M5. Milestones **M8 onward are sequ
 
 ## Next Step
 
-**Milestone 6 complete.** Next: **Milestone 7 — Validation Engine**.
+**Milestone 7 complete.** Next: **Milestone 8 — Automated Test Suite**.

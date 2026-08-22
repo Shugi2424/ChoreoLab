@@ -1,5 +1,6 @@
 import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
 import ErrorOutlinedIcon from "@mui/icons-material/ErrorOutlined";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import {
   Box,
   Divider,
@@ -10,7 +11,8 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import type { Routine } from "../../types/routine";
+import type { ReactNode } from "react";
+import type { Routine, ValidationResult } from "../../types/routine";
 import { TIMELINE_TYPE_COLORS } from "../../types/routine";
 import { formatCopValue } from "../../utils/formatCopValue";
 
@@ -18,9 +20,149 @@ interface ScorePanelProps {
   routine: Routine;
 }
 
+type ValidationDomain = "db" | "da" | "a";
+
+const DOMAIN_CONFIG: Array<{
+  key: ValidationDomain;
+  label: string;
+  color: string;
+  validKey: keyof Pick<ValidationResult, "dbValid" | "daValid" | "artistryValid">;
+}> = [
+  {
+    key: "db",
+    label: "Difficulty of Body (DB)",
+    color: TIMELINE_TYPE_COLORS.body_element,
+    validKey: "dbValid",
+  },
+  {
+    key: "da",
+    label: "Difficulty of Apparatus (DA)",
+    color: TIMELINE_TYPE_COLORS.mastery,
+    validKey: "daValid",
+  },
+  {
+    key: "a",
+    label: "Artistry (A)",
+    color: TIMELINE_TYPE_COLORS.artistry,
+    validKey: "artistryValid",
+  },
+];
+
+const MESSAGE_ICON_COLUMN_WIDTH = 22;
+const MESSAGE_INDENT = 4.5;
+
+function ValidationMessageRow({
+  icon,
+  message,
+  color,
+}: {
+  icon: ReactNode;
+  message: string;
+  color: string;
+}) {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "flex-start",
+        gap: 1,
+        pl: MESSAGE_INDENT,
+        py: 0.375,
+      }}
+    >
+      <Box
+        sx={{
+          width: MESSAGE_ICON_COLUMN_WIDTH,
+          flexShrink: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: 22,
+          mt: "1px",
+        }}
+      >
+        {icon}
+      </Box>
+      <Typography variant="body2" sx={{ color, flex: 1, lineHeight: 1.43 }}>
+        {message}
+      </Typography>
+    </Box>
+  );
+}
+
+function DomainValidationSection({
+  label,
+  color,
+  isValid,
+  issues,
+  warnings,
+}: {
+  label: string;
+  color: string;
+  isValid: boolean;
+  issues: ValidationResult["missingRequirements"];
+  warnings: ValidationResult["warnings"];
+}) {
+  return (
+    <Box sx={{ mb: 2 }}>
+      <ListItem disableGutters sx={{ py: 0, alignItems: "center" }}>
+        <ListItemIcon sx={{ minWidth: 36, mt: 0 }}>
+          {isValid ? (
+            <CheckCircleOutlinedIcon color="success" fontSize="small" />
+          ) : (
+            <ErrorOutlinedIcon color="error" fontSize="small" />
+          )}
+        </ListItemIcon>
+        <ListItemText
+          primary={label}
+          slotProps={{
+            primary: { sx: { color, fontWeight: 600, lineHeight: 1.5 } },
+          }}
+        />
+      </ListItem>
+      {issues.map((req) => (
+        <ValidationMessageRow
+          key={req.id}
+          icon={<ErrorOutlinedIcon color="error" sx={{ fontSize: 18 }} />}
+          message={req.message}
+          color="error.main"
+        />
+      ))}
+      {warnings.map((notice) => (
+        <ValidationMessageRow
+          key={notice.id}
+          icon={
+            <InfoOutlinedIcon sx={{ fontSize: 18, color: "info.main", opacity: 0.55 }} />
+          }
+          message={notice.message}
+          color="text.secondary"
+        />
+      ))}
+    </Box>
+  );
+}
+
+function groupByDomain<T extends { domain: string }>(
+  items: T[],
+): Record<ValidationDomain, T[]> {
+  const grouped: Record<ValidationDomain, T[]> = {
+    db: [],
+    da: [],
+    a: [],
+  };
+  for (const item of items) {
+    const domain = item.domain as ValidationDomain;
+    if (domain in grouped) {
+      grouped[domain].push(item);
+    }
+  }
+  return grouped;
+}
+
 export function ScorePanel({ routine }: ScorePanelProps) {
   const { validation, dbScore, daScore } = routine;
-  const missing = validation.missingRequirements;
+  const issuesByDomain = groupByDomain(validation.missingRequirements);
+  const warningsByDomain = groupByDomain(validation.warnings ?? []);
 
   return (
     <Paper
@@ -68,84 +210,24 @@ export function ScorePanel({ routine }: ScorePanelProps) {
         Validation
       </Typography>
       <Box sx={{ flex: 1, minHeight: 0, overflow: "auto", pr: 0.5 }}>
-      <List dense disablePadding>
-        <ListItem disableGutters>
-          <ListItemIcon sx={{ minWidth: 36 }}>
-            {validation.dbValid ? (
-              <CheckCircleOutlinedIcon color="success" fontSize="small" />
-            ) : (
-              <ErrorOutlinedIcon color="error" fontSize="small" />
-            )}
-          </ListItemIcon>
-          <ListItemText
-            primary="Difficulty of Body (DB)"
-            slotProps={{
-              primary: { sx: { color: TIMELINE_TYPE_COLORS.body_element } },
-            }}
-          />
-        </ListItem>
-        <ListItem disableGutters>
-          <ListItemIcon sx={{ minWidth: 36 }}>
-            {validation.daValid ? (
-              <CheckCircleOutlinedIcon color="success" fontSize="small" />
-            ) : (
-              <ErrorOutlinedIcon color="error" fontSize="small" />
-            )}
-          </ListItemIcon>
-          <ListItemText
-            primary="Difficulty of Apparatus (DA)"
-            slotProps={{
-              primary: { sx: { color: TIMELINE_TYPE_COLORS.mastery } },
-            }}
-          />
-        </ListItem>
-        <ListItem disableGutters>
-          <ListItemIcon sx={{ minWidth: 36 }}>
-            {validation.artistryValid ? (
-              <CheckCircleOutlinedIcon color="success" fontSize="small" />
-            ) : (
-              <ErrorOutlinedIcon color="error" fontSize="small" />
-            )}
-          </ListItemIcon>
-          <ListItemText
-            primary="Artistry (A)"
-            slotProps={{
-              primary: { sx: { color: TIMELINE_TYPE_COLORS.artistry } },
-            }}
-          />
-        </ListItem>
-      </List>
+        <List dense disablePadding>
+          {DOMAIN_CONFIG.map((domain) => (
+            <DomainValidationSection
+              key={domain.key}
+              label={domain.label}
+              color={domain.color}
+              isValid={validation[domain.validKey]}
+              issues={issuesByDomain[domain.key]}
+              warnings={warningsByDomain[domain.key]}
+            />
+          ))}
+        </List>
 
-      {missing.length > 0 && (
-        <Box sx={{ mt: 2 }}>
-          <Typography variant="subtitle2" color="error.main" gutterBottom>
-            Missing requirements
+        {validation.isValid && (
+          <Typography color="success.main" sx={{ mt: 1 }} variant="body2">
+            Routine meets all CoP requirements.
           </Typography>
-          <List dense disablePadding>
-            {missing.map((req) => (
-              <ListItem key={req.id} disableGutters alignItems="flex-start">
-                <ListItemIcon sx={{ minWidth: 36, mt: 0.25 }}>
-                  <ErrorOutlinedIcon color="error" fontSize="small" />
-                </ListItemIcon>
-                <ListItemText
-                  primary={req.message}
-                  secondary={req.domain}
-                  slotProps={{
-                    primary: { variant: "body2" },
-                    secondary: { variant: "caption" },
-                  }}
-                />
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      )}
-
-      {validation.isValid && (
-        <Typography color="success.main" sx={{ mt: 2 }} variant="body2">
-          Routine meets all CoP requirements.
-        </Typography>
-      )}
+        )}
       </Box>
     </Paper>
   );

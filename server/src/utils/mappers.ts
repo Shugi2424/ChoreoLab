@@ -125,6 +125,12 @@ export function toGraphQLValidationResult(doc: {
     domain: string;
     message: string;
   }>;
+  warnings?: Array<{
+    id: string;
+    domain: string;
+    severity: string;
+    message: string;
+  }>;
   calculatedAt?: Date;
 }) {
   return {
@@ -137,6 +143,12 @@ export function toGraphQLValidationResult(doc: {
       domain: item.domain,
       message: item.message,
     })),
+    warnings: (doc.warnings ?? []).map((item) => ({
+      id: item.id,
+      domain: item.domain,
+      severity: item.severity,
+      message: item.message,
+    })),
     calculatedAt: doc.calculatedAt?.toISOString() ?? new Date().toISOString(),
   };
 }
@@ -147,6 +159,10 @@ export function toGraphQLRoutineItem(item: unknown) {
     type: string;
     order: number;
     bodyElementId?: string | null;
+    bodyElementConfig?: {
+      rotationCount?: number;
+      value: number;
+    } | null;
     risk?: {
       criteriaIds: string[];
       rotations: Array<{ rotationId: string; count: number }>;
@@ -167,6 +183,7 @@ export function toGraphQLRoutineItem(item: unknown) {
     type: entry.type,
     order: entry.order,
     bodyElementId: entry.bodyElementId ?? null,
+    bodyElementConfig: entry.bodyElementConfig ?? null,
     risk: entry.risk ?? null,
     mastery: entry.mastery ?? null,
     artistryComponentId: entry.artistryComponentId ?? null,
