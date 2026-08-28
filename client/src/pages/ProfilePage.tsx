@@ -15,19 +15,7 @@ import {
   CHANGE_PASSWORD_MUTATION,
   UPDATE_PROFILE_MUTATION,
 } from "../graphql/mutations";
-
-function getGraphQLErrorMessage(error: unknown, fallback: string): string {
-  if (
-    typeof error === "object" &&
-    error !== null &&
-    "graphQLErrors" in error &&
-    Array.isArray(error.graphQLErrors) &&
-    error.graphQLErrors[0]?.message
-  ) {
-    return String(error.graphQLErrors[0].message);
-  }
-  return fallback;
-}
+import { getGraphQLErrorMessage } from "../utils/graphqlErrors";
 
 function ProfileDetailsForm({
   coach,

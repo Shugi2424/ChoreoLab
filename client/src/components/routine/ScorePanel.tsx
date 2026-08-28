@@ -12,6 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import type { ReactNode } from "react";
+import { useMemo } from "react";
 import type { Routine, ValidationResult } from "../../types/routine";
 import { DOMAIN_COLORS } from "../../theme/domainColors";
 import { formatCopValue } from "../../utils/formatCopValue";
@@ -212,8 +213,14 @@ function groupByDomain<T extends { domain: string }>(
 
 export function ScorePanel({ routine }: ScorePanelProps) {
   const { validation, dbScore, daScore } = routine;
-  const issuesByDomain = groupByDomain(validation.missingRequirements);
-  const warningsByDomain = groupByDomain(validation.warnings ?? []);
+  const issuesByDomain = useMemo(
+    () => groupByDomain(validation.missingRequirements),
+    [validation.missingRequirements],
+  );
+  const warningsByDomain = useMemo(
+    () => groupByDomain(validation.warnings ?? []),
+    [validation.warnings],
+  );
 
   return (
     <Paper

@@ -1,13 +1,10 @@
 import { Routine } from "../models/Routine.js";
 import { AGE_CATEGORIES, APPARATUS } from "../types/enums.js";
-import {
-  ForbiddenError,
-  NotFoundError,
-  UserInputError,
-} from "../utils/errors.js";
+import { UserInputError } from "../utils/errors.js";
 import type { RoutinePersistTarget } from "../types/routineScoring.js";
 import { toGraphQLRoutine } from "../utils/mappers.js";
 import { applyDerivedRoutineFields } from "./routineDerivedFields.js";
+import { getRoutineDocForCoach } from "./routineAccess.js";
 
 export interface CreateRoutineInput {
   gymnastName: string;
@@ -76,17 +73,6 @@ function validateUpdateInput(input: UpdateRoutineInput): UpdateRoutineInput {
   }
 
   return patch;
-}
-
-async function getRoutineDocForCoach(id: string, coachId: string) {
-  const routine = await Routine.findById(id);
-  if (!routine) {
-    throw new NotFoundError("Routine not found");
-  }
-  if (routine.coach.toString() !== coachId) {
-    throw new ForbiddenError();
-  }
-  return routine;
 }
 
 export const routineService = {

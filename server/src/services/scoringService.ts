@@ -1,23 +1,19 @@
 import { BodyElement } from "../models/BodyElement.js";
-import { Requirement } from "../models/Requirement.js";
 import type { RoutinePersistTarget, ScoringTimelineEntry } from "../types/routineScoring.js";
-import { NotFoundError } from "../utils/errors.js";
 import {
   calculateDAScore,
   calculateDBScore,
   type DaScoringLimits,
   type DbScoringLimits,
 } from "../utils/scoring.js";
+import type { RequirementsDocument } from "./requirementsCache.js";
+import { getRequirementsByAgeCategory } from "./requirementsCache.js";
+import type { TimelineCatalogMaps } from "./timelineCatalogCache.js";
 
-async function loadScoringLimits(ageCategory: string): Promise<{
+function scoringLimitsFromRequirements(requirements: RequirementsDocument): {
   db: DbScoringLimits;
   da: DaScoringLimits;
-}> {
-  const requirements = await Requirement.findOne({ ageCategory }).lean();
-  if (!requirements) {
-    throw new NotFoundError(`Requirements not found for age category: ${ageCategory}`);
-  }
-
+} {
   return {
     db: {
       maxElements: requirements.DB.maxElements,
@@ -31,6 +27,7 @@ async function loadScoringLimits(ageCategory: string): Promise<{
 
 async function resolveBodyElementValues(
   timeline: readonly ScoringTimelineEntry[],
+  catalogValues?: Map<string, number>,
 ): Promise<number[]> {
   const bodyItems = timeline.filter(
     (item) => item.type === "body_element" && item.bodyElementId,
@@ -40,26 +37,29 @@ async function resolveBodyElementValues(
     return [];
   }
 
-  const idsNeedingCatalog = [
-    ...new Set(
-      bodyItems
-        .filter((item) => item.bodyElementConfig?.value == null)
-        .map((item) => item.bodyElementId as string),
-    ),
-  ];
+  let catalogValueById = catalogValues;
 
-  const catalogElements =
-    idsNeedingCatalog.length > 0
-      ? await BodyElement.find({ id: { $in: idsNeedingCatalog } }).lean()
-      : [];
-  const catalogValueById = new Map(catalogElements.map((element) => [element.id, element.value]));
+  if (!catalogValueById) {
+    const idsNeedingCatalog = [
+      ...new Set(
+        bodyItems
+          .filter((item) => item.bodyElementConfig?.value == null)
+          .map((item) => item.bodyElementId as string),
+      ),
+    ];
+
+    const catalogElements =
+      idsNeedingCatalog.length > 0
+        ? await BodyElement.find({ id: { $in: idsNeedingCatalog } }).lean()
+        : [];
+    catalogValueById = new Map(catalogElements.map((element) => [element.id, element.value]));
+  }
 
   const maxValueByElementId = new Map<string, number>();
 
   for (const item of bodyItems) {
     const id = item.bodyElementId as string;
-    const value =
-      item.bodyElementConfig?.value ?? catalogValueById.get(id);
+    const value = item.bodyElementConfig?.value ?? catalogValueById.get(id);
     if (value == null) {
       continue;
     }
@@ -82,12 +82,18 @@ function collectMasteryValues(timeline: readonly ScoringTimelineEntry[]): number
     .map((item) => item.mastery!.value);
 }
 
+interface ApplyScoresOptions {
+  requirements?: RequirementsDocument;
+  catalog?: TimelineCatalogMaps;
+}
+
 export const scoringService = {
   async calculateDB(
     timeline: readonly ScoringTimelineEntry[],
     ageCategory: string,
   ): Promise<number> {
-    const { db: limits } = await loadScoringLimits(ageCategory);
+    const requirements = await getRequirementsByAgeCategory(ageCategory);
+    const { db: limits } = scoringLimitsFromRequirements(requirements);
     const bodyValues = await resolveBodyElementValues(timeline);
     const riskValues = collectRiskValues(timeline);
     return calculateDBScore(bodyValues, riskValues, limits);
@@ -97,19 +103,26 @@ export const scoringService = {
     timeline: readonly ScoringTimelineEntry[],
     ageCategory: string,
   ): Promise<number> {
-    const { da: limits } = await loadScoringLimits(ageCategory);
+    const requirements = await getRequirementsByAgeCategory(ageCategory);
+    const { da: limits } = scoringLimitsFromRequirements(requirements);
     const masteryValues = collectMasteryValues(timeline);
     return calculateDAScore(masteryValues, limits);
   },
 
   /** Recalculate and write dbScore / daScore on the routine document (does not save). */
-  async applyScores(routine: RoutinePersistTarget): Promise<void> {
+  async applyScores(
+    routine: RoutinePersistTarget,
+    options?: ApplyScoresOptions,
+  ): Promise<void> {
+    const requirements =
+      options?.requirements ?? (await getRequirementsByAgeCategory(routine.ageCategory));
+    const { db: dbLimits, da: daLimits } = scoringLimitsFromRequirements(requirements);
     const timeline = routine.timeline;
-    const [dbScore, daScore] = await Promise.all([
-      this.calculateDB(timeline, routine.ageCategory),
-      this.calculateDA(timeline, routine.ageCategory),
-    ]);
-    routine.dbScore = dbScore;
-    routine.daScore = daScore;
+    const bodyValues = await resolveBodyElementValues(
+      timeline,
+      options?.catalog?.bodyValueById,
+    );
+    routine.dbScore = calculateDBScore(bodyValues, collectRiskValues(timeline), dbLimits);
+    routine.daScore = calculateDAScore(collectMasteryValues(timeline), daLimits);
   },
 };

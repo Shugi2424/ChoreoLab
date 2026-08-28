@@ -102,7 +102,7 @@ export function MyRoutinesPage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const navigate = useNavigate();
-  const { data, loading, error, refetch } = useQuery<{ routines: Routine[] }>(
+  const { data, loading, error } = useQuery<{ routines: Routine[] }>(
     ROUTINES_QUERY,
     { fetchPolicy: "network-only" },
   );
@@ -117,9 +117,22 @@ export function MyRoutinesPage() {
     setDeleteError(null);
 
     try {
-      await deleteRoutine({ variables: { id: routineToDelete.id } });
+      await deleteRoutine({
+        variables: { id: routineToDelete.id },
+        update(cache) {
+          const existing = cache.readQuery<{ routines: Routine[] }>({ query: ROUTINES_QUERY });
+          if (!existing) {
+            return;
+          }
+          cache.writeQuery({
+            query: ROUTINES_QUERY,
+            data: {
+              routines: existing.routines.filter((routine) => routine.id !== routineToDelete.id),
+            },
+          });
+        },
+      });
       setRoutineToDelete(null);
-      await refetch();
     } catch (err) {
       setDeleteError(getGraphQLErrorMessage(err, "Could not delete routine."));
     }

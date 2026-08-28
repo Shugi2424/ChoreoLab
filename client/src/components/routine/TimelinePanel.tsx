@@ -31,6 +31,7 @@ import { touchIconButtonSx } from "../../theme/touchTargets";
 
 interface TimelinePanelProps {
   routine: Routine;
+  sortedTimelineItems?: RoutineItem[];
   selectedItemId: string | null;
   onSelectItem: (itemId: string) => void;
   onRemoveItem: (itemId: string) => void;
@@ -218,6 +219,7 @@ function SortableTimelineRow({
 
 export function TimelinePanel({
   routine,
+  sortedTimelineItems,
   selectedItemId,
   onSelectItem,
   onRemoveItem,
@@ -234,8 +236,9 @@ export function TimelinePanel({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const sortedItems = useMemo(
-    () => [...routine.timeline].sort((a, b) => a.order - b.order),
-    [routine.timeline],
+    () =>
+      sortedTimelineItems ?? [...routine.timeline].sort((a, b) => a.order - b.order),
+    [sortedTimelineItems, routine.timeline],
   );
 
   const displayItems = useMemo(() => {

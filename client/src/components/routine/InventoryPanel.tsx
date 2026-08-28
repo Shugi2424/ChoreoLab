@@ -96,15 +96,12 @@ function syncRiskMasteryFromSelectedItem(
 ) {
   setters.setFormError(null);
   const criteria = selectedItem.risk?.criteriaIds ?? [];
-  setters.setThrowCriteriaIds(
-    criteria.filter((id) => throwCriteria.some((c) => c.id === id)),
-  );
-  setters.setCatchCriteriaIds(
-    criteria.filter((id) => catchCriteria.some((c) => c.id === id)),
-  );
-  setters.setGeneralCriteriaIds(
-    criteria.filter((id) => generalCriteria.some((c) => c.id === id)),
-  );
+  const throwIds = new Set(throwCriteria.map((c) => c.id));
+  const catchIds = new Set(catchCriteria.map((c) => c.id));
+  const generalIds = new Set(generalCriteria.map((c) => c.id));
+  setters.setThrowCriteriaIds(criteria.filter((id) => throwIds.has(id)));
+  setters.setCatchCriteriaIds(criteria.filter((id) => catchIds.has(id)));
+  setters.setGeneralCriteriaIds(criteria.filter((id) => generalIds.has(id)));
   setters.setRiskRotationIds(buildRiskRotationIds(selectedItem));
   setters.setMasteryBaseIds(selectedItem.mastery?.baseIds ?? []);
   setters.setMasteryCriteriaIds(selectedItem.mastery?.criteriaIds ?? []);
@@ -143,6 +140,13 @@ interface BaseOption {
   value: number;
   apparatuses: string[];
   allowedCriteria: string[];
+}
+
+interface BodyElementOption {
+  id: string;
+  name: string;
+  category: string;
+  value: number;
 }
 
 interface CriteriaOption {
@@ -190,6 +194,7 @@ interface InventoryPanelProps {
   hiddenInventoryDragId?: string | null;
   touchFriendly?: boolean;
   timelineItems?: RoutineItem[];
+  bodyElements?: BodyElementOption[];
 }
 
 export function InventoryPanel({
@@ -206,20 +211,35 @@ export function InventoryPanel({
   hiddenInventoryDragId = null,
   touchFriendly = false,
   timelineItems = [],
+  bodyElements: bodyElementsProp,
 }: InventoryPanelProps) {
-  const { data: bodyElementsData } = useQuery(BODY_ELEMENTS_QUERY);
+  const { data: bodyElementsData } = useQuery(BODY_ELEMENTS_QUERY, {
+    skip: bodyElementsProp !== undefined,
+  });
   const { data: basesData } = useQuery(BASES_QUERY, { variables: { apparatus } });
   const { data: daCriteriaData } = useQuery(DA_CRITERIA_QUERY);
   const { data: rCriteriaData } = useQuery(R_CRITERIA_QUERY, { variables: { apparatus } });
   const { data: rotationsData } = useQuery(ROTATIONS_QUERY);
   const { data: artistryData } = useQuery(ARTISTRY_COMPONENTS_QUERY);
 
-  const bodyElements = bodyElementsData?.bodyElements ?? [];
+  const bodyElements = bodyElementsProp ?? bodyElementsData?.bodyElements ?? [];
   const bases = basesData?.bases ?? [];
   const daCriteria = daCriteriaData?.daCriteria ?? [];
   const rCriteria = rCriteriaData?.rCriteria ?? [];
   const rotations = rotationsData?.rotations ?? [];
   const artistryComponents = artistryData?.artistryComponents ?? [];
+
+  const basesById = useMemo(
+    () => new Map<string, BaseOption>(bases.map((base: BaseOption) => [base.id, base])),
+    [bases],
+  );
+  const bodyElementsById = useMemo(
+    () =>
+      new Map<string, BodyElementOption>(
+        bodyElements.map((element: BodyElementOption) => [element.id, element]),
+      ),
+    [bodyElements],
+  );
 
   const activeType = mode === "edit" ? selectedItem?.type : itemType;
 
@@ -330,11 +350,10 @@ export function InventoryPanel({
     }
     const allowed = new Set<string>();
     for (const baseId of masteryBaseIds) {
-      const base = bases.find((b: BaseOption) => b.id === baseId);
-      base?.allowedCriteria.forEach((id: string) => allowed.add(id));
+      basesById.get(baseId)?.allowedCriteria.forEach((id: string) => allowed.add(id));
     }
     return daCriteria.filter((c: CriteriaOption) => allowed.has(c.id));
-  }, [masteryBaseIds, bases, daCriteria]);
+  }, [masteryBaseIds, basesById, daCriteria]);
 
   const selectableMasteryBases = useMemo(() => {
     if (masteryBaseIds.length >= 2) {
@@ -381,11 +400,9 @@ export function InventoryPanel({
       return null;
     }
     return (
-      bodyElements.find(
-        (element: { id: string; category: string }) => element.id === pivotId,
-      ) ?? null
+      bodyElementsById.get(pivotId) ?? null
     );
-  }, [bodyElements, mode, pendingPivotId, selectedItem]);
+  }, [bodyElementsById, mode, pendingPivotId, selectedItem]);
 
   const showPivotConfigurator =
     activePivotElement?.category === "pivot" &&
@@ -605,9 +622,7 @@ export function InventoryPanel({
   };
 
   const handleBodyElementPick = async (id: string, insertIndex?: number) => {
-    const element = bodyElements.find(
-      (entry: { id: string; category: string }) => entry.id === id,
-    );
+    const element = bodyElementsById.get(id);
 
     if (element?.category === "pivot") {
       if (mode === "add") {

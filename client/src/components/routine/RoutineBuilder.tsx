@@ -293,16 +293,15 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
   };
 
   const handleMoveItem = async (itemId: string, direction: "up" | "down") => {
-    const items = [...routine.timeline].sort((a, b) => a.order - b.order);
-    const index = items.findIndex((item) => item.id === itemId);
+    const index = sortedItems.findIndex((item) => item.id === itemId);
     if (index < 0) {
       return;
     }
     const targetIndex = direction === "up" ? index - 1 : index + 1;
-    if (targetIndex < 0 || targetIndex >= items.length) {
+    if (targetIndex < 0 || targetIndex >= sortedItems.length) {
       return;
     }
-    const ids = items.map((item) => item.id);
+    const ids = sortedItems.map((item) => item.id);
     [ids[index], ids[targetIndex]] = [ids[targetIndex], ids[index]];
     setLocalItemIds(ids);
     await handleReorder(ids);
@@ -469,12 +468,14 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
       hiddenInventoryDragId={hiddenInventoryDragId}
       touchFriendly={isMobile}
       timelineItems={sortedItems}
+      bodyElements={bodyElements}
     />
   );
 
   const timelineSection = (
     <TimelinePanel
       routine={routine}
+      sortedTimelineItems={sortedItems}
       selectedItemId={selectedItemId}
       onSelectItem={(id) => {
         setAddType(null);

@@ -6,7 +6,6 @@ import {
   RCriteria,
   Rotation,
 } from "../models/reference.js";
-import { Requirement } from "../models/Requirement.js";
 import {
   toGraphQLArtistryComponent,
   toGraphQLBase,
@@ -16,27 +15,61 @@ import {
   toGraphQLRequirement,
   toGraphQLRotation,
 } from "../utils/mappers.js";
+import { getRequirementsByAgeCategory } from "./requirementsCache.js";
+
+type GraphQLBodyElement = ReturnType<typeof toGraphQLBodyElement>;
+type GraphQLArtistryComponent = ReturnType<typeof toGraphQLArtistryComponent>;
+
+const bodyElementById = new Map<string, GraphQLBodyElement | null>();
+const artistryComponentById = new Map<string, GraphQLArtistryComponent | null>();
+const listCache = new Map<string, unknown[]>();
+
+function listCacheKey(prefix: string, parts: unknown[]): string {
+  return `${prefix}:${JSON.stringify(parts)}`;
+}
 
 export const referenceDataService = {
   async listBodyElements(category?: string) {
+    const key = listCacheKey("bodyElements", [category ?? null]);
+    const cached = listCache.get(key);
+    if (cached) {
+      return cached as GraphQLBodyElement[];
+    }
+
     const filter = category ? { category } : {};
     const docs = await BodyElement.find(filter).sort({ id: 1 }).lean();
-    return docs.map(toGraphQLBodyElement);
+    const result = docs.map(toGraphQLBodyElement);
+    listCache.set(key, result);
+    return result;
   },
 
   async getBodyElement(id: string) {
+    if (bodyElementById.has(id)) {
+      return bodyElementById.get(id)!;
+    }
+
     const doc = await BodyElement.findOne({ id }).lean();
-    return doc ? toGraphQLBodyElement(doc) : null;
+    const result = doc ? toGraphQLBodyElement(doc) : null;
+    bodyElementById.set(id, result);
+    return result;
   },
 
   async getRequirements(ageCategory: string) {
-    const doc = await Requirement.findOne({ ageCategory }).lean();
-    return doc ? toGraphQLRequirement(doc) : null;
+    const doc = await getRequirementsByAgeCategory(ageCategory);
+    return toGraphQLRequirement(doc);
   },
 
   async listDACriteria() {
+    const key = listCacheKey("daCriteria", []);
+    const cached = listCache.get(key);
+    if (cached) {
+      return cached as ReturnType<typeof toGraphQLDACriteria>[];
+    }
+
     const docs = await DACriteria.find().sort({ id: 1 }).lean();
-    return docs.map(toGraphQLDACriteria);
+    const result = docs.map(toGraphQLDACriteria);
+    listCache.set(key, result);
+    return result;
   },
 
   async getDACriterion(id: string) {
@@ -45,9 +78,17 @@ export const referenceDataService = {
   },
 
   async listBases(apparatus?: string) {
+    const key = listCacheKey("bases", [apparatus ?? null]);
+    const cached = listCache.get(key);
+    if (cached) {
+      return cached as ReturnType<typeof toGraphQLBase>[];
+    }
+
     const filter = apparatus ? { apparatuses: apparatus } : {};
     const docs = await Base.find(filter).sort({ id: 1 }).lean();
-    return docs.map(toGraphQLBase);
+    const result = docs.map(toGraphQLBase);
+    listCache.set(key, result);
+    return result;
   },
 
   async getBase(id: string) {
@@ -56,11 +97,19 @@ export const referenceDataService = {
   },
 
   async listRCriteria(apparatus?: string, type?: string) {
+    const key = listCacheKey("rCriteria", [apparatus ?? null, type ?? null]);
+    const cached = listCache.get(key);
+    if (cached) {
+      return cached as ReturnType<typeof toGraphQLRCriteria>[];
+    }
+
     const filter: Record<string, unknown> = {};
     if (apparatus) filter.apparatuses = apparatus;
     if (type) filter.type = type;
     const docs = await RCriteria.find(filter).sort({ id: 1 }).lean();
-    return docs.map(toGraphQLRCriteria);
+    const result = docs.map(toGraphQLRCriteria);
+    listCache.set(key, result);
+    return result;
   },
 
   async getRCriterion(id: string) {
@@ -69,9 +118,17 @@ export const referenceDataService = {
   },
 
   async listRotations(group?: string) {
+    const key = listCacheKey("rotations", [group ?? null]);
+    const cached = listCache.get(key);
+    if (cached) {
+      return cached as ReturnType<typeof toGraphQLRotation>[];
+    }
+
     const filter = group ? { group } : {};
     const docs = await Rotation.find(filter).sort({ id: 1 }).lean();
-    return docs.map(toGraphQLRotation);
+    const result = docs.map(toGraphQLRotation);
+    listCache.set(key, result);
+    return result;
   },
 
   async getRotation(id: string) {
@@ -80,13 +137,27 @@ export const referenceDataService = {
   },
 
   async listArtistryComponents(type?: string) {
+    const key = listCacheKey("artistry", [type ?? null]);
+    const cached = listCache.get(key);
+    if (cached) {
+      return cached as GraphQLArtistryComponent[];
+    }
+
     const filter = type ? { type } : {};
     const docs = await ArtistryComponent.find(filter).sort({ id: 1 }).lean();
-    return docs.map(toGraphQLArtistryComponent);
+    const result = docs.map(toGraphQLArtistryComponent);
+    listCache.set(key, result);
+    return result;
   },
 
   async getArtistryComponent(id: string) {
+    if (artistryComponentById.has(id)) {
+      return artistryComponentById.get(id)!;
+    }
+
     const doc = await ArtistryComponent.findOne({ id }).lean();
-    return doc ? toGraphQLArtistryComponent(doc) : null;
+    const result = doc ? toGraphQLArtistryComponent(doc) : null;
+    artistryComponentById.set(id, result);
+    return result;
   },
 };

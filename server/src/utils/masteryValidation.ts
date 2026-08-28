@@ -15,10 +15,18 @@ export interface MasteryInput {
   rotationId?: string;
 }
 
+interface MasteryBaseDoc {
+  id: string;
+  name: string;
+  value: number;
+  apparatuses: string[];
+  allowedCriteria: string[];
+}
+
 export async function validateMasteryInput(
   input: MasteryInput,
   apparatus: string,
-): Promise<MasteryInput> {
+): Promise<MasteryInput & { bases: MasteryBaseDoc[] }> {
   const baseIds = input.baseIds ?? [];
   const criteriaIds = input.criteriaIds ?? [];
 
@@ -73,26 +81,29 @@ export async function validateMasteryInput(
     baseIds,
     criteriaIds,
     rotationId: input.rotationId,
+    bases,
   };
 }
 
 export async function calculateMasteryValue(
   baseIds: string[],
   criteriaIds: string[],
+  bases?: MasteryBaseDoc[],
 ): Promise<number> {
-  const bases = await Base.find({ id: { $in: baseIds } }).lean();
-  if (bases.length === 0) {
+  const loaded =
+    bases ?? (await Base.find({ id: { $in: baseIds } }).lean()) as MasteryBaseDoc[];
+  if (loaded.length === 0) {
     return 0;
   }
 
   if (baseIds.length === 1 && criteriaIds.length === 2) {
-    return bases[0].value;
+    return loaded[0].value;
   }
 
   if (baseIds.length === 2 && criteriaIds.length === 1) {
-    const highestBase = Math.max(...bases.map((base) => base.value));
+    const highestBase = Math.max(...loaded.map((base) => base.value));
     return highestBase + 0.1;
   }
 
-  return Math.max(...bases.map((base) => base.value));
+  return Math.max(...loaded.map((base) => base.value));
 }

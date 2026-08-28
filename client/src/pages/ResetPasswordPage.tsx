@@ -8,19 +8,7 @@ import {
   AuthTextField,
 } from "../components/auth/AuthPageShell";
 import { RESET_PASSWORD_MUTATION } from "../graphql/mutations";
-
-function getGraphQLErrorMessage(error: unknown): string {
-  if (
-    typeof error === "object" &&
-    error !== null &&
-    "graphQLErrors" in error &&
-    Array.isArray(error.graphQLErrors) &&
-    error.graphQLErrors[0]?.message
-  ) {
-    return String(error.graphQLErrors[0].message);
-  }
-  return "Could not reset password.";
-}
+import { getGraphQLErrorMessage } from "../utils/graphqlErrors";
 
 export function ResetPasswordPage() {
   const navigate = useNavigate();
@@ -55,7 +43,7 @@ export function ResetPasswordPage() {
       setSuccessMessage(data.resetPassword.message);
       setTimeout(() => navigate("/login", { replace: true }), 1500);
     } catch (error) {
-      setErrorMessage(getGraphQLErrorMessage(error));
+      setErrorMessage(getGraphQLErrorMessage(error, "Could not reset password."));
     }
   };
 

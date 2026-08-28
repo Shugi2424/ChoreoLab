@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { clearRequirementsCache } from "./requirementsCache.js";
 import { scoringService } from "./scoringService.js";
 
 const { mockRequirementLean, mockBodyElementLean } = vi.hoisted(() => ({
@@ -20,6 +21,7 @@ vi.mock("../models/BodyElement.js", () => ({
 
 describe("scoringService", () => {
   beforeEach(() => {
+    clearRequirementsCache();
     mockRequirementLean.mockReset();
     mockBodyElementLean.mockReset();
     mockRequirementLean.mockResolvedValue({

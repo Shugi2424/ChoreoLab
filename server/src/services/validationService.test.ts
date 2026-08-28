@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { clearRequirementsCache } from "./requirementsCache.js";
 import { validationService } from "./validationService.js";
 
 const { mockRequirementLean, mockBodyElementLean, mockArtistryLean } = vi.hoisted(() => ({
@@ -38,6 +39,7 @@ const seniorRequirements = {
 
 describe("validationService", () => {
   beforeEach(() => {
+    clearRequirementsCache();
     mockRequirementLean.mockReset();
     mockBodyElementLean.mockReset();
     mockArtistryLean.mockReset();

@@ -4,7 +4,6 @@ import { Routine, type RoutineDocument } from "../models/Routine.js";
 import type { RoutinePersistTarget } from "../types/routineScoring.js";
 import { RCriteria, Rotation, ArtistryComponent } from "../models/reference.js";
 import {
-  ForbiddenError,
   NotFoundError,
   UserInputError,
 } from "../utils/errors.js";
@@ -49,16 +48,7 @@ export interface UpdateRoutineItemInput {
   artistryComponentId?: string;
 }
 
-async function getRoutineDocForCoach(id: string, coachId: string) {
-  const routine = await Routine.findById(id);
-  if (!routine) {
-    throw new NotFoundError("Routine not found");
-  }
-  if (routine.coach.toString() !== coachId) {
-    throw new ForbiddenError();
-  }
-  return routine;
-}
+import { getRoutineDocForCoach } from "./routineAccess.js";
 
 function renormalizeOrder(timeline: RoutineDocument["timeline"]) {
   timeline.forEach((item, index) => {
@@ -171,7 +161,11 @@ async function buildMasteryPayload(input: MasteryInput, apparatus: string) {
     isAcro = rotation.group.startsWith("acro-");
   }
 
-  const value = await calculateMasteryValue(validated.baseIds, validated.criteriaIds);
+  const value = await calculateMasteryValue(
+    validated.baseIds,
+    validated.criteriaIds,
+    validated.bases,
+  );
 
   return {
     baseIds: validated.baseIds,
@@ -292,27 +286,19 @@ export const routineTimelineService = {
       throw new UserInputError("Item list must include every timeline item.");
     }
 
-    const timelineIds = new Set(
-      routine.timeline.map((entry) =>
-        (entry as { _id: Types.ObjectId })._id.toString(),
-      ),
+    const entryById = new Map(
+      routine.timeline.map((entry) => {
+        const timelineEntry = entry as { _id: Types.ObjectId; order: number };
+        return [timelineEntry._id.toString(), timelineEntry];
+      }),
     );
 
-    for (const id of itemIds) {
-      if (!timelineIds.has(id)) {
+    for (let index = 0; index < itemIds.length; index++) {
+      const entry = entryById.get(itemIds[index]);
+      if (!entry) {
         throw new UserInputError("Invalid timeline item id in reorder list.");
       }
-    }
-
-    const orderMap = new Map(itemIds.map((id, index) => [id, index]));
-
-    for (const entry of routine.timeline) {
-      const timelineEntry = entry as { _id: Types.ObjectId; order: number };
-      const nextOrder = orderMap.get(timelineEntry._id.toString());
-      if (nextOrder === undefined) {
-        throw new UserInputError("Invalid timeline item id in reorder list.");
-      }
-      timelineEntry.order = nextOrder;
+      entry.order = index;
     }
 
     routine.timeline.sort(

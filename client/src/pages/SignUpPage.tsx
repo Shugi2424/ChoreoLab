@@ -9,19 +9,7 @@ import {
   AuthTextField,
 } from "../components/auth/AuthPageShell";
 import { SIGN_UP_MUTATION } from "../graphql/mutations";
-
-function getGraphQLErrorMessage(error: unknown): string {
-  if (
-    typeof error === "object" &&
-    error !== null &&
-    "graphQLErrors" in error &&
-    Array.isArray(error.graphQLErrors) &&
-    error.graphQLErrors[0]?.message
-  ) {
-    return String(error.graphQLErrors[0].message);
-  }
-  return "Could not create account.";
-}
+import { getGraphQLErrorMessage } from "../utils/graphqlErrors";
 
 export function SignUpPage() {
   const navigate = useNavigate();
@@ -60,7 +48,7 @@ export function SignUpPage() {
       loginWithToken(data.signUp.token, data.signUp.coach);
       navigate("/dashboard", { replace: true });
     } catch (error) {
-      setErrorMessage(getGraphQLErrorMessage(error));
+      setErrorMessage(getGraphQLErrorMessage(error, "Could not create account."));
     }
   };
 
