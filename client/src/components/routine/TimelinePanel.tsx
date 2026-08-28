@@ -27,6 +27,7 @@ import {
   TIMELINE_TYPE_COLORS,
 } from "../../types/routine";
 import { applyTimelineScroll } from "../../utils/timelineScroll";
+import { touchIconButtonSx } from "../../theme/touchTargets";
 
 interface TimelinePanelProps {
   routine: Routine;
@@ -41,6 +42,7 @@ interface TimelinePanelProps {
   scrollToItemId?: string | null;
   scrollToEnd?: boolean;
   onScrolledToItem?: () => void;
+  touchFriendly?: boolean;
 }
 
 function DropSlotIndicator({ color }: { color?: string | null }) {
@@ -71,6 +73,7 @@ interface SortableTimelineRowProps {
   canMoveUp: boolean;
   canMoveDown: boolean;
   disabled: boolean;
+  touchFriendly?: boolean;
 }
 
 function TimelineRowContent({
@@ -121,9 +124,11 @@ function SortableTimelineRow({
   canMoveUp,
   canMoveDown,
   disabled,
+  touchFriendly = false,
 }: SortableTimelineRowProps) {
+  const sortableDisabled = disabled || touchFriendly;
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({ id: item.id, disabled });
+    useSortable({ id: item.id, disabled: sortableDisabled });
 
   const style = {
     transform: CSS.Translate.toString(transform),
@@ -146,53 +151,66 @@ function SortableTimelineRow({
         borderLeftColor: TIMELINE_TYPE_COLORS[item.type],
       }}
     >
-      <IconButton
-        size="small"
-        aria-label="Drag to reorder"
-        sx={{ cursor: disabled ? "default" : "grab", mr: 0.5, mt: 0.25 }}
-        disabled={disabled}
-        {...attributes}
-        {...listeners}
-        onClick={(event) => event.stopPropagation()}
-      >
-        <DragIndicatorIcon fontSize="small" />
-      </IconButton>
+      {!touchFriendly ? (
+        <Box
+          component="span"
+          aria-label="Drag to reorder"
+          sx={{
+            cursor: disabled ? "default" : "grab",
+            mr: 0.5,
+            mt: 0.25,
+            color: "text.secondary",
+            flexShrink: 0,
+            display: "inline-flex",
+            alignItems: "center",
+          }}
+          {...attributes}
+          {...listeners}
+          onClick={(event) => event.stopPropagation()}
+        >
+          <DragIndicatorIcon fontSize="small" />
+        </Box>
+      ) : null}
       <TimelineRowContent item={item} index={index} selected={selected} />
-      <ButtonGroup size="small" orientation="vertical" sx={{ mr: 0.5 }}>
+      <ButtonGroup
+        size={touchFriendly ? "medium" : "small"}
+        orientation="vertical"
+        sx={{ mr: 0.5, flexShrink: 0 }}
+      >
         <IconButton
-          size="small"
           aria-label="Move up"
           disabled={disabled || !canMoveUp}
+          sx={touchFriendly ? touchIconButtonSx : undefined}
           onClick={(event) => {
             event.stopPropagation();
             onMoveUp();
           }}
         >
-          <KeyboardArrowUpIcon fontSize="small" />
+          <KeyboardArrowUpIcon fontSize={touchFriendly ? "medium" : "small"} />
         </IconButton>
         <IconButton
-          size="small"
           aria-label="Move down"
           disabled={disabled || !canMoveDown}
+          sx={touchFriendly ? touchIconButtonSx : undefined}
           onClick={(event) => {
             event.stopPropagation();
             onMoveDown();
           }}
         >
-          <KeyboardArrowDownIcon fontSize="small" />
+          <KeyboardArrowDownIcon fontSize={touchFriendly ? "medium" : "small"} />
         </IconButton>
       </ButtonGroup>
       <IconButton
-        size="small"
         aria-label="Remove item"
         color="error"
         disabled={disabled}
+        sx={touchFriendly ? touchIconButtonSx : undefined}
         onClick={(event) => {
           event.stopPropagation();
           onRemove();
         }}
       >
-        <DeleteOutlinedIcon fontSize="small" />
+        <DeleteOutlinedIcon fontSize={touchFriendly ? "medium" : "small"} />
       </IconButton>
     </ListItemButton>
   );
@@ -211,6 +229,7 @@ export function TimelinePanel({
   scrollToItemId,
   scrollToEnd = false,
   onScrolledToItem,
+  touchFriendly = false,
 }: TimelinePanelProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -271,6 +290,11 @@ export function TimelinePanel({
       <Typography variant="h6" gutterBottom sx={{ flexShrink: 0 }}>
         Timeline
       </Typography>
+      {touchFriendly ? (
+        <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 1, flexShrink: 0 }}>
+          Use the arrow buttons to reorder items.
+        </Typography>
+      ) : null}
 
       <Box ref={scrollContainerRef} sx={{ flex: 1, minHeight: 0, overflow: "auto", pr: 0.5 }}>
         {displayItems.length === 0 ? (
@@ -299,6 +323,7 @@ export function TimelinePanel({
                     canMoveUp={index > 0}
                     canMoveDown={index < displayItems.length - 1}
                     disabled={busy}
+                    touchFriendly={touchFriendly}
                   />
                 </Box>
               ))}

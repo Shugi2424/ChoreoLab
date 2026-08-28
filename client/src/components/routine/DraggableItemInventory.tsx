@@ -1,5 +1,6 @@
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import {
   Autocomplete,
   Box,
@@ -13,6 +14,7 @@ import {
 import { useDraggable } from "@dnd-kit/core";
 import { useMemo, useState } from "react";
 import { sortRotations } from "../../utils/rotationSort";
+import { touchIconButtonSx } from "../../theme/touchTargets";
 import {
   compactListboxSlotProps,
   compactPickerSx,
@@ -36,6 +38,8 @@ interface DraggableInventoryRowProps {
   disabled: boolean;
   dragColor?: string;
   hiddenDragId?: string | null;
+  touchFriendly?: boolean;
+  onAddItemAtPosition?: (id: string) => void;
 }
 
 function DraggableInventoryRow({
@@ -47,7 +51,10 @@ function DraggableInventoryRow({
   disabled,
   dragColor,
   hiddenDragId,
+  touchFriendly = false,
+  onAddItemAtPosition,
 }: DraggableInventoryRowProps) {
+  const dragDisabled = disabled || touchFriendly;
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: dragId,
     data: {
@@ -56,7 +63,7 @@ function DraggableInventoryRow({
       subtitle: item.subtitle,
       color: dragColor,
     },
-    disabled,
+    disabled: dragDisabled,
   });
 
   const visuallyHidden = isDragging || dragId === hiddenDragId;
@@ -85,21 +92,23 @@ function DraggableInventoryRow({
           p: 0.75,
         }}
       >
-        <Box
-          component="span"
-          sx={{
-            display: "inline-flex",
-            alignItems: "flex-start",
-            pt: 0.25,
-            flexShrink: 0,
-            cursor: disabled ? "default" : "grab",
-            color: "text.secondary",
-          }}
-          {...attributes}
-          {...listeners}
-        >
-          <DragIndicatorIcon sx={{ fontSize: 18 }} />
-        </Box>
+        {!touchFriendly ? (
+          <Box
+            component="span"
+            sx={{
+              display: "inline-flex",
+              alignItems: "flex-start",
+              pt: 0.25,
+              flexShrink: 0,
+              cursor: dragDisabled ? "default" : "grab",
+              color: "text.secondary",
+            }}
+            {...attributes}
+            {...listeners}
+          >
+            <DragIndicatorIcon sx={{ fontSize: 18 }} />
+          </Box>
+        ) : null}
         <Box
           component="button"
           type="button"
@@ -135,14 +144,31 @@ function DraggableInventoryRow({
           ) : null}
         </Box>
         <Button
-          size="small"
-          variant="text"
+          size={touchFriendly ? "medium" : "small"}
+          variant={touchFriendly ? "outlined" : "text"}
           onClick={onAdd}
           disabled={disabled}
-          sx={{ flexShrink: 0, alignSelf: "flex-start", minWidth: 40, px: 0.5, fontSize: "0.7rem" }}
+          sx={{
+            flexShrink: 0,
+            alignSelf: "flex-start",
+            minWidth: touchFriendly ? 88 : 40,
+            minHeight: touchFriendly ? 44 : undefined,
+            px: touchFriendly ? 1.5 : 0.5,
+            fontSize: touchFriendly ? "0.8125rem" : "0.7rem",
+          }}
         >
-          Add
+          {touchFriendly ? "Add to end" : "Add"}
         </Button>
+        {touchFriendly && onAddItemAtPosition ? (
+          <IconButton
+            aria-label={`Choose timeline position for ${item.name}`}
+            disabled={disabled}
+            onClick={() => onAddItemAtPosition(item.id)}
+            sx={touchIconButtonSx}
+          >
+            <PlaylistAddIcon />
+          </IconButton>
+        ) : null}
       </Box>
     </ListItem>
   );
@@ -162,6 +188,8 @@ interface DraggableItemInventoryProps {
   busy: boolean;
   dragColor?: string;
   hiddenDragId?: string | null;
+  touchFriendly?: boolean;
+  onAddItemAtPosition?: (id: string) => void;
 }
 
 export function DraggableItemInventory({
@@ -178,6 +206,8 @@ export function DraggableItemInventory({
   busy,
   dragColor,
   hiddenDragId = null,
+  touchFriendly = false,
+  onAddItemAtPosition,
 }: DraggableItemInventoryProps) {
   const [search, setSearch] = useState("");
 
@@ -207,7 +237,9 @@ export function DraggableItemInventory({
         </Typography>
       </Box>
       <Typography variant="caption" color="text.secondary" sx={{ mb: 1, flexShrink: 0, lineHeight: 1.35 }}>
-        {hint}
+        {touchFriendly
+          ? "Tap Add to append, or use the list icon to choose a position."
+          : hint}
       </Typography>
       <TextField
         size="small"
@@ -238,6 +270,8 @@ export function DraggableItemInventory({
               disabled={busy}
               dragColor={dragColor}
               hiddenDragId={hiddenDragId}
+              touchFriendly={touchFriendly}
+              onAddItemAtPosition={onAddItemAtPosition}
             />
           ))
         )}

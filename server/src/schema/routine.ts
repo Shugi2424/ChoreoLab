@@ -85,6 +85,12 @@ export const routineTypeDefs = `#graphql
     ageCategory: AgeCategory!
   }
 
+  input UpdateRoutineInput {
+    gymnastName: String
+    apparatus: Apparatus
+    ageCategory: AgeCategory
+  }
+
   input RiskRotationInput {
     rotationId: ID!
     count: Int!

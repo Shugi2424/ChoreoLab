@@ -12,7 +12,7 @@ export const compactPickerSx = {
     width: "100%",
   },
   "& .MuiInputBase-root": {
-    fontSize: "0.8125rem",
+    fontSize: { xs: "16px", md: "0.8125rem" },
     alignItems: "flex-start",
     flexWrap: "wrap",
     gap: 0.5,
@@ -21,12 +21,12 @@ export const compactPickerSx = {
     minHeight: 40,
   },
   "& .MuiInputBase-input": {
-    fontSize: "0.8125rem",
+    fontSize: { xs: "16px", md: "0.8125rem" },
     minWidth: 48,
     flexGrow: 1,
   },
   "& .MuiInputLabel-root": {
-    fontSize: "0.8125rem",
+    fontSize: { xs: "16px", md: "0.8125rem" },
   },
   "& .MuiFormHelperText-root": { fontSize: "0.75rem" },
   "& .MuiChip-root": {
@@ -35,7 +35,7 @@ export const compactPickerSx = {
     m: 0,
   },
   "& .MuiChip-label": {
-    fontSize: "0.75rem",
+    fontSize: { xs: "0.875rem", md: "0.75rem" },
     px: 0.75,
     py: 0.25,
     lineHeight: 1.3,
@@ -51,6 +51,11 @@ export const compactPickerSx = {
     flexWrap: "wrap",
     rowGap: 0.5,
   },
+  /** Placeholder and typing area wrap below selected chips (multi-select). */
+  "& .MuiAutocomplete-input": {
+    flex: "1 1 100%",
+    minWidth: "100% !important",
+  },
 };
 
 export const compactListboxSlotProps = {
@@ -62,7 +67,7 @@ export const compactListboxSlotProps = {
   listbox: {
     sx: {
       "& .MuiAutocomplete-option": {
-        fontSize: "0.75rem",
+        fontSize: { xs: "16px", md: "0.75rem" },
         py: 0.75,
         px: 1.5,
         lineHeight: 1.35,
@@ -127,7 +132,7 @@ export function renderCompactOption(
       key,
       style: {
         ...style,
-        fontSize: "0.75rem",
+        fontSize: "inherit",
         lineHeight: 1.35,
         whiteSpace: "normal",
         wordBreak: "break-word",

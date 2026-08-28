@@ -32,7 +32,7 @@ export function LoginPage() {
       const { data } = await login({
         variables: { input: { email, password } },
       });
-      loginWithToken(data.login.token);
+      loginWithToken(data.login.token, data.login.coach);
       navigate("/dashboard", { replace: true });
     } catch (error) {
       setErrorMessage(getLoginErrorMessage(error));

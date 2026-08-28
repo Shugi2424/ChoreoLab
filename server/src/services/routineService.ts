@@ -15,6 +15,12 @@ export interface CreateRoutineInput {
   ageCategory: string;
 }
 
+export interface UpdateRoutineInput {
+  gymnastName?: string;
+  apparatus?: string;
+  ageCategory?: string;
+}
+
 function validateCreateInput(input: CreateRoutineInput): CreateRoutineInput {
   const gymnastName = input.gymnastName?.trim();
   if (!gymnastName) {
@@ -36,6 +42,40 @@ function validateCreateInput(input: CreateRoutineInput): CreateRoutineInput {
     apparatus: input.apparatus,
     ageCategory: input.ageCategory,
   };
+}
+
+function validateUpdateInput(input: UpdateRoutineInput): UpdateRoutineInput {
+  const patch: UpdateRoutineInput = {};
+
+  if (input.gymnastName !== undefined) {
+    const gymnastName = input.gymnastName.trim();
+    if (!gymnastName) {
+      throw new UserInputError("Gymnast name is required.");
+    }
+    patch.gymnastName = gymnastName;
+  }
+
+  if (input.apparatus !== undefined) {
+    if (!APPARATUS.includes(input.apparatus as (typeof APPARATUS)[number])) {
+      throw new UserInputError("Invalid apparatus.");
+    }
+    patch.apparatus = input.apparatus;
+  }
+
+  if (input.ageCategory !== undefined) {
+    if (
+      !AGE_CATEGORIES.includes(input.ageCategory as (typeof AGE_CATEGORIES)[number])
+    ) {
+      throw new UserInputError("Invalid age category.");
+    }
+    patch.ageCategory = input.ageCategory;
+  }
+
+  if (Object.keys(patch).length === 0) {
+    throw new UserInputError("No routine fields to update.");
+  }
+
+  return patch;
 }
 
 async function getRoutineDocForCoach(id: string, coachId: string) {
@@ -62,6 +102,26 @@ export const routineService = {
     await applyDerivedRoutineFields(persistTarget);
     await doc.save();
     return toGraphQLRoutine(doc.toObject());
+  },
+
+  async update(coachId: string, id: string, input: UpdateRoutineInput) {
+    const patch = validateUpdateInput(input);
+    const routine = await getRoutineDocForCoach(id, coachId);
+
+    if (patch.gymnastName !== undefined) {
+      routine.gymnastName = patch.gymnastName;
+    }
+    if (patch.apparatus !== undefined) {
+      routine.apparatus = patch.apparatus as (typeof APPARATUS)[number];
+    }
+    if (patch.ageCategory !== undefined) {
+      routine.ageCategory = patch.ageCategory as (typeof AGE_CATEGORIES)[number];
+    }
+
+    const persistTarget = routine as unknown as RoutinePersistTarget;
+    await applyDerivedRoutineFields(persistTarget);
+    await routine.save();
+    return toGraphQLRoutine(routine.toObject());
   },
 
   /** Fresh scores/validation for display; does not write (preserves updatedAt sort order). */

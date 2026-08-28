@@ -2,7 +2,7 @@
 
 ChoreoLab uses **Vitest** for automated tests. CoP business logic is covered by fast unit tests with no database (Mongoose models are mocked where needed).
 
-**M8 (complete)** delivers unit tests + CI. **M9** adds React component tests during UI polish. **M11** adds MongoDB integration and optional E2E after deployment.
+**M8 (complete)** delivers unit tests + CI. **M9 (complete)** adds React component tests and manual phone QA checklist. **M11** adds MongoDB integration and optional E2E after deployment.
 
 ## Commands
 
@@ -21,6 +21,25 @@ ChoreoLab uses **Vitest** for automated tests. CoP business logic is covered by 
 | `server/src/middleware/context.test.ts` | GraphQL context from Bearer JWT |
 | `server/src/services/*.test.ts` | Scoring and validation services (mocked Mongoose) |
 | `client/src/utils/*.test.ts` | Login errors, pivot preview, re-export parity |
+| `client/src/types/routineTimelineLabels.test.ts` | Timeline primary/meta label formatting |
+| `client/src/components/**/*.test.tsx` | ScorePanel, TimelinePanel (M9) |
+| `client/src/pages/LoginPage.test.tsx` | Auth error display (M9) |
+
+## Manual phone QA (M9)
+
+Run on a real iOS or Android device before production deploy:
+
+1. **Login** — sign in; confirm no input zoom and fast redirect to Home
+2. **Create routine** — new gymnast, apparatus, age category
+3. **Routine builder (mobile tabs)** — Scores | Timeline | Inventory; add body element, risk, mastery, artistry via inventory buttons (not drag)
+4. **Risk editor** — throw/catch criteria pickers readable; rotation selects without zoom clipping
+5. **Reorder** — arrow buttons move timeline items; scores update
+6. **Edit** — tap timeline item, edit in inventory, save
+7. **Delete item** — remove from timeline
+8. **My Routines** — open list, delete routine with confirmation dialog
+9. **Profile** — update name/club; change password validation messages
+
+Local URL: `http://192.168.68.118:5173` (same Wi‑Fi as dev machine).
 
 ## Shared package (`@choreolab/shared`)
 
@@ -52,7 +71,7 @@ GitHub Actions (`.github/workflows/ci.yml`) runs on push/PR to `master`:
 
 | Type | Milestone | Notes |
 | ---- | --------- | ----- |
-| React component tests (`@testing-library/react`) | M9 | ScorePanel, TimelinePanel, auth error display |
+| React component tests (`@testing-library/react`) | M9 (complete) | ScorePanel, TimelinePanel, LoginPage, timeline labels |
 | MongoDB integration tests | M11 | `routineTimelineService`, JWT-protected GraphQL |
 | E2E browser tests | M11 | Optional after deploy if manual QA is insufficient |
 | Post-deploy smoke checklist | M10 | Manual verification on production URLs |

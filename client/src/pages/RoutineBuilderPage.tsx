@@ -2,16 +2,16 @@ import {
   Alert,
   Box,
   Button,
-  CircularProgress,
   MenuItem,
   Paper,
   TextField,
-  Typography,
 } from "@mui/material";
 import { useMutation, useQuery } from "@apollo/client";
 import { FormEvent, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { RoutineBuilder } from "../components/routine/RoutineBuilder";
+import { PageHeader } from "../components/layout/PageHeader";
+import { PageLoading } from "../components/layout/PageLoading";
 import { CREATE_ROUTINE_MUTATION } from "../graphql/mutations";
 import { ROUTINE_QUERY } from "../graphql/queries";
 import type { AgeCategory, Apparatus, Routine } from "../types/routine";
@@ -47,12 +47,10 @@ function CreateRoutineForm() {
 
   return (
     <Box>
-      <Typography variant="h4" color="secondary.main" gutterBottom>
-        Create Routine
-      </Typography>
-      <Typography color="text.secondary" sx={{ mb: 3 }}>
-        Enter the gymnast details to start building a routine.
-      </Typography>
+      <PageHeader
+        title="Create Routine"
+        subtitle="Enter the gymnast details to start building a routine."
+      />
 
       <Paper sx={{ p: 3, maxWidth: 480 }}>
         <form onSubmit={handleSubmit}>
@@ -68,6 +66,7 @@ function CreateRoutineForm() {
             label="Gymnast name"
             value={gymnastName}
             onChange={(event) => setGymnastName(event.target.value)}
+            sx={{ "& .MuiInputBase-input": { fontSize: { xs: "16px", sm: "inherit" } } }}
           />
           <TextField
             margin="normal"
@@ -133,11 +132,7 @@ export function RoutineBuilderPage() {
   }
 
   if (loading) {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
-        <CircularProgress color="primary" />
-      </Box>
-    );
+    return <PageLoading label="Loading routine…" />;
   }
 
   if (error || !data?.routine) {

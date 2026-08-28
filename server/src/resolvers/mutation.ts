@@ -8,6 +8,7 @@ import { coachService, type UpdateProfileInput } from "../services/coachService.
 import {
   routineService,
   type CreateRoutineInput,
+  type UpdateRoutineInput,
 } from "../services/routineService.js";
 import {
   routineTimelineService,
@@ -60,6 +61,12 @@ export const mutationResolvers = {
     { input }: { input: CreateRoutineInput },
     context: GraphQLContext,
   ) => routineService.create(requireAuth(context), input),
+
+  updateRoutine: (
+    _: unknown,
+    { id, input }: { id: string; input: UpdateRoutineInput },
+    context: GraphQLContext,
+  ) => routineService.update(requireAuth(context), id, input),
 
   deleteRoutine: (_: unknown, { id }: { id: string }, context: GraphQLContext) =>
     routineService.delete(requireAuth(context), id),

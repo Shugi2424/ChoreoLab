@@ -57,7 +57,7 @@ export function SignUpPage() {
           },
         },
       });
-      loginWithToken(data.signUp.token);
+      loginWithToken(data.signUp.token, data.signUp.coach);
       navigate("/dashboard", { replace: true });
     } catch (error) {
       setErrorMessage(getGraphQLErrorMessage(error));

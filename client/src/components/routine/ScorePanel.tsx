@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import type { ReactNode } from "react";
 import type { Routine, ValidationResult } from "../../types/routine";
-import { TIMELINE_TYPE_COLORS } from "../../types/routine";
+import { DOMAIN_COLORS } from "../../theme/domainColors";
 import { formatCopValue } from "../../utils/formatCopValue";
 
 interface ScorePanelProps {
@@ -31,22 +31,73 @@ const DOMAIN_CONFIG: Array<{
   {
     key: "db",
     label: "Difficulty of Body (DB)",
-    color: TIMELINE_TYPE_COLORS.body_element,
+    color: DOMAIN_COLORS.db,
     validKey: "dbValid",
   },
   {
     key: "da",
     label: "Difficulty of Apparatus (DA)",
-    color: TIMELINE_TYPE_COLORS.mastery,
+    color: DOMAIN_COLORS.da,
     validKey: "daValid",
   },
   {
     key: "a",
     label: "Artistry (A)",
-    color: TIMELINE_TYPE_COLORS.artistry,
+    color: DOMAIN_COLORS.a,
     validKey: "artistryValid",
   },
 ];
+
+function ScoreMetricCard({
+  code,
+  title,
+  value,
+  color,
+}: {
+  code: string;
+  title: string;
+  value: number;
+  color: string;
+}) {
+  return (
+    <Box
+      sx={{
+        flex: 1,
+        minWidth: 0,
+        p: 1.5,
+        borderRadius: 2,
+        bgcolor: "background.default",
+        border: "1px solid",
+        borderColor: "divider",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <Box sx={{ minHeight: 52, mb: 1 }}>
+        <Typography
+          variant="overline"
+          sx={{ lineHeight: 1.2, color, fontWeight: 800, display: "block" }}
+        >
+          {code}
+        </Typography>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{
+            display: "block",
+            lineHeight: 1.35,
+            minHeight: "2.7em",
+          }}
+        >
+          {title}
+        </Typography>
+      </Box>
+      <Typography variant="h3" sx={{ fontWeight: 800, lineHeight: 1, color, mt: "auto" }}>
+        {formatCopValue(value)}
+      </Typography>
+    </Box>
+  );
+}
 
 const MESSAGE_ICON_COLUMN_WIDTH = 22;
 const MESSAGE_INDENT = 4.5;
@@ -116,7 +167,7 @@ function DomainValidationSection({
         <ListItemText
           primary={label}
           slotProps={{
-            primary: { sx: { color, fontWeight: 600, lineHeight: 1.5 } },
+            primary: { sx: { color, fontWeight: 700, lineHeight: 1.5 } },
           }}
         />
       </ListItem>
@@ -176,37 +227,35 @@ export function ScorePanel({ routine }: ScorePanelProps) {
         overflow: "hidden",
       }}
     >
-      <Typography variant="h6" gutterBottom sx={{ flexShrink: 0 }}>
+      <Typography variant="h6" gutterBottom sx={{ flexShrink: 0, fontWeight: 800 }}>
         Scores
       </Typography>
-      <Box sx={{ display: "flex", gap: 3, mb: 2, flexShrink: 0 }}>
-        <Box>
-          <Typography variant="body2" color="text.secondary">
-            DB
-          </Typography>
-          <Typography variant="caption" color="text.secondary" sx={{ display: "block" }}>
-            Difficulty of Body
-          </Typography>
-          <Typography variant="h3" color="primary.main" sx={{ fontWeight: 700 }}>
-            {formatCopValue(dbScore)}
-          </Typography>
-        </Box>
-        <Box>
-          <Typography variant="body2" color="text.secondary">
-            DA
-          </Typography>
-          <Typography variant="caption" color="text.secondary" sx={{ display: "block" }}>
-            Difficulty of Apparatus
-          </Typography>
-          <Typography variant="h3" color="secondary.main" sx={{ fontWeight: 700 }}>
-            {formatCopValue(daScore)}
-          </Typography>
-        </Box>
+      <Box
+        sx={{
+          display: "flex",
+          gap: 1.5,
+          mb: 2,
+          flexShrink: 0,
+          alignItems: "stretch",
+        }}
+      >
+        <ScoreMetricCard
+          code="DB"
+          title="Difficulty of Body"
+          value={dbScore}
+          color={DOMAIN_COLORS.db}
+        />
+        <ScoreMetricCard
+          code="DA"
+          title="Difficulty of Apparatus"
+          value={daScore}
+          color={DOMAIN_COLORS.da}
+        />
       </Box>
 
       <Divider sx={{ my: 2, flexShrink: 0 }} />
 
-      <Typography variant="h6" gutterBottom sx={{ flexShrink: 0 }}>
+      <Typography variant="h6" gutterBottom sx={{ flexShrink: 0, fontWeight: 800 }}>
         Validation
       </Typography>
       <Box sx={{ flex: 1, minHeight: 0, overflow: "auto", pr: 0.5 }}>

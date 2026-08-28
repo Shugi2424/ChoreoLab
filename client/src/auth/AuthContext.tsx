@@ -16,7 +16,7 @@ interface AuthContextValue {
   token: string | null;
   bootstrapping: boolean;
   isAuthenticated: boolean;
-  loginWithToken: (token: string) => void;
+  loginWithToken: (token: string, coach?: Coach) => void;
   logout: () => void;
   refetchCoach: () => Promise<void>;
 }
@@ -35,16 +35,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const { data, loading, refetch } = useQuery<{ me: Coach }>(ME_QUERY, {
     skip: !token,
-    fetchPolicy: "network-only",
+    fetchPolicy: "cache-and-network",
     onError: () => {
       void handleSessionError();
     },
   });
 
-  const loginWithToken = useCallback((newToken: string) => {
-    setStoredToken(newToken);
-    setToken(newToken);
-  }, []);
+  const loginWithToken = useCallback(
+    (newToken: string, coach?: Coach) => {
+      setStoredToken(newToken);
+      setToken(newToken);
+      if (coach) {
+        client.writeQuery({ query: ME_QUERY, data: { me: coach } });
+      }
+    },
+    [client],
+  );
 
   const logout = useCallback(async () => {
     clearStoredToken();
@@ -62,7 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => ({
       coach: data?.me ?? null,
       token,
-      bootstrapping: Boolean(token) && loading,
+      bootstrapping: Boolean(token) && loading && !data?.me,
       isAuthenticated: Boolean(token),
       loginWithToken,
       logout,

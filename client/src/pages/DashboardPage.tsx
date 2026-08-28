@@ -1,42 +1,42 @@
-import { Alert, Box, Grid, Typography } from "@mui/material";
+import { Alert, Box, Grid } from "@mui/material";
 import { useQuery } from "@apollo/client";
 import { useAuth } from "../auth/AuthContext";
 import { NavCard } from "../components/layout/PlaceholderPage";
-import { HEALTH_QUERY, ROUTINES_QUERY } from "../graphql/queries";
+import { DashboardSkeleton } from "../components/layout/PageLoading";
+import { PageHeader } from "../components/layout/PageHeader";
+import { ROUTINES_QUERY } from "../graphql/queries";
 import type { Routine } from "../types/routine";
 
 export function DashboardPage() {
   const { coach } = useAuth();
-  const { data, loading, error } = useQuery(HEALTH_QUERY);
-  const { data: routinesData } = useQuery<{ routines: Routine[] }>(ROUTINES_QUERY);
+  const { data: routinesData, loading, error } = useQuery<{ routines: Routine[] }>(ROUTINES_QUERY);
 
   const routineCount = routinesData?.routines.length ?? 0;
 
+  if (loading) {
+    return <DashboardSkeleton />;
+  }
+
   return (
     <Box>
-      <Typography variant="h4" color="secondary.main" gutterBottom>
-        Dashboard
-      </Typography>
-      <Typography color="text.secondary" sx={{ mb: 3 }}>
-        {coach
-          ? `Welcome back, ${coach.firstName}. Build competition routines with live DB, DA, and CoP validation.`
-          : "Build competition routines with live DB, DA, and CoP validation."}
-      </Typography>
+      <PageHeader
+        title="Home"
+        subtitle={
+          coach ? (
+            <>
+              Welcome back, {coach.firstName}.
+              <br />
+              Build competition routines with live DB and DA scoring, and CoP validation.
+            </>
+          ) : (
+            "Build competition routines with live DB and DA scoring, and CoP validation."
+          )
+        }
+      />
 
-      {loading && (
-        <Typography color="text.secondary" sx={{ mb: 3 }}>
-          Checking API connection…
-        </Typography>
-      )}
       {error && (
         <Alert severity="warning" sx={{ mb: 3 }}>
-          Could not reach the API. Start the server with <code>npm run dev</code> in{" "}
-          <code>server/</code>.
-        </Alert>
-      )}
-      {data?.health && (
-        <Alert severity="success" sx={{ mb: 3 }}>
-          API connected — {data.health}
+          Could not load routines. Check that the server is running.
         </Alert>
       )}
 

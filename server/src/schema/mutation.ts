@@ -7,6 +7,7 @@ export const mutationTypeDefs = `#graphql
     updateProfile(input: UpdateProfileInput!): Coach!
     changePassword(currentPassword: String!, newPassword: String!): MessagePayload!
     createRoutine(input: CreateRoutineInput!): Routine!
+    updateRoutine(id: ID!, input: UpdateRoutineInput!): Routine!
     deleteRoutine(id: ID!): MessagePayload!
     addRoutineItem(routineId: ID!, input: AddRoutineItemInput!, insertIndex: Int): Routine!
     removeRoutineItem(routineId: ID!, itemId: ID!): Routine!

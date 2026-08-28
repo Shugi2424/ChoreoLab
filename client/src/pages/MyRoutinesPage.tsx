@@ -4,7 +4,10 @@ import {
   Alert,
   Box,
   Button,
-  CircularProgress,
+  Card,
+  CardActions,
+  CardContent,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -20,20 +23,84 @@ import {
   TableRow,
   Tooltip,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { useMutation, useQuery } from "@apollo/client";
 import { useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { EmptyState } from "../components/layout/EmptyState";
+import { PageHeader } from "../components/layout/PageHeader";
+import { RoutinesListSkeleton } from "../components/layout/PageLoading";
 import { DELETE_ROUTINE_MUTATION } from "../graphql/mutations";
 import { ROUTINES_QUERY } from "../graphql/queries";
 import type { Routine } from "../types/routine";
-import {
-  formatAgeCategory,
-  formatApparatus,
-} from "../types/routine";
+import { formatAgeCategory, formatApparatus } from "../types/routine";
 import { getGraphQLErrorMessage } from "../utils/graphqlErrors";
+import { touchIconButtonSx } from "../theme/touchTargets";
+
+function RoutineCard({
+  routine,
+  onOpen,
+  onDelete,
+}: {
+  routine: Routine;
+  onOpen: () => void;
+  onDelete: () => void;
+}) {
+  return (
+    <Card sx={{ mb: 2 }}>
+      <CardContent onClick={onOpen} sx={{ cursor: "pointer", pb: 1 }}>
+        <Typography variant="h6" component="h2" sx={{ mb: 0.5 }}>
+          {routine.gymnastName}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+          {formatApparatus(routine.apparatus)} · {formatAgeCategory(routine.ageCategory)}
+        </Typography>
+        <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", alignItems: "center" }}>
+          <Chip
+            size="small"
+            label={`DB ${formatCopValue(routine.dbScore)}`}
+            variant="outlined"
+            sx={{ fontWeight: 700, color: "text.primary", borderColor: "divider" }}
+          />
+          <Chip
+            size="small"
+            label={`DA ${formatCopValue(routine.daScore)}`}
+            variant="outlined"
+            sx={{ fontWeight: 700, color: "text.primary", borderColor: "divider" }}
+          />
+          <Chip
+            size="small"
+            label={routine.validation.isValid ? "Valid" : "Incomplete"}
+            color={routine.validation.isValid ? "success" : "warning"}
+            variant="outlined"
+          />
+        </Box>
+      </CardContent>
+      <CardActions sx={{ justifyContent: "space-between", px: 2, pb: 2 }}>
+        <Button size="small" variant="contained" onClick={onOpen}>
+          Open
+        </Button>
+        <IconButton
+          color="error"
+          aria-label={`Delete routine for ${routine.gymnastName}`}
+          onClick={(event) => {
+            event.stopPropagation();
+            onDelete();
+          }}
+          sx={touchIconButtonSx}
+        >
+          <DeleteOutlinedIcon />
+        </IconButton>
+      </CardActions>
+    </Card>
+  );
+}
 
 export function MyRoutinesPage() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const navigate = useNavigate();
   const { data, loading, error, refetch } = useQuery<{ routines: Routine[] }>(
     ROUTINES_QUERY,
@@ -60,8 +127,9 @@ export function MyRoutinesPage() {
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
-        <CircularProgress color="primary" />
+      <Box>
+        <PageHeader title="My Routines" subtitle="Loading your saved routines…" />
+        <RoutinesListSkeleton />
       </Box>
     );
   }
@@ -74,28 +142,25 @@ export function MyRoutinesPage() {
 
   return (
     <Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 3,
-          gap: 2,
-          flexWrap: "wrap",
-        }}
-      >
-        <Box>
-          <Typography variant="h4" color="secondary.main" gutterBottom>
-            My Routines
-          </Typography>
-          <Typography color="text.secondary">
-            Click a row to open. Use the delete icon to remove a routine.
-          </Typography>
-        </Box>
-        <Button component={RouterLink} to="/routines/new" variant="contained" color="primary">
-          Create Routine
-        </Button>
-      </Box>
+      <PageHeader
+        title="My Routines"
+        subtitle={
+          isMobile
+            ? "Tap a routine to open it."
+            : "Click a row to open. Use the delete icon to remove a routine."
+        }
+        action={
+          <Button
+            component={RouterLink}
+            to="/routines/new"
+            variant="contained"
+            color="primary"
+            sx={{ minHeight: isMobile ? 44 : undefined }}
+          >
+            Create Routine
+          </Button>
+        }
+      />
 
       {deleteError && (
         <Alert severity="error" sx={{ mb: 2 }} onClose={() => setDeleteError(null)}>
@@ -104,17 +169,26 @@ export function MyRoutinesPage() {
       )}
 
       {routines.length === 0 ? (
-        <Paper sx={{ p: 4, textAlign: "center" }}>
-          <Typography variant="h6" gutterBottom>
-            No routines yet
-          </Typography>
-          <Typography color="text.secondary" sx={{ mb: 3 }}>
-            Create your first routine to start building a timeline.
-          </Typography>
-          <Button component={RouterLink} to="/routines/new" variant="contained" color="primary">
-            Create your first routine
-          </Button>
-        </Paper>
+        <EmptyState
+          title="No routines yet"
+          description="Create your first routine to start building a timeline with live CoP scoring."
+          action={
+            <Button component={RouterLink} to="/routines/new" variant="contained" color="primary">
+              Create your first routine
+            </Button>
+          }
+        />
+      ) : isMobile ? (
+        <Box>
+          {routines.map((routine) => (
+            <RoutineCard
+              key={routine.id}
+              routine={routine}
+              onOpen={() => navigate(`/routines/${routine.id}`)}
+              onDelete={() => setRoutineToDelete(routine)}
+            />
+          ))}
+        </Box>
       ) : (
         <TableContainer component={Paper}>
           <Table>
@@ -142,9 +216,7 @@ export function MyRoutinesPage() {
                   <TableCell>{formatAgeCategory(routine.ageCategory)}</TableCell>
                   <TableCell align="right">{formatCopValue(routine.dbScore)}</TableCell>
                   <TableCell align="right">{formatCopValue(routine.daScore)}</TableCell>
-                  <TableCell>
-                    {routine.validation.isValid ? "Valid" : "Incomplete"}
-                  </TableCell>
+                  <TableCell>{routine.validation.isValid ? "Valid" : "Incomplete"}</TableCell>
                   <TableCell align="right" onClick={(event) => event.stopPropagation()}>
                     <Tooltip title="Delete routine">
                       <IconButton

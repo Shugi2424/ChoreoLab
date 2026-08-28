@@ -154,6 +154,15 @@ const ROUTINE_BUILDER_FIELDS = gql`
   }
 `;
 
+export const UPDATE_ROUTINE_MUTATION = gql`
+  ${ROUTINE_BUILDER_FIELDS}
+  mutation UpdateRoutine($id: ID!, $input: UpdateRoutineInput!) {
+    updateRoutine(id: $id, input: $input) {
+      ...RoutineBuilderFields
+    }
+  }
+`;
+
 export const ADD_ROUTINE_ITEM_MUTATION = gql`
   ${ROUTINE_BUILDER_FIELDS}
   mutation AddRoutineItem(

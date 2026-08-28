@@ -1,5 +1,6 @@
 import { Box, Button, Link, Paper, TextField, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
+import { Logo } from "../brand/Logo";
 import { AuthFormLayout } from "./AuthFormLayout";
 
 interface AuthPageShellProps {
@@ -21,8 +22,19 @@ export function AuthPageShell({
 }: AuthPageShellProps) {
   return (
     <AuthFormLayout>
-      <Paper sx={{ p: 4, width: "100%", maxWidth: 440 }}>
-        <Typography variant="h4" color="secondary.main" gutterBottom>
+      <Paper
+        elevation={0}
+        sx={{
+          p: { xs: 3, sm: 4 },
+          width: "100%",
+          maxWidth: 440,
+          boxShadow: "0 12px 40px rgba(109, 91, 215, 0.08)",
+        }}
+      >
+        <Box sx={{ mb: 3 }}>
+          <Logo variant="dark" size="md" />
+        </Box>
+        <Typography variant="h4" gutterBottom>
           {title}
         </Typography>
         <Typography color="text.secondary" sx={{ mb: 3 }}>
@@ -64,6 +76,17 @@ export function AuthSubmitButton({
   );
 }
 
-export function AuthTextField(props: React.ComponentProps<typeof TextField>) {
-  return <TextField margin="normal" fullWidth required {...props} />;
+export function AuthTextField({ sx, ...props }: React.ComponentProps<typeof TextField>) {
+  return (
+    <TextField
+      margin="normal"
+      fullWidth
+      required
+      sx={{
+        "& .MuiInputBase-input": { fontSize: { xs: "16px", sm: "1rem" } },
+        ...sx,
+      }}
+      {...props}
+    />
+  );
 }

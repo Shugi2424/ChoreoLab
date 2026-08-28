@@ -10,6 +10,7 @@ import {
 import { useMutation } from "@apollo/client";
 import { FormEvent, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
+import { PageHeader } from "../components/layout/PageHeader";
 import {
   CHANGE_PASSWORD_MUTATION,
   UPDATE_PROFILE_MUTATION,
@@ -180,12 +181,7 @@ export function ProfilePage() {
 
   return (
     <Box>
-      <Typography variant="h4" color="secondary.main" gutterBottom>
-        Profile
-      </Typography>
-      <Typography color="text.secondary" sx={{ mb: 3 }}>
-        {coach.email}
-      </Typography>
+      <PageHeader title="Profile" subtitle={coach.email} />
 
       <ProfileDetailsForm
         key={`${coach.firstName}-${coach.lastName}-${coach.club ?? ""}`}

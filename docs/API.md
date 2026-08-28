@@ -515,7 +515,7 @@ Implemented in `server/src/services/scoringService.ts` and `server/src/utils/sco
 | `forgotPassword` / `resetPassword`         | ✅ Implemented      |
 | `updateProfile` / `changePassword`           | ✅ Implemented      |
 | `routines` / `routine`                     | ✅ Implemented (coach-scoped) |
-| `createRoutine` / `deleteRoutine`          | ✅ Implemented (coach-scoped) |
+| `createRoutine` / `updateRoutine` / `deleteRoutine` | ✅ Implemented (coach-scoped) |
 | `bodyElements` / `bodyElement`             | ✅ Implemented (auth required) |
 | `requirements`                             | ✅ Implemented      |
 | `bases` / `base`                           | ✅ Implemented      |

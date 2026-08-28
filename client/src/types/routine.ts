@@ -1,4 +1,5 @@
 import { formatCopValue } from "../utils/formatCopValue";
+import { DOMAIN_COLORS } from "../theme/domainColors";
 
 export type RoutineItemType = "body_element" | "risk" | "mastery" | "artistry";
 
@@ -137,12 +138,12 @@ export function getRoutineItemEditorLabel(type: RoutineItemType): string {
   }
 }
 
-/** Timeline accent colors — DB blue, DA purple, Artistry orange. */
+/** Timeline accent colors — aligned with CoP domain colors. */
 export const TIMELINE_TYPE_COLORS: Record<RoutineItemType, string> = {
-  body_element: "#1976D2",
-  risk: "#1976D2",
-  mastery: "#7B2D8E",
-  artistry: "#E65100",
+  body_element: DOMAIN_COLORS.db,
+  risk: DOMAIN_COLORS.db,
+  mastery: DOMAIN_COLORS.da,
+  artistry: DOMAIN_COLORS.a,
 };
 
 export function formatBodyCategory(category: string): string {

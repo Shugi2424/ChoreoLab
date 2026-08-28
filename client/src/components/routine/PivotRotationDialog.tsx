@@ -4,10 +4,10 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  TextField,
   Typography,
 } from "@mui/material";
 import { useMemo, useState } from "react";
+import { NumberStepperField } from "../ui/NumberStepperField";
 import {
   calculatePivotValue,
   formatPivotRotationHint,
@@ -80,27 +80,19 @@ function PivotRotationDialogForm({
             ? ` (+${rule.incrementPerTurn.toFixed(1)} per additional turn)`
             : " (fixed value)"}
         </Typography>
-        <TextField
+        <NumberStepperField
           label={rule.turnLabel}
-          type="number"
           size="small"
           fullWidth
           value={rotationCount}
-          onChange={(event) => {
-            const next = Number.parseInt(event.target.value, 10);
-            setRotationCount(Number.isNaN(next) ? 1 : Math.max(1, next));
+          onChange={(next) => {
+            setRotationCount(next);
             setError(null);
-          }}
-          slotProps={{
-            htmlInput: {
-              min: 1,
-              step: 1,
-            },
           }}
           disabled={busy || rule.incrementPerTurn == null}
           error={error != null}
-          helperText={error}
-          sx={{ mb: 1 }}
+          helperText={error ?? undefined}
+          sx={{ mb: 1, maxWidth: 280 }}
         />
         {valuePreview != null && (
           <Typography variant="body2" color="primary.main">

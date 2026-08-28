@@ -8,7 +8,6 @@ import {
   Divider,
   IconButton,
   Paper,
-  TextField,
   Typography,
 } from "@mui/material";
 import { useQuery } from "@apollo/client";
@@ -60,6 +59,9 @@ import {
   RotationPicker,
   type InventoryItem,
 } from "./DraggableItemInventory";
+import { InsertPositionDialog } from "./InsertPositionDialog";
+import { NumberStepperField } from "../ui/NumberStepperField";
+import { buildTimelineInsertOptions } from "../../utils/timelineInsertOptions";
 
 const ROTATION_CRITERION_ID = "rotation";
 const ROTATION_R_CRITERION_ID = "rotation";
@@ -120,6 +122,7 @@ function resetAddFormState(setters: {
   setMasteryRotationId: (value: string) => void;
   setPendingPivotId: (value: string | null) => void;
   setPivotRotationCount: (value: number) => void;
+  setPendingInsertIndex: (value: number | undefined) => void;
 }) {
   setters.setFormError(null);
   setters.setThrowCriteriaIds([]);
@@ -131,6 +134,7 @@ function resetAddFormState(setters: {
   setters.setMasteryRotationId("");
   setters.setPendingPivotId(null);
   setters.setPivotRotationCount(1);
+  setters.setPendingInsertIndex(undefined);
 }
 
 interface BaseOption {
@@ -176,10 +180,16 @@ interface InventoryPanelProps {
   onStartAdd: (type: RoutineItemType) => void;
   onBack: () => void;
   onSubmit: (payload: EditingPanelSubmitPayload) => Promise<void>;
-  onAddBodyElement: (bodyElementId: string, rotationCount?: number) => Promise<void>;
-  onAddArtistry: (artistryComponentId: string) => Promise<void>;
+  onAddBodyElement: (
+    bodyElementId: string,
+    rotationCount?: number,
+    insertIndex?: number,
+  ) => Promise<void>;
+  onAddArtistry: (artistryComponentId: string, insertIndex?: number) => Promise<void>;
   busy: boolean;
   hiddenInventoryDragId?: string | null;
+  touchFriendly?: boolean;
+  timelineItems?: RoutineItem[];
 }
 
 export function InventoryPanel({
@@ -194,6 +204,8 @@ export function InventoryPanel({
   onAddArtistry,
   busy,
   hiddenInventoryDragId = null,
+  touchFriendly = false,
+  timelineItems = [],
 }: InventoryPanelProps) {
   const { data: bodyElementsData } = useQuery(BODY_ELEMENTS_QUERY);
   const { data: basesData } = useQuery(BASES_QUERY, { variables: { apparatus } });
@@ -222,6 +234,17 @@ export function InventoryPanel({
   const [formError, setFormError] = useState<string | null>(null);
   const [pendingPivotId, setPendingPivotId] = useState<string | null>(null);
   const [pivotRotationCount, setPivotRotationCount] = useState(1);
+  const [pendingInsertIndex, setPendingInsertIndex] = useState<number | undefined>(undefined);
+  const [insertPositionRequest, setInsertPositionRequest] = useState<{
+    id: string;
+    itemName: string;
+    kind: "body" | "artistry";
+  } | null>(null);
+
+  const insertPositionOptions = useMemo(
+    () => buildTimelineInsertOptions(timelineItems),
+    [timelineItems],
+  );
 
   const [syncedAddFormKey, setSyncedAddFormKey] = useState<string | null>(null);
   const [syncedPivotEditKey, setSyncedPivotEditKey] = useState<string | null>(null);
@@ -241,6 +264,7 @@ export function InventoryPanel({
         setMasteryRotationId,
         setPendingPivotId,
         setPivotRotationCount,
+        setPendingInsertIndex,
       });
     }
     setSyncedAddFormKey(addFormKey);
@@ -580,7 +604,7 @@ export function InventoryPanel({
     }
   };
 
-  const handleBodyElementPick = async (id: string) => {
+  const handleBodyElementPick = async (id: string, insertIndex?: number) => {
     const element = bodyElements.find(
       (entry: { id: string; category: string }) => entry.id === id,
     );
@@ -588,6 +612,7 @@ export function InventoryPanel({
     if (element?.category === "pivot") {
       if (mode === "add") {
         setPendingPivotId(id);
+        setPendingInsertIndex(insertIndex);
         setPivotRotationCount(1);
         setFormError(null);
         return;
@@ -604,7 +629,17 @@ export function InventoryPanel({
       return;
     }
     if (mode === "add") {
-      await onAddBodyElement(id);
+      await onAddBodyElement(id, undefined, insertIndex);
+    }
+  };
+
+  const handleArtistryPick = async (id: string, insertIndex?: number) => {
+    if (mode === "edit" && selectedItem?.artistryComponentId !== id) {
+      await onSubmit({ artistryComponentId: id });
+      return;
+    }
+    if (mode === "add") {
+      await onAddArtistry(id, insertIndex);
     }
   };
 
@@ -619,8 +654,13 @@ export function InventoryPanel({
     }
     setFormError(null);
     if (mode === "add") {
-      await onAddBodyElement(activePivotElement.id, pivotRotationCount);
+      await onAddBodyElement(
+        activePivotElement.id,
+        pivotRotationCount,
+        pendingInsertIndex,
+      );
       setPendingPivotId(null);
+      setPendingInsertIndex(undefined);
       setPivotRotationCount(1);
       return;
     }
@@ -630,14 +670,25 @@ export function InventoryPanel({
     });
   };
 
-  const handleArtistryPick = async (id: string) => {
-    if (mode === "edit" && selectedItem?.artistryComponentId !== id) {
-      await onSubmit({ artistryComponentId: id });
+  const openInsertPositionPicker = (id: string, kind: "body" | "artistry") => {
+    const itemName =
+      kind === "body"
+        ? (bodyInventoryItems.find((entry) => entry.id === id)?.name ?? id)
+        : (artistryInventoryItems.find((entry) => entry.id === id)?.name ?? id);
+    setInsertPositionRequest({ id, itemName, kind });
+  };
+
+  const handleInsertPositionSelect = async (insertIndex: number) => {
+    if (!insertPositionRequest) {
       return;
     }
-    if (mode === "add") {
-      await onAddArtistry(id);
+    const { id, kind } = insertPositionRequest;
+    setInsertPositionRequest(null);
+    if (kind === "body") {
+      await handleBodyElementPick(id, insertIndex);
+      return;
     }
+    await handleArtistryPick(id, insertIndex);
   };
 
   const addButtons: { type: RoutineItemType; label: string }[] = [
@@ -690,11 +741,17 @@ export function InventoryPanel({
               dragIdPrefix="inventory-body"
               dragDataType="body-element"
               dragDataIdKey="bodyElementId"
-              onAddItem={handleBodyElementPick}
+              onAddItem={(id) => void handleBodyElementPick(id)}
               onBack={onBack}
               busy={busy}
               dragColor={TIMELINE_TYPE_COLORS.body_element}
               hiddenDragId={hiddenInventoryDragId}
+              touchFriendly={touchFriendly}
+              onAddItemAtPosition={
+                touchFriendly && mode === "add"
+                  ? (id) => openInsertPositionPicker(id, "body")
+                  : undefined
+              }
             />
           ) : (
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 1, flexShrink: 0 }}>
@@ -703,6 +760,7 @@ export function InventoryPanel({
                 size="small"
                 onClick={() => {
                   setPendingPivotId(null);
+                  setPendingInsertIndex(undefined);
                   setPivotRotationCount(1);
                   setFormError(null);
                 }}
@@ -731,23 +789,13 @@ export function InventoryPanel({
                   ? ` (+${pivotRotationRule.incrementPerTurn.toFixed(1)} per additional turn)`
                   : " (fixed value)"}
               </Typography>
-              <TextField
+              <NumberStepperField
                 label={pivotRotationRule.turnLabel}
-                type="number"
                 size="small"
                 value={pivotRotationCount}
-                onChange={(event) => {
-                  const next = Number.parseInt(event.target.value, 10);
-                  setPivotRotationCount(Number.isNaN(next) ? 1 : Math.max(1, next));
-                }}
-                slotProps={{
-                  htmlInput: {
-                    min: 1,
-                    step: 1,
-                  },
-                }}
+                onChange={setPivotRotationCount}
                 disabled={busy || pivotRotationRule.incrementPerTurn == null}
-                sx={{ mb: 1, maxWidth: 200 }}
+                sx={{ mb: 1, maxWidth: 280 }}
               />
               {pivotValuePreview != null && (
                 <Typography variant="body2" color="primary.main" sx={{ mb: 2 }}>
@@ -778,11 +826,17 @@ export function InventoryPanel({
           dragIdPrefix="inventory-artistry"
           dragDataType="artistry"
           dragDataIdKey="artistryComponentId"
-          onAddItem={handleArtistryPick}
+          onAddItem={(id) => void handleArtistryPick(id)}
           onBack={onBack}
           busy={busy}
           dragColor={TIMELINE_TYPE_COLORS.artistry}
           hiddenDragId={hiddenInventoryDragId}
+          touchFriendly={touchFriendly}
+          onAddItemAtPosition={
+            touchFriendly && mode === "add"
+              ? (id) => openInsertPositionPicker(id, "artistry")
+              : undefined
+          }
         />
       ) : mode === "idle" ? (
         <>
@@ -1116,6 +1170,15 @@ export function InventoryPanel({
         </Box>
       ) : null}
       </Box>
+
+      <InsertPositionDialog
+        open={insertPositionRequest != null}
+        itemName={insertPositionRequest?.itemName ?? ""}
+        options={insertPositionOptions}
+        busy={busy}
+        onClose={() => setInsertPositionRequest(null)}
+        onSelect={(insertIndex) => void handleInsertPositionSelect(insertIndex)}
+      />
     </Paper>
   );
 }

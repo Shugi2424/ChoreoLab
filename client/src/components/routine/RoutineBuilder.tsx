@@ -10,6 +10,11 @@ import {
   DialogTitle,
   Grid,
   Paper,
+  Snackbar,
+  Tab,
+  Tabs,
+  ToggleButton,
+  ToggleButtonGroup,
   Typography,
   useMediaQuery,
   useTheme,
@@ -18,46 +23,47 @@ import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import {
   DndContext,
   DragOverlay,
-  KeyboardSensor,
-  PointerSensor,
   closestCenter,
   pointerWithin,
   type CollisionDetection,
   type DragEndEvent,
   type DragOverEvent,
   type DragStartEvent,
-  useSensor,
-  useSensors,
 } from "@dnd-kit/core";
-import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { arrayMove } from "@dnd-kit/sortable";
 import { useMutation, useQuery } from "@apollo/client";
 import { useCallback, useMemo, useState } from "react";
 import {
   ADD_ROUTINE_ITEM_MUTATION,
   REORDER_ROUTINE_ITEMS_MUTATION,
   REMOVE_ROUTINE_ITEM_MUTATION,
+  UPDATE_ROUTINE_MUTATION,
   UPDATE_ROUTINE_ITEM_MUTATION,
 } from "../../graphql/mutations";
 import { BODY_ELEMENTS_QUERY } from "../../graphql/queries";
-import type { Routine, RoutineItemType } from "../../types/routine";
+import type { AgeCategory, Routine, RoutineItemType } from "../../types/routine";
 import {
+  AGE_CATEGORY_OPTIONS,
   formatAgeCategory,
   formatApparatus,
   getRoutineItemTimelineMeta,
   getRoutineItemTimelinePrimary,
   TIMELINE_TYPE_COLORS,
 } from "../../types/routine";
+import { useRoutineBuilderSensors } from "../../utils/dndSensors";
 import { getGraphQLErrorMessage } from "../../utils/graphqlErrors";
 import { InventoryPanel, type EditingPanelSubmitPayload } from "./InventoryPanel";
 import { PivotRotationDialog } from "./PivotRotationDialog";
 import { ScorePanel } from "./ScorePanel";
 import { TimelinePanel, useTimelineOrder } from "./TimelinePanel";
 
+const MOBILE_TAB_INVENTORY = 0;
+const MOBILE_TAB_TIMELINE = 1;
+const MOBILE_TAB_SCORES = 2;
+
 interface RoutineBuilderProps {
   routine: Routine;
 }
-
-const PERSIST_ADD_TYPES = new Set<RoutineItemType>(["body_element", "artistry"]);
 
 interface DragPreview {
   label: string;
@@ -107,6 +113,7 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
   const [dropInsertIndex, setDropInsertIndex] = useState<number | null>(null);
   const [hiddenInventoryDragId, setHiddenInventoryDragId] = useState<string | null>(null);
   const [pendingPivotDrop, setPendingPivotDrop] = useState<PendingPivotDrop | null>(null);
+  const [ageCategoryNotice, setAgeCategoryNotice] = useState<string | null>(null);
 
   const [scrollToItemId, setScrollToItemId] = useState<string | null>(null);
   const [scrollToEnd, setScrollToEnd] = useState(false);
@@ -126,7 +133,10 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
     );
   }, [bodyElements, pendingPivotDrop]);
 
-  const { localItemIds, setLocalItemIds } = useTimelineOrder(routine.timeline);
+  const { localItemIds, setLocalItemIds, sortedItems } = useTimelineOrder(routine.timeline);
+  const [mobileTab, setMobileTab] = useState(MOBILE_TAB_INVENTORY);
+
+  const sensors = useRoutineBuilderSensors();
 
   const inventoryMode =
     addType !== null ? "add" : selectedItemId ? "edit" : "idle";
@@ -153,8 +163,12 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
     REORDER_ROUTINE_ITEMS_MUTATION,
     mutationOptions,
   );
+  const [updateRoutineMeta, { loading: updatingRoutine }] = useMutation(
+    UPDATE_ROUTINE_MUTATION,
+    mutationOptions,
+  );
 
-  const busy = adding || updating || removing || reordering;
+  const busy = adding || updating || removing || reordering || updatingRoutine;
 
   const applyRoutineUpdate = useCallback((updated: Routine) => {
     setRoutine(updated);
@@ -188,12 +202,10 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
         setScrollToItemId(newItem.id);
         setScrollToEnd(appendToEnd);
       }
-      if (PERSIST_ADD_TYPES.has(type)) {
-        setAddType(type);
-        setSelectedItemId(null);
-      } else {
-        setAddType(null);
-        setSelectedItemId(newItem?.id ?? null);
+      setAddType(null);
+      setSelectedItemId(null);
+      if (isMobile) {
+        setMobileTab(MOBILE_TAB_INVENTORY);
       }
     }
   };
@@ -215,6 +227,25 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
       return;
     }
     await addTimelineItem(addType, payload);
+  };
+
+  const handleAgeCategoryChange = async (ageCategory: AgeCategory) => {
+    if (ageCategory === routine.ageCategory) {
+      return;
+    }
+    const { data } = await updateRoutineMeta({
+      variables: {
+        id: routine.id,
+        input: { ageCategory },
+      },
+    });
+    const updated = data?.updateRoutine as Routine | undefined;
+    if (updated) {
+      applyRoutineUpdate(updated);
+      setAgeCategoryNotice(
+        `Timeline unchanged — validation now uses ${formatAgeCategory(ageCategory)} rules.`,
+      );
+    }
   };
 
   const handleEditSubmit = async (payload: EditingPanelSubmitPayload) => {
@@ -276,13 +307,6 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
     setLocalItemIds(ids);
     await handleReorder(ids);
   };
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
 
   const handleDragStart = (event: DragStartEvent) => {
     const id = String(event.active.id);
@@ -443,6 +467,8 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
       onAddArtistry={handleAddArtistry}
       busy={busy}
       hiddenInventoryDragId={hiddenInventoryDragId}
+      touchFriendly={isMobile}
+      timelineItems={sortedItems}
     />
   );
 
@@ -453,6 +479,9 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
       onSelectItem={(id) => {
         setAddType(null);
         setSelectedItemId(id);
+        if (isMobile) {
+          setMobileTab(MOBILE_TAB_INVENTORY);
+        }
       }}
       onRemoveItem={setRemoveItemId}
       onMoveItem={handleMoveItem}
@@ -466,6 +495,7 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
         setScrollToItemId(null);
         setScrollToEnd(false);
       }}
+      touchFriendly={isMobile}
     />
   );
 
@@ -491,7 +521,7 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
           flexShrink: 0,
         }}
       >
-        <Typography variant="h4" color="secondary.main">
+        <Typography variant="h4">
           {routine.gymnastName}
         </Typography>
         <Chip
@@ -505,17 +535,73 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
           variant="outlined"
         />
       </Box>
-      <Typography color="text.secondary" sx={{ mb: 2, flexShrink: 0 }}>
-        {formatApparatus(routine.apparatus)} · {formatAgeCategory(routine.ageCategory)}
-        {" · "}
-        Changes save automatically
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          gap: 1.5,
+          mb: 2,
+          flexShrink: 0,
+        }}
+      >
+        <Typography color="text.secondary">
+          {formatApparatus(routine.apparatus)} · Changes save automatically
+        </Typography>
+        <ToggleButtonGroup
+          exclusive
+          size="small"
+          value={routine.ageCategory}
+          onChange={(_event, value: AgeCategory | null) => {
+            if (value) {
+              void handleAgeCategoryChange(value);
+            }
+          }}
+          disabled={busy}
+          aria-label="Age category"
+        >
+          {AGE_CATEGORY_OPTIONS.map((option) => (
+            <ToggleButton key={option.value} value={option.value} sx={{ minHeight: 36, px: 1.75 }}>
+              {option.label}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
+      </Box>
+
+      <Snackbar
+        open={Boolean(ageCategoryNotice)}
+        autoHideDuration={4500}
+        onClose={() => setAgeCategoryNotice(null)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          severity="info"
+          variant="filled"
+          onClose={() => setAgeCategoryNotice(null)}
+          sx={{ width: "100%" }}
+        >
+          {ageCategoryNotice}
+        </Alert>
+      </Snackbar>
 
       {errorMessage && (
         <Alert severity="error" sx={{ mb: 2, flexShrink: 0 }} onClose={() => setErrorMessage(null)}>
           {errorMessage}
         </Alert>
       )}
+
+      {isMobile ? (
+        <Tabs
+          value={mobileTab}
+          onChange={(_event, value: number) => setMobileTab(value)}
+          variant="fullWidth"
+          sx={{ mb: 2, flexShrink: 0 }}
+        >
+          <Tab label="Inventory" />
+          <Tab label="Timeline" />
+          <Tab label="Scores" />
+        </Tabs>
+      ) : null}
 
       <DndContext
         sensors={sensors}
@@ -535,17 +621,26 @@ export function RoutineBuilder({ routine: initialRoutine }: RoutineBuilderProps)
           }}
         >
           {isMobile ? (
-            <>
-              <Grid size={12} sx={{ flexShrink: 0 }}>
-                {scoreSection}
-              </Grid>
-              <Grid size={12} sx={{ display: "flex", minHeight: 220, maxHeight: 320 }}>
-                {timelineSection}
-              </Grid>
-              <Grid size={12} sx={{ display: "flex", minHeight: 280, flex: 1 }}>
-                {inventorySection}
-              </Grid>
-            </>
+            <Grid
+              size={12}
+              sx={{
+                display: "flex",
+                minHeight:
+                  mobileTab === MOBILE_TAB_INVENTORY
+                    ? 420
+                    : mobileTab === MOBILE_TAB_TIMELINE
+                      ? 360
+                      : 280,
+              }}
+            >
+              {mobileTab === MOBILE_TAB_INVENTORY
+                ? inventorySection
+                : mobileTab === MOBILE_TAB_TIMELINE
+                  ? timelineSection
+                  : mobileTab === MOBILE_TAB_SCORES
+                    ? scoreSection
+                    : inventorySection}
+            </Grid>
           ) : (
             <>
               <Grid size={{ xs: 12, md: 3 }} sx={{ display: "flex", minHeight: 0, height: "100%" }}>

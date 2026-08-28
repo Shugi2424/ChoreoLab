@@ -139,7 +139,7 @@ The most important screen. Three-panel layout on desktop:
 - **Body elements:** line 1 e.g. `1. Tuck jump…`; line 2 e.g. `Body element (DB) · Jump · 0.1`
 - **Risk / mastery / artistry:** same two-line pattern (e.g. line 1 `2. Risk`; line 2 `Risk (DB) · 0.4`)
 - Long body element and artistry names wrap on line 1 (not truncated)
-- Color-coded by domain: **DB** (body + risk) blue `#1976D2`, **DA** (mastery) purple `#7B2D8E`, **Artistry** orange `#E65100`
+- Color-coded by domain: **DB** (body + risk) blue `#3B82F6`, **DA** (mastery) violet `#8B5CF6`, **Artistry** teal `#0EA5A4`
 - Click to select → populates inventory panel for editing
 - **Drag-and-drop reorder** is the primary way to change item order (drag handle on each row)
 - Drop indicator matches the dragged item's type color
@@ -238,8 +238,8 @@ Use MUI `useMediaQuery` or `Grid` breakpoints; test on real iOS and Android devi
 | My Routines     | ✅ Implemented                                         |
 | Profile         | ✅ Implemented                                         |
 | Routine Builder | ✅ Implemented (M5 — inventory, timeline DnD, validation) |
-| Visual polish       | ❌ Milestone 9                                         |
-| Mobile / touch UX   | ⚠️ Partial — stacks on small screens; **DnD broken on phones** (M9) |
+| Visual polish       | ⚠️ Milestone 9 (in progress)                           |
+| Mobile / touch UX   | ⚠️ Touch DnD + tabs + fallbacks (M9); verify on device |
 
 ---
 
