@@ -320,10 +320,12 @@ export function useTimelineOrder(timeline: Routine["timeline"]) {
   );
   const serverItemIds = useMemo(() => sortedItems.map((item) => item.id), [sortedItems]);
   const [localItemIds, setLocalItemIds] = useState(serverItemIds);
+  const [prevServerItemIds, setPrevServerItemIds] = useState(serverItemIds);
 
-  useLayoutEffect(() => {
+  if (serverItemIds !== prevServerItemIds) {
+    setPrevServerItemIds(serverItemIds);
     setLocalItemIds(serverItemIds);
-  }, [serverItemIds]);
+  }
 
   return { localItemIds, setLocalItemIds, sortedItems };
 }

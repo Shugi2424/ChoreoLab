@@ -9,13 +9,6 @@ describe("validateRoutineTimeline", () => {
     ["3.1601", "pivot"],
   ]);
 
-  const artistryMaps = new Map([
-    ["char-1", "character"],
-    ["dance-1", "dance"],
-    ["dyn-1", "dynamicChange"],
-    ["effect-1", "effect"],
-  ]);
-
   it("flags missing required body groups", () => {
     const result = validateRoutineTimeline(
       [{ type: "body_element", bodyElementId: "1.101" }],
@@ -28,11 +21,11 @@ describe("validateRoutineTimeline", () => {
   });
 
   it("flags excess body elements beyond maxElements", () => {
-    const timeline = Array.from({ length: 9 }, (_, index) => ({
+    const timeline = Array.from({ length: 9 }, (_, i) => ({
       type: "body_element" as const,
-      bodyElementId: `1.10${index}`,
+      bodyElementId: `1.10${i}`,
     }));
-    const categories = new Map(timeline.map((item, index) => [item.bodyElementId!, "jump"]));
+    const categories = new Map(timeline.map((item) => [item.bodyElementId!, "jump"]));
     categories.set("2.101", "balance");
     categories.set("3.1601", "pivot");
 

@@ -12,7 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useQuery } from "@apollo/client";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import {
   ARTISTRY_COMPONENTS_QUERY,
   BASES_QUERY,
@@ -64,6 +64,74 @@ import {
 const ROTATION_CRITERION_ID = "rotation";
 const ROTATION_R_CRITERION_ID = "rotation";
 const DEFAULT_RISK_ROTATION_SLOTS = ["", ""] as const;
+
+function buildRiskRotationIds(selectedItem: RoutineItem): string[] {
+  const ids =
+    selectedItem.risk?.rotations.flatMap((r) =>
+      Array.from({ length: r.count }, () => r.rotationId),
+    ) ?? [];
+  while (ids.length < MIN_BASE_ROTATIONS) {
+    ids.push("");
+  }
+  return ids;
+}
+
+function syncRiskMasteryFromSelectedItem(
+  selectedItem: RoutineItem,
+  throwCriteria: RCriteriaOption[],
+  catchCriteria: RCriteriaOption[],
+  generalCriteria: RCriteriaOption[],
+  setters: {
+    setFormError: (value: string | null) => void;
+    setThrowCriteriaIds: (value: string[]) => void;
+    setCatchCriteriaIds: (value: string[]) => void;
+    setGeneralCriteriaIds: (value: string[]) => void;
+    setRiskRotationIds: (value: string[]) => void;
+    setMasteryBaseIds: (value: string[]) => void;
+    setMasteryCriteriaIds: (value: string[]) => void;
+    setMasteryRotationId: (value: string) => void;
+  },
+) {
+  setters.setFormError(null);
+  const criteria = selectedItem.risk?.criteriaIds ?? [];
+  setters.setThrowCriteriaIds(
+    criteria.filter((id) => throwCriteria.some((c) => c.id === id)),
+  );
+  setters.setCatchCriteriaIds(
+    criteria.filter((id) => catchCriteria.some((c) => c.id === id)),
+  );
+  setters.setGeneralCriteriaIds(
+    criteria.filter((id) => generalCriteria.some((c) => c.id === id)),
+  );
+  setters.setRiskRotationIds(buildRiskRotationIds(selectedItem));
+  setters.setMasteryBaseIds(selectedItem.mastery?.baseIds ?? []);
+  setters.setMasteryCriteriaIds(selectedItem.mastery?.criteriaIds ?? []);
+  setters.setMasteryRotationId(selectedItem.mastery?.rotationId ?? "");
+}
+
+function resetAddFormState(setters: {
+  setFormError: (value: string | null) => void;
+  setThrowCriteriaIds: (value: string[]) => void;
+  setCatchCriteriaIds: (value: string[]) => void;
+  setGeneralCriteriaIds: (value: string[]) => void;
+  setRiskRotationIds: (value: string[]) => void;
+  setMasteryBaseIds: (value: string[]) => void;
+  setMasteryCriteriaIds: (value: string[]) => void;
+  setMasteryRotationId: (value: string) => void;
+  setPendingPivotId: (value: string | null) => void;
+  setPivotRotationCount: (value: number) => void;
+}) {
+  setters.setFormError(null);
+  setters.setThrowCriteriaIds([]);
+  setters.setCatchCriteriaIds([]);
+  setters.setGeneralCriteriaIds([]);
+  setters.setRiskRotationIds([...DEFAULT_RISK_ROTATION_SLOTS]);
+  setters.setMasteryBaseIds([]);
+  setters.setMasteryCriteriaIds([]);
+  setters.setMasteryRotationId("");
+  setters.setPendingPivotId(null);
+  setters.setPivotRotationCount(1);
+}
 
 interface BaseOption {
   id: string;
@@ -155,6 +223,41 @@ export function InventoryPanel({
   const [pendingPivotId, setPendingPivotId] = useState<string | null>(null);
   const [pivotRotationCount, setPivotRotationCount] = useState(1);
 
+  const [syncedAddFormKey, setSyncedAddFormKey] = useState<string | null>(null);
+  const [syncedPivotEditKey, setSyncedPivotEditKey] = useState<string | null>(null);
+  const [syncedEditFormKey, setSyncedEditFormKey] = useState<string | null>(null);
+
+  const addFormKey = mode === "add" && itemType ? itemType : null;
+  if (addFormKey !== syncedAddFormKey) {
+    if (addFormKey) {
+      resetAddFormState({
+        setFormError,
+        setThrowCriteriaIds,
+        setCatchCriteriaIds,
+        setGeneralCriteriaIds,
+        setRiskRotationIds,
+        setMasteryBaseIds,
+        setMasteryCriteriaIds,
+        setMasteryRotationId,
+        setPendingPivotId,
+        setPivotRotationCount,
+      });
+    }
+    setSyncedAddFormKey(addFormKey);
+  }
+
+  const pivotEditKey =
+    mode === "edit" && selectedItem?.type === "body_element"
+      ? `${selectedItem.id}:${selectedItem.bodyElementConfig?.rotationCount ?? 1}`
+      : null;
+  if (pivotEditKey !== syncedPivotEditKey) {
+    if (pivotEditKey && selectedItem?.type === "body_element") {
+      setPivotRotationCount(selectedItem.bodyElementConfig?.rotationCount ?? 1);
+      setPendingPivotId(null);
+    }
+    setSyncedPivotEditKey(pivotEditKey);
+  }
+
   const throwCriteria = useMemo(
     () => rCriteria.filter((c: RCriteriaOption) => c.type === "throw"),
     [rCriteria],
@@ -171,61 +274,31 @@ export function InventoryPanel({
     [rCriteria],
   );
 
-  useEffect(() => {
-    if (mode !== "add" || !itemType) {
-      return;
+  const editFormKey =
+    mode === "edit" && selectedItem
+      ? `${selectedItem.id}:${throwCriteria.length}:${catchCriteria.length}:${generalCriteria.length}`
+      : null;
+  if (editFormKey !== syncedEditFormKey) {
+    if (editFormKey && selectedItem) {
+      syncRiskMasteryFromSelectedItem(
+        selectedItem,
+        throwCriteria,
+        catchCriteria,
+        generalCriteria,
+        {
+          setFormError,
+          setThrowCriteriaIds,
+          setCatchCriteriaIds,
+          setGeneralCriteriaIds,
+          setRiskRotationIds,
+          setMasteryBaseIds,
+          setMasteryCriteriaIds,
+          setMasteryRotationId,
+        },
+      );
     }
-    setFormError(null);
-    setThrowCriteriaIds([]);
-    setCatchCriteriaIds([]);
-    setGeneralCriteriaIds([]);
-    setRiskRotationIds([...DEFAULT_RISK_ROTATION_SLOTS]);
-    setMasteryBaseIds([]);
-    setMasteryCriteriaIds([]);
-    setMasteryRotationId("");
-    setPendingPivotId(null);
-    setPivotRotationCount(1);
-  }, [mode, itemType]);
-
-  useEffect(() => {
-    if (mode !== "edit" || selectedItem?.type !== "body_element") {
-      return;
-    }
-    setPivotRotationCount(selectedItem.bodyElementConfig?.rotationCount ?? 1);
-    setPendingPivotId(null);
-  }, [mode, selectedItem?.id, selectedItem?.type, selectedItem?.bodyElementConfig?.rotationCount]);
-
-  useEffect(() => {
-    if (mode !== "edit" || !selectedItem) {
-      return;
-    }
-    setFormError(null);
-    const criteria = selectedItem.risk?.criteriaIds ?? [];
-    setThrowCriteriaIds(
-      criteria.filter((id) => throwCriteria.some((c: RCriteriaOption) => c.id === id)),
-    );
-    setCatchCriteriaIds(
-      criteria.filter((id) => catchCriteria.some((c: RCriteriaOption) => c.id === id)),
-    );
-    setGeneralCriteriaIds(
-      criteria.filter((id) => generalCriteria.some((c: RCriteriaOption) => c.id === id)),
-    );
-    setRiskRotationIds(
-      (() => {
-        const ids =
-          selectedItem.risk?.rotations.flatMap((r) =>
-            Array.from({ length: r.count }, () => r.rotationId),
-          ) ?? [];
-        while (ids.length < MIN_BASE_ROTATIONS) {
-          ids.push("");
-        }
-        return ids;
-      })(),
-    );
-    setMasteryBaseIds(selectedItem.mastery?.baseIds ?? []);
-    setMasteryCriteriaIds(selectedItem.mastery?.criteriaIds ?? []);
-    setMasteryRotationId(selectedItem.mastery?.rotationId ?? "");
-  }, [mode, selectedItem, throwCriteria, catchCriteria, generalCriteria]);
+    setSyncedEditFormKey(editFormKey);
+  }
 
   const allowedMasteryCriteria = useMemo(() => {
     if (masteryBaseIds.length === 0) {
@@ -288,7 +361,7 @@ export function InventoryPanel({
         (element: { id: string; category: string }) => element.id === pivotId,
       ) ?? null
     );
-  }, [bodyElements, mode, pendingPivotId, selectedItem?.bodyElementId, selectedItem?.type]);
+  }, [bodyElements, mode, pendingPivotId, selectedItem]);
 
   const showPivotConfigurator =
     activePivotElement?.category === "pivot" &&
