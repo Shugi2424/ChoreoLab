@@ -2,7 +2,7 @@ import "dotenv/config";
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import cors from "cors";
-import express, { type RequestHandler } from "express";
+import express, { type Request, type RequestHandler, type Response } from "express";
 import http from "node:http";
 import { loadConfig } from "./config/env.js";
 import { connectDb, disconnectDb, isDbConnected } from "./db.js";
@@ -22,7 +22,7 @@ async function main() {
   const server = new ApolloServer({ typeDefs, resolvers });
   await server.start();
 
-  app.get("/health", (_req, res) => {
+  app.get("/health", (_req: Request, res: Response) => {
     const dbConnected = isDbConnected();
     res.status(dbConnected ? 200 : 503).json({
       status: dbConnected ? "ok" : "degraded",

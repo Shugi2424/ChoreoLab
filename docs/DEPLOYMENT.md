@@ -16,20 +16,40 @@ This guide covers deploying ChoreoLab to **MongoDB Atlas**, **Render** (API), an
 
 The client talks to the API via `VITE_GRAPHQL_URL`. The API allows the client origin via `CORS_ORIGIN`.
 
+### Dev vs production databases (recommended)
+
+Use **one Atlas cluster** and **two database names** on the same connection string (same user/password/host):
+
+| Environment | Where | Database name in URI |
+| ----------- | ----- | -------------------- |
+| Development | Local `server/.env` | `choreolab` |
+| Production  | Render `MONGODB_URI` | `choreolab_prod` |
+
+Example — only the path before `?` changes:
+
+```
+# Dev (local)
+mongodb+srv://USER:PASS@CLUSTER.mongodb.net/choreolab?retryWrites=true&w=majority
+
+# Prod (Render)
+mongodb+srv://USER:PASS@CLUSTER.mongodb.net/choreolab_prod?retryWrites=true&w=majority
+```
+
+Atlas creates each database on first use. **Seed production once** (step 4) into `choreolab_prod`; leave your existing dev data in `choreolab` untouched.
+
 ---
 
 ## 1. MongoDB Atlas
 
-1. Create a cluster (or use an existing one) at [mongodb.com/atlas](https://www.mongodb.com/atlas).
-2. **Database Access** — create a database user with read/write on the `choreolab` database.
-3. **Network Access** — for production:
-   - Add **`0.0.0.0/0`** (allow from anywhere) so Render can connect, **or**
-   - Use Atlas **VPC peering** / Render static IPs if you upgrade to a paid Render plan.
-4. **Connect** → Drivers → copy the connection string:
-   ```
-   mongodb+srv://USER:PASS@CLUSTER.mongodb.net/choreolab?retryWrites=true&w=majority
-   ```
-5. Keep this URI for Render env vars and for seeding (step 4 below).
+If you already have a dev cluster, **reuse it** — add network access for Render and a **separate production database name** (see [Dev vs production databases](#dev-vs-production-databases-recommended) above).
+
+1. Open your existing cluster at [cloud.mongodb.com](https://cloud.mongodb.com) (or create one — M0 free tier is fine).
+2. **Database Access** — your existing user is fine (read/write on any database).
+3. **Network Access** — add **`0.0.0.0/0`** if not already present (required for Render).
+4. **Connect** → Drivers → copy the connection string and set the database name:
+   - **Dev (local):** `...mongodb.net/choreolab?...`
+   - **Prod (Render):** `...mongodb.net/choreolab_prod?...`
+5. Keep the **production** URI for Render; keep **dev** URI in local `server/.env` only.
 
 ---
 
@@ -53,7 +73,7 @@ The client talks to the API via `VITE_GRAPHQL_URL`. The API allows the client or
 | Setting | Value |
 | ------- | ----- |
 | Root directory | *(repo root)* |
-| Build command | `npm ci && npm run build:server` |
+| Build command | `npm ci --include=dev && npm run build:server` |
 | Start command | `npm run start:server` |
 | Health check path | `/health` |
 
