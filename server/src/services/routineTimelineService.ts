@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 import { BodyElement } from "../models/BodyElement.js";
-import { Routine, type RoutineDocument } from "../models/Routine.js";
+import type { RoutineDocument } from "../models/Routine.js";
 import type { RoutinePersistTarget } from "../types/routineScoring.js";
 import { RCriteria, Rotation, ArtistryComponent } from "../models/reference.js";
 import {
