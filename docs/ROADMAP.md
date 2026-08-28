@@ -340,18 +340,22 @@ Add when polishing screens — guards against UX regressions without full E2E:
 
 **Goal:** Application accessible on the internet.
 
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for step-by-step Atlas, Render, and Vercel setup.
+
 ### Server (Render)
 
-- [ ] Production build script
-- [ ] Environment variables configured (MongoDB, JWT secret, email, CORS origin)
-- [ ] Health check endpoint
-- [ ] Graceful shutdown
+- [x] Production build script (`npm run build:server`, `npm run start:server`)
+- [x] Environment variables documented and validated in production (`server/.env.example`, `loadConfig`)
+- [x] Health check endpoint (`GET /health` — includes MongoDB status for Render)
+- [x] Graceful shutdown (Apollo stop, Mongo disconnect, HTTP close, timeout)
+- [x] [`render.yaml`](../render.yaml) Blueprint
 
 ### Client (Vercel)
 
-- [ ] Production build
-- [ ] `VITE_GRAPHQL_URL` pointing to Render backend
-- [ ] Custom domain (optional)
+- [x] Production build (`npm run build:client`)
+- [x] `VITE_GRAPHQL_URL` documented for Vercel env
+- [x] SPA routing via [`client/vercel.json`](../client/vercel.json)
+- [ ] Custom domain (optional — see DEPLOYMENT.md)
 
 ### Database (Atlas)
 
@@ -437,4 +441,4 @@ M6 and M7 can be developed in parallel after M5. Milestones **M8 onward are sequ
 
 ## Next Step
 
-**Milestone 9 complete** — mobile builder, theme, page polish, component tests. Next: **Milestone 10 — Deployment**.
+**Milestone 10 in progress** — deployment configs and docs ready. Complete Atlas setup, Render + Vercel deploy, and production seed per [DEPLOYMENT.md](./DEPLOYMENT.md). Then run the post-deploy smoke checklist.

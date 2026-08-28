@@ -218,10 +218,8 @@ Completed through Milestone 7:
 
 Remaining:
 
-- Automated test suite (M8)
-- UI polish pass (M9)
-
-See [ROADMAP.md](./ROADMAP.md) for the full milestone plan.
+- Production deploy and smoke test (M10) — see [DEPLOYMENT.md](./DEPLOYMENT.md)
+- Polish & hardening (M11)
 
 ## Confirmed Decisions
 

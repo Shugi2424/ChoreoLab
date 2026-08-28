@@ -65,6 +65,7 @@ Start with [`docs/README.md`](./docs/README.md) for the index and editing workfl
 | [domains/](./docs/domains/)                       | Detailed CoP data (collaborative)   |
 | [UI_UX.md](./docs/UI_UX.md)                       | Design system, layouts              |
 | [ROADMAP.md](./docs/ROADMAP.md)                   | Milestone plan                      |
+| [DEPLOYMENT.md](./docs/DEPLOYMENT.md)             | Production deploy guide             |
 | [AI_RULES.md](./docs/AI_RULES.md)                 | Development guidelines              |
 
 ## Project Structure
@@ -90,9 +91,17 @@ ChoreoLab/
 
 ## Current Status
 
-**Milestone 0 complete** — Express API, MUI client scaffold, reference data seeded. See [ROADMAP.md](./docs/ROADMAP.md).
+Functional through **Milestone 9** — auth, routine builder, scoring, validation, UI polish, and automated tests.
 
-**Next:** Milestone 1 — Authentication.
+**In progress:** Milestone 10 — deployment ([DEPLOYMENT.md](./docs/DEPLOYMENT.md)).
+
+### Production build
+
+```bash
+npm ci
+npm run build:server   # API → server/dist
+npm run build:client   # SPA → client/dist
+```
 
 ### Lint & format (root)
 

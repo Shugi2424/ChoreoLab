@@ -2,7 +2,7 @@
 
 ChoreoLab uses **Vitest** for automated tests. CoP business logic is covered by fast unit tests with no database (Mongoose models are mocked where needed).
 
-**M8 (complete)** delivers unit tests + CI. **M9 (complete)** adds React component tests and manual phone QA checklist. **M11** adds MongoDB integration and optional E2E after deployment.
+**M8 (complete)** delivers unit tests + CI. **M9 (complete)** adds React component tests and manual phone QA checklist. **M10** adds production deploy configs and [DEPLOYMENT.md](./DEPLOYMENT.md). **M11** adds MongoDB integration and optional E2E after deployment.
 
 ## Commands
 

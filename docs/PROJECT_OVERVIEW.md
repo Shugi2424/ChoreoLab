@@ -111,19 +111,17 @@ Numerical requirements tracked alongside body and apparatus difficulty.
 
 ## Current State
 
-The application is **functional through Milestone 5**:
+The application is **functional through Milestone 9**:
 
 - Authentication, profile, password reset (Resend email)
 - Dashboard, routine CRUD, My Routines list
 - Reference data seeded and queryable (163 body elements, bases, criteria, risks, rotations, artistry)
 - **Routine Builder** — inventory panel, timeline drag-and-drop, all four item types, risk/mastery composition validation
-- MUI theme, React Router, layered server services
+- Live DB/DA scoring and CoP validation (M6–M7)
+- MUI theme, mobile polish, component tests (M9)
+- Vitest unit tests + GitHub Actions CI (M8)
 
-**Not yet implemented:** UI polish (M9), deployment (M10).
-
-**Implemented (M8):** Vitest unit tests + GitHub Actions CI — see [TESTING.md](./TESTING.md).
-
-**Implemented:** live DB/DA scoring recalculates on every timeline change (M6).
+**In progress:** deployment to Vercel + Render + Atlas (M10). See [DEPLOYMENT.md](./DEPLOYMENT.md).
 
 See [ROADMAP.md](./ROADMAP.md) for the milestone plan.
 

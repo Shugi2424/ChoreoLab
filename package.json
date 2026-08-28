@@ -18,6 +18,9 @@
     "test:coverage": "npm run test:coverage --prefix server",
     "test:watch": "npm run test:watch --prefix shared",
     "build": "npm run build --prefix shared && npm run build --prefix server && npm run build --prefix client",
+    "build:server": "npm run build --prefix shared && npm run build --prefix server",
+    "build:client": "npm run build --prefix shared && npm run build --prefix client",
+    "start:server": "npm start --prefix server",
     "postinstall": "npm run build --prefix shared"
   },
   "devDependencies": {

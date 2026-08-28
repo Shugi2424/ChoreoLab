@@ -14,6 +14,7 @@ This folder is the **source of truth** for the project. Read these docs before i
 | [UI_UX.md](./UI_UX.md)                       | Design system, layouts, components       | Stable                              |
 | [ROADMAP.md](./ROADMAP.md)                   | Milestone plan                           | Stable                              |
 | [TESTING.md](./TESTING.md)                   | Vitest suites, CI, client/server parity  | Stable                              |
+| [DEPLOYMENT.md](./DEPLOYMENT.md)             | Atlas, Render, Vercel production setup   | Stable                              |
 | [AI_RULES.md](./AI_RULES.md)                 | Development standards                    | Stable                              |
 
 ### Domain docs (collaborative — fill in together)
@@ -75,11 +76,9 @@ These hold the detailed CoP data that drives seed files and validation rules.
 
 ## Current phase
 
-**Milestone 8 complete** — Vitest unit tests for scoring, validation, risk/mastery/pivot rules, client parity tests, and GitHub Actions CI (`npm test`).
+**Milestone 10 in progress** — production build scripts, Render/Vercel config, and [DEPLOYMENT.md](./DEPLOYMENT.md).
 
-Next: **Milestone 9 — Client UI Polish** ([ROADMAP.md](./ROADMAP.md)).
-
-See [TESTING.md](./TESTING.md) for commands and layout.
+Previous: M9 client UI polish (complete). See [ROADMAP.md](./ROADMAP.md).
 
 ### Local dev shortcuts (Windows)
 
