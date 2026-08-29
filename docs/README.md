@@ -76,9 +76,9 @@ These hold the detailed CoP data that drives seed files and validation rules.
 
 ## Current phase
 
-**Milestone 10 in progress** — production build scripts, Render/Vercel config, and [DEPLOYMENT.md](./DEPLOYMENT.md).
+**Milestone 11 complete** — v1 roadmap finished. See [ROADMAP.md](./ROADMAP.md).
 
-Previous: M9 client UI polish (complete). See [ROADMAP.md](./ROADMAP.md).
+Previous: M10 deployment (live on Vercel + Render).
 
 ### Local dev shortcuts (Windows)
 

@@ -15,6 +15,8 @@ Each milestone is **independently testable** and should be completed before movi
 - [x] [domains/ARTISTRY.md](./domains/ARTISTRY.md) — artistry components
 - [x] [domains/VALIDATION.md](./domains/VALIDATION.md) — validation rule catalog
 
+
+
 ### Technical docs (aligned with domain docs)
 
 - [x] Project structure and architecture docs
@@ -25,6 +27,8 @@ Each milestone is **independently testable** and should be completed before movi
 **Test:** Domain docs have no unresolved `[TBD]` items needed for Milestone 4+ OR product owner explicitly defers them.
 
 ---
+
+
 
 ## Milestone 0 — Foundation & Code Quality
 
@@ -41,6 +45,8 @@ Each milestone is **independently testable** and should be completed before movi
 - [x] Migrate from Apollo standalone to Express + Apollo (CORS, health endpoint, graceful shutdown)
 - [x] Add `client/.env.example`
 
+
+
 ### Client
 
 - [x] Install MUI, React Router, Emotion
@@ -48,6 +54,8 @@ Each milestone is **independently testable** and should be completed before movi
 - [x] Set up React Router with placeholder routes
 - [x] Reorganize folder structure (`pages/`, `components/`, `graphql/`)
 - [x] Move queries out of `apollo/client.ts` into `graphql/`
+
+
 
 ### Tooling
 
@@ -57,6 +65,8 @@ Each milestone is **independently testable** and should be completed before movi
 **Test:** Server starts, health query works, client renders routed placeholder pages with MUI theme applied.
 
 ---
+
+
 
 ## Milestone 1 — Authentication
 
@@ -71,6 +81,8 @@ Each milestone is **independently testable** and should be completed before movi
 - [x] GraphQL query: `me`
 - [x] Protected operation enforcement
 
+
+
 ### Client
 
 - [x] Auth context / token storage
@@ -84,6 +96,8 @@ Each milestone is **independently testable** and should be completed before movi
 
 ---
 
+
+
 ## Milestone 2 — Password Reset & Profile
 
 **Goal:** Coaches can reset passwords and manage their profile.
@@ -95,6 +109,8 @@ Each milestone is **independently testable** and should be completed before movi
 - [x] `updateProfile` / `changePassword` mutations
 - [x] `coachService`
 
+
+
 ### Client
 
 - [x] Forgot password page
@@ -104,6 +120,8 @@ Each milestone is **independently testable** and should be completed before movi
 **Test:** Request reset → receive email → reset password → login with new password → edit profile.
 
 ---
+
+
 
 ## Milestone 3 — Dashboard & Routine CRUD
 
@@ -116,6 +134,8 @@ Each milestone is **independently testable** and should be completed before movi
 - [x] GraphQL: `createRoutine`, `routines`, `routine`, `deleteRoutine`
 - [x] Initial scores (0) and empty validation on create
 
+
+
 ### Client
 
 - [x] Dashboard page (Create Routine, My Routines, Profile cards)
@@ -127,6 +147,8 @@ Each milestone is **independently testable** and should be completed before movi
 **Test:** Create routine → appears in My Routines → open → delete → gone from list.
 
 ---
+
+
 
 ## Milestone 4 — Reference Data & Seeding
 
@@ -141,6 +163,8 @@ Each milestone is **independently testable** and should be completed before movi
 - [x] `ArtistryComponent` model and seed (4 types)
 - [x] `referenceDataService`
 
+
+
 ### Documentation
 
 - [x] Domain docs populated (see Phase 0)
@@ -149,6 +173,8 @@ Each milestone is **independently testable** and should be completed before movi
 **Test:** Run seed → query reference data via GraphQL → data matches seed files.
 
 ---
+
+
 
 ## Milestone 5 — Routine Builder (Timeline) ✅
 
@@ -162,6 +188,8 @@ Each milestone is **independently testable** and should be completed before movi
 - [x] `routineTimelineService` — timeline CRUD, risk/mastery payload building
 - [x] Risk composition validation and value calculation (`riskValidation.ts`)
 - [x] Mastery composition validation and value calculation (`masteryValidation.ts`)
+
+
 
 ### Client
 
@@ -182,6 +210,8 @@ Each milestone is **independently testable** and should be completed before movi
 
 ---
 
+
+
 ## Milestone 6 — Scoring Engine ✅
 
 **Goal:** DB and DA scores calculate automatically on every routine change.
@@ -192,6 +222,8 @@ Each milestone is **independently testable** and should be completed before movi
 - [x] Integrate into routine mutations (recalculate on every change)
 - [x] Persist scores on routine document
 
+
+
 ### Client
 
 - [x] Score panel displays live DB and DA values
@@ -200,6 +232,8 @@ Each milestone is **independently testable** and should be completed before movi
 **Test:** Add elements with known values → DB score matches expected sum. Add masteries → DA score matches expected sum.
 
 ---
+
+
 
 ## Milestone 7 — Validation Engine ✅
 
@@ -210,6 +244,8 @@ Each milestone is **independently testable** and should be completed before movi
 - [x] `validationService` — rule handlers against `requirements` collection
 - [x] Integrate into routine mutations alongside scoring
 
+
+
 ### Client
 
 - [x] Validation panel — green checks, red errors, grouped by domain
@@ -218,6 +254,8 @@ Each milestone is **independently testable** and should be completed before movi
 **Test:** Build routine missing a required element → validation shows specific missing requirement. Add it → validation passes.
 
 ---
+
+
 
 ## Milestone 8 — Automated Test Suite ✅
 
@@ -232,6 +270,8 @@ Scoring/risk/mastery unit tests can be **drafted during M6–M7**; this mileston
 - [x] Coverage reporting for `server/src/utils/` and services (`@vitest/coverage-v8` or equivalent)
 - [x] **GitHub Actions** (or CI of choice) — run `npm test`, `npm run lint`, and `npm run build` on push/PR
 
+
+
 ### Server — unit tests (priority)
 
 Pure functions and services with **no MongoDB** (or mocked models):
@@ -242,6 +282,8 @@ Pure functions and services with **no MongoDB** (or mocked models):
 - [x] `utils/validation.ts` + `utils/fouetteValidation.ts` + `utils/pivotRotation.ts` — rule handlers per domain (M7), fixture timelines + `requirements` seed data
 - [x] `seeds/data/requirements.json` — schema sanity checks
 - [x] Auth — JWT sign/verify, `buildGraphQLContext`, and `requireAuth` unit tests (no live HTTP)
+
+
 
 ### Client — unit tests
 
@@ -263,6 +305,8 @@ Mocked service tests (no MongoDB):
 Further test types (MongoDB integration, React components, E2E) are tracked in **M9** and **M11** — not part of M8 scope.
 
 ---
+
+
 
 ## Milestone 9 — Client UI Polish
 
@@ -291,12 +335,16 @@ The routine builder and core flows must feel **convenient on a phone**, not mere
 - [x] Button, input, card, and chip variants aligned to design system
 - [x] Subtle hover/focus/active states on interactive elements
 
+
+
 ### Layout & navigation
 
 - [x] App shell polish — logo, nav hierarchy, coach menu, logout
 - [x] Responsive layout — desktop top nav, mobile drawer/hamburger
 - [x] Consistent page structure — `PageHeader`, container padding, section headings
 - [x] Auth pages — centered card layout, branded header, improved visual balance
+
+
 
 ### UX patterns
 
@@ -306,6 +354,8 @@ The routine builder and core flows must feel **convenient on a phone**, not mere
 - [x] Feedback consistency — success/error alerts with uniform placement
 - [x] Confirmation dialogs for destructive actions (delete routine, etc.)
 
+
+
 ### Page polish (pass over each screen)
 
 - [x] Login, sign up, forgot password, reset password
@@ -314,12 +364,16 @@ The routine builder and core flows must feel **convenient on a phone**, not mere
 - [x] My Routines — list/card layout, filters or sort if needed
 - [x] Routine Builder — three-panel layout, timeline, inventory, score/validation panels; **mobile layout and touch DnD** (see Mobile & touch above)
 
+
+
 ### Responsive & accessibility
 
 - [x] Test all flows at mobile, tablet, and desktop breakpoints — **phone must pass the routine-builder test matrix** (see TESTING.md)
 - [x] Touch-friendly targets and spacing on small screens (see Mobile & touch)
 - [x] Visible focus rings and keyboard navigation
 - [x] Color contrast meets WCAG AA for text and controls
+
+
 
 ### UI component tests (Vitest + Testing Library)
 
@@ -336,6 +390,8 @@ Add when polishing screens — guards against UX regressions without full E2E:
 
 ---
 
+
+
 ## Milestone 10 — Deployment
 
 **Goal:** Application accessible on the internet.
@@ -348,55 +404,61 @@ See [DEPLOYMENT.md](./DEPLOYMENT.md) for step-by-step Atlas, Render, and Vercel 
 - [x] Environment variables documented and validated in production (`server/.env.example`, `loadConfig`)
 - [x] Health check endpoint (`GET /health` — includes MongoDB status for Render)
 - [x] Graceful shutdown (Apollo stop, Mongo disconnect, HTTP close, timeout)
-- [x] [`render.yaml`](../render.yaml) Blueprint
+- [x] `[render.yaml](../render.yaml)` Blueprint
+
+
 
 ### Client (Vercel)
 
 - [x] Production build (`npm run build:client`)
 - [x] `VITE_GRAPHQL_URL` documented for Vercel env
-- [x] SPA routing via [`client/vercel.json`](../client/vercel.json)
-- [ ] Custom domain (optional — see DEPLOYMENT.md)
+- [x] SPA routing via `[client/vercel.json](../client/vercel.json)`
 
 ### Database (Atlas)
 
-- [ ] Production cluster or dedicated database
-- [ ] IP allowlist for Render
-- [ ] Run seed on production
+- [x] Production cluster or dedicated database
+- [x] IP allowlist for Render
+- [x] Run seed on production
 
 **Test:** Access app via Vercel URL → sign up → create routine → scores and validation work. CI (`npm test`) passes on `master` before deploy.
 
 ### Post-deploy smoke checklist (manual)
 
-- [ ] Sign up, log in, reset password flow on production URLs
-- [ ] Create routine → add body element, risk, mastery → scores and validation update
-- [ ] CORS and GraphQL URL correct from Vercel client
+- [x] Sign up, log in, reset password flow on production URLs
+- [x] Create routine → add body element, risk, mastery → scores and validation update
+- [x] CORS and GraphQL URL correct from Vercel client
+
+**Status: complete** (Aug 2026). Live at Vercel + Render; see [DEPLOYMENT.md](./DEPLOYMENT.md).
 
 ---
+
+
 
 ## Milestone 11 — Polish & Hardening
 
 **Goal:** Production-quality finishing touches (server-side and reliability).
 
-- [ ] Error boundaries on client
-- [ ] Rate limiting on auth endpoints
-- [ ] Input validation on all mutations
-- [ ] Security review (JWT expiry, password strength, CORS)
-- [ ] Performance: indexes verified, query optimization
+- [x] Error boundaries on client
+- [x] Rate limiting on auth endpoints
+- [x] Input validation on all mutations
+- [x] Security review (JWT expiry 7d, password strength, CORS from env, trust proxy)
+- [x] Performance: indexes verified, query optimization
 
 ### Extended automated tests
 
-Run after deployment (M10) when a real environment exists for smoke comparison:
+- [x] **MongoDB integration tests** — `routineTimelineService` add/update/reorder recalculates scores and validation (MongoDB Memory Server)
+- [x] **GraphQL integration tests** — protected mutations reject missing/invalid JWT; coach cannot access another coach's routine
 
-- [ ] **MongoDB integration tests** — `routineTimelineService` add/update/reorder recalculates scores and validation (MongoDB Memory Server or dedicated test DB)
-- [ ] **GraphQL integration tests** — protected mutations reject missing/invalid JWT; coach cannot access another coach's routine
-- [ ] **E2E browser tests** (Playwright or Cypress) — login → create routine → build timeline → verify scores/validation (optional; add if manual QA becomes a bottleneck)
-- [ ] Visual regression — not planned for v1
+**Test:** Full user flow on mobile and desktop without errors; auth and API hardened for production load; integration suite passes in CI.
 
-**Test:** Full user flow on mobile and desktop without errors; auth and API hardened for production load; integration/E2E suite passes in CI when enabled.
+**Status: complete** (Aug 2026).
 
 ---
 
+
+
 ## Timeline Estimate
+
 
 | Milestone                    | Estimated effort                      |
 | ---------------------------- | ------------------------------------- |
@@ -413,9 +475,12 @@ Run after deployment (M10) when a real environment exists for smoke comparison:
 | 10 — Deployment              | 1–2 days                              |
 | 11 — Polish & Hardening      | 2–3 days                              |
 
+
 **Total estimate:** 10–15 weeks at a steady pace, depending on CoP data availability.
 
 ---
+
+
 
 ## Dependency Graph
 
@@ -439,6 +504,8 @@ M6 and M7 can be developed in parallel after M5. Milestones **M8 onward are sequ
 
 ---
 
+
+
 ## Next Step
 
-**Milestone 10 in progress** — deployment configs and docs ready. Complete Atlas setup, Render + Vercel deploy, and production seed per [DEPLOYMENT.md](./DEPLOYMENT.md). Then run the post-deploy smoke checklist.
+**Milestone 11 complete** — v1 roadmap finished. Use manual phone QA ([TESTING.md](./TESTING.md)) before major releases; otherwise iterate on CoP data and coach feedback.

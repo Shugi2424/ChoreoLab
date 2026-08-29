@@ -17,6 +17,7 @@ async function main() {
   await connectDb(config.mongodbUri);
 
   const app = express();
+  app.set("trust proxy", 1);
   const httpServer = http.createServer(app);
 
   const server = new ApolloServer({ typeDefs, resolvers });

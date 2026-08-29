@@ -13,8 +13,8 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@choreolab/shared": "file:../shared",
     "@apollo/server": "^4.11.3",
+    "@choreolab/shared": "file:../shared",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^16.4.7",
@@ -31,6 +31,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.10.7",
     "@vitest/coverage-v8": "^4.1.11",
+    "mongodb-memory-server": "^10.1.4",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3",
     "vitest": "^4.1.11"

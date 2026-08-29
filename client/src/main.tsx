@@ -10,6 +10,7 @@ import "@fontsource/plus-jakarta-sans/700.css";
 import "@fontsource/plus-jakarta-sans/800.css";
 import App from "./App";
 import { AuthProvider } from "./auth/AuthContext";
+import { ErrorBoundary } from "./components/layout/ErrorBoundary";
 import { client } from "./apollo/client";
 import { theme } from "./theme/theme";
 import "./index.css";
@@ -21,7 +22,9 @@ createRoot(document.getElementById("root")!).render(
         <CssBaseline />
         <BrowserRouter>
           <AuthProvider>
-            <App />
+            <ErrorBoundary>
+              <App />
+            </ErrorBoundary>
           </AuthProvider>
         </BrowserRouter>
       </ThemeProvider>

@@ -49,6 +49,7 @@ export interface UpdateRoutineItemInput {
 }
 
 import { getRoutineDocForCoach } from "./routineAccess.js";
+import { assertObjectId } from "../utils/inputValidation.js";
 
 function renormalizeOrder(timeline: RoutineDocument["timeline"]) {
   timeline.forEach((item, index) => {
@@ -226,6 +227,7 @@ async function buildTimelineItem(
 }
 
 function findTimelineItem(routine: RoutineDocument, itemId: string) {
+  assertObjectId(itemId, "timeline item id");
   const item = routine.timeline.find(
     (entry) => (entry as { _id?: Types.ObjectId })._id?.toString() === itemId,
   );
@@ -281,6 +283,14 @@ export const routineTimelineService = {
 
   async reorderItems(coachId: string, routineId: string, itemIds: string[]) {
     const routine = await getRoutineDocForCoach(routineId, coachId);
+
+    if (!Array.isArray(itemIds) || itemIds.length === 0) {
+      throw new UserInputError("At least one timeline item id is required.");
+    }
+
+    for (const itemId of itemIds) {
+      assertObjectId(itemId, "timeline item id");
+    }
 
     if (itemIds.length !== routine.timeline.length) {
       throw new UserInputError("Item list must include every timeline item.");

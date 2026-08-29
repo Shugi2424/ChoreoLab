@@ -1,6 +1,10 @@
 import { Routine } from "../models/Routine.js";
 import { AGE_CATEGORIES, APPARATUS } from "../types/enums.js";
 import { UserInputError } from "../utils/errors.js";
+import {
+  assertNonEmptyString,
+  MAX_GYMNAST_NAME_LENGTH,
+} from "../utils/inputValidation.js";
 import type { RoutinePersistTarget } from "../types/routineScoring.js";
 import { toGraphQLRoutine } from "../utils/mappers.js";
 import { applyDerivedRoutineFields } from "./routineDerivedFields.js";
@@ -19,10 +23,11 @@ export interface UpdateRoutineInput {
 }
 
 function validateCreateInput(input: CreateRoutineInput): CreateRoutineInput {
-  const gymnastName = input.gymnastName?.trim();
-  if (!gymnastName) {
-    throw new UserInputError("Gymnast name is required.");
-  }
+  const gymnastName = assertNonEmptyString(
+    input.gymnastName,
+    "Gymnast name",
+    MAX_GYMNAST_NAME_LENGTH,
+  );
 
   if (!APPARATUS.includes(input.apparatus as (typeof APPARATUS)[number])) {
     throw new UserInputError("Invalid apparatus.");
@@ -45,11 +50,11 @@ function validateUpdateInput(input: UpdateRoutineInput): UpdateRoutineInput {
   const patch: UpdateRoutineInput = {};
 
   if (input.gymnastName !== undefined) {
-    const gymnastName = input.gymnastName.trim();
-    if (!gymnastName) {
-      throw new UserInputError("Gymnast name is required.");
-    }
-    patch.gymnastName = gymnastName;
+    patch.gymnastName = assertNonEmptyString(
+      input.gymnastName,
+      "Gymnast name",
+      MAX_GYMNAST_NAME_LENGTH,
+    );
   }
 
   if (input.apparatus !== undefined) {
@@ -110,15 +115,10 @@ export const routineService = {
     return toGraphQLRoutine(routine.toObject());
   },
 
-  /** Fresh scores/validation for display; does not write (preserves updatedAt sort order). */
+  /** Uses persisted scores/validation; recalculation happens on timeline mutations and getById. */
   async listByCoach(coachId: string) {
-    const docs = await Routine.find({ coach: coachId }).sort({ updatedAt: -1 });
-    await Promise.all(
-      docs.map((routine) =>
-        applyDerivedRoutineFields(routine as unknown as RoutinePersistTarget),
-      ),
-    );
-    return docs.map((doc) => toGraphQLRoutine(doc.toObject()));
+    const docs = await Routine.find({ coach: coachId }).sort({ updatedAt: -1 }).lean();
+    return docs.map((doc) => toGraphQLRoutine(doc));
   },
 
   /** Fresh scores/validation for the builder; persisted on timeline mutations only. */

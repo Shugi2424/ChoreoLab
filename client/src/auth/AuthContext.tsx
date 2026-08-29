@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const { data, loading, refetch } = useQuery<{ me: Coach }>(ME_QUERY, {
     skip: !token,
-    fetchPolicy: "cache-and-network",
+    fetchPolicy: "cache-first",
     onError: () => {
       void handleSessionError();
     },
