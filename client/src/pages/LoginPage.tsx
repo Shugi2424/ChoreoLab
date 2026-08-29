@@ -1,5 +1,5 @@
 import { Alert, Box, Link } from "@mui/material";
-import { useMutation } from "@apollo/client";
+import { useMutation, useApolloClient } from "@apollo/client";
 import { FormEvent, useState } from "react";
 import { Link as RouterLink, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
@@ -9,10 +9,12 @@ import {
   AuthTextField,
 } from "../components/auth/AuthPageShell";
 import { LOGIN_MUTATION } from "../graphql/mutations";
+import { ROUTINES_QUERY } from "../graphql/queries";
 import { getLoginErrorMessage } from "../utils/loginErrors";
 
 export function LoginPage() {
   const navigate = useNavigate();
+  const client = useApolloClient();
   const { loginWithToken, isAuthenticated } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,6 +35,7 @@ export function LoginPage() {
         variables: { input: { email, password } },
       });
       loginWithToken(data.login.token, data.login.coach);
+      void client.query({ query: ROUTINES_QUERY });
       navigate("/dashboard", { replace: true });
     } catch (error) {
       setErrorMessage(getLoginErrorMessage(error));

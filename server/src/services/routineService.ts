@@ -115,15 +115,10 @@ export const routineService = {
     return toGraphQLRoutine(routine.toObject());
   },
 
-  /** Fresh scores/validation for display; does not write (preserves updatedAt sort order). */
+  /** Uses persisted scores/validation; recalculation happens on timeline mutations and getById. */
   async listByCoach(coachId: string) {
-    const docs = await Routine.find({ coach: coachId }).sort({ updatedAt: -1 });
-    await Promise.all(
-      docs.map((routine) =>
-        applyDerivedRoutineFields(routine as unknown as RoutinePersistTarget),
-      ),
-    );
-    return docs.map((doc) => toGraphQLRoutine(doc.toObject()));
+    const docs = await Routine.find({ coach: coachId }).sort({ updatedAt: -1 }).lean();
+    return docs.map((doc) => toGraphQLRoutine(doc));
   },
 
   /** Fresh scores/validation for the builder; persisted on timeline mutations only. */

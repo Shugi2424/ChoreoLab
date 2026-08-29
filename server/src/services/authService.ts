@@ -87,13 +87,12 @@ export const authService = {
       throw new UserInputError("Email and password are required");
     }
 
-    let email: string;
-    try {
-      email = normalizeEmail(input.email);
-    } catch {
+    const email = input.email.trim().toLowerCase();
+    if (!email) {
       throw new UserInputError("Invalid email or password");
     }
-    const coach = await Coach.findOne({ email });
+
+    const coach = await Coach.findOne({ email }).lean();
     if (!coach) {
       throw new UserInputError("Invalid email or password");
     }
