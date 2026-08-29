@@ -1,9 +1,11 @@
+import type { Request } from "express";
 import type { AppConfig } from "../config/env.js";
 import type { GraphQLContext } from "../types/context.js";
+import { getClientIp } from "./clientIp.js";
 import { verifyToken } from "../utils/jwt.js";
 
 export function buildGraphQLContext(
-  req: { headers: { authorization?: string } },
+  req: Pick<Request, "ip" | "headers" | "socket">,
   config: Pick<
     AppConfig,
     "jwtSecret" | "clientUrl" | "resendApiKey" | "emailFrom"
@@ -25,6 +27,7 @@ export function buildGraphQLContext(
 
   return {
     coachId,
+    clientIp: getClientIp(req),
     jwtSecret: config.jwtSecret,
     emailConfig: {
       clientUrl: config.clientUrl,

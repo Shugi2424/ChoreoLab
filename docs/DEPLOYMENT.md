@@ -119,12 +119,6 @@ GraphQL endpoint: `https://YOUR-SERVICE.onrender.com/graphql`
 
 [`client/vercel.json`](../client/vercel.json) enables SPA routing (React Router).
 
-### Custom domain (optional)
-
-1. Vercel → Project → **Domains** → add your domain.
-2. Update Render `CORS_ORIGIN` and `CLIENT_URL` to the custom domain.
-3. Redeploy Render (env change triggers restart).
-
 ---
 
 ## 4. Seed production reference data

@@ -1,6 +1,12 @@
 import { Coach } from "../models/Coach.js";
 import { UserInputError } from "../utils/errors.js";
-import { comparePassword, hashPassword } from "../utils/password.js";
+import { comparePassword, hashPassword, validatePassword } from "../utils/password.js";
+import {
+  assertNonEmptyString,
+  assertOptionalString,
+  MAX_CLUB_LENGTH,
+  MAX_NAME_LENGTH,
+} from "../utils/inputValidation.js";
 import { toGraphQLCoach } from "../utils/mappers.js";
 
 export interface UpdateProfileInput {
@@ -11,19 +17,16 @@ export interface UpdateProfileInput {
 
 export const coachService = {
   async updateProfile(coachId: string, input: UpdateProfileInput) {
-    if (!input.firstName.trim()) {
-      throw new UserInputError("First name is required");
-    }
-    if (!input.lastName.trim()) {
-      throw new UserInputError("Last name is required");
-    }
+    const firstName = assertNonEmptyString(input.firstName, "First name", MAX_NAME_LENGTH);
+    const lastName = assertNonEmptyString(input.lastName, "Last name", MAX_NAME_LENGTH);
+    const club = assertOptionalString(input.club, "Club", MAX_CLUB_LENGTH);
 
     const coach = await Coach.findByIdAndUpdate(
       coachId,
       {
-        firstName: input.firstName.trim(),
-        lastName: input.lastName.trim(),
-        club: input.club?.trim() || undefined,
+        firstName,
+        lastName,
+        club,
       },
       { new: true },
     );
@@ -54,6 +57,7 @@ export const coachService = {
       throw new UserInputError("Current password is incorrect");
     }
 
+    validatePassword(newPassword);
     coach.passwordHash = await hashPassword(newPassword);
     await coach.save();
 

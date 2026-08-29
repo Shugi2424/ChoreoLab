@@ -10,6 +10,10 @@ export function validatePassword(password: string): void {
       `Password must be at least ${MIN_PASSWORD_LENGTH} characters`,
     );
   }
+
+  if (!/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)) {
+    throw new UserInputError("Password must include at least one letter and one number");
+  }
 }
 
 export async function hashPassword(password: string): Promise<string> {

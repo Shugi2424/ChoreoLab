@@ -5,6 +5,13 @@ import { UserInputError } from "../utils/errors.js";
 import { signToken } from "../utils/jwt.js";
 import { toGraphQLCoach } from "../utils/mappers.js";
 import { comparePassword, hashPassword, validatePassword } from "../utils/password.js";
+import {
+  assertEmail,
+  assertNonEmptyString,
+  assertOptionalString,
+  MAX_CLUB_LENGTH,
+  MAX_NAME_LENGTH,
+} from "../utils/inputValidation.js";
 
 const RESET_TOKEN_EXPIRY_MS = 60 * 60 * 1000;
 
@@ -27,20 +34,22 @@ export interface ResetPasswordInput {
 }
 
 function normalizeEmail(email: string): string {
-  return email.trim().toLowerCase();
+  return assertEmail(email);
 }
 
-function validateSignUpInput(input: SignUpInput): void {
-  if (!input.email.trim()) {
-    throw new UserInputError("Email is required");
-  }
-  if (!input.firstName.trim()) {
-    throw new UserInputError("First name is required");
-  }
-  if (!input.lastName.trim()) {
-    throw new UserInputError("Last name is required");
-  }
+function validateSignUpInput(input: SignUpInput): {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  club?: string;
+} {
+  const email = normalizeEmail(input.email);
+  const firstName = assertNonEmptyString(input.firstName, "First name", MAX_NAME_LENGTH);
+  const lastName = assertNonEmptyString(input.lastName, "Last name", MAX_NAME_LENGTH);
+  const club = assertOptionalString(input.club, "Club", MAX_CLUB_LENGTH);
   validatePassword(input.password);
+  return { email, password: input.password, firstName, lastName, club };
 }
 
 function hashResetToken(token: string): string {
@@ -53,21 +62,20 @@ function generateResetToken(): string {
 
 export const authService = {
   async signUp(input: SignUpInput, jwtSecret: string) {
-    validateSignUpInput(input);
+    const validated = validateSignUpInput(input);
 
-    const email = normalizeEmail(input.email);
-    const existing = await Coach.findOne({ email }).lean();
+    const existing = await Coach.findOne({ email: validated.email }).lean();
     if (existing) {
       throw new UserInputError("An account with this email already exists");
     }
 
-    const passwordHash = await hashPassword(input.password);
+    const passwordHash = await hashPassword(validated.password);
     const coach = await Coach.create({
-      email,
+      email: validated.email,
       passwordHash,
-      firstName: input.firstName.trim(),
-      lastName: input.lastName.trim(),
-      club: input.club?.trim() || undefined,
+      firstName: validated.firstName,
+      lastName: validated.lastName,
+      club: validated.club,
     });
 
     const token = signToken(coach._id.toString(), jwtSecret);
@@ -79,7 +87,12 @@ export const authService = {
       throw new UserInputError("Email and password are required");
     }
 
-    const email = normalizeEmail(input.email);
+    let email: string;
+    try {
+      email = normalizeEmail(input.email);
+    } catch {
+      throw new UserInputError("Invalid email or password");
+    }
     const coach = await Coach.findOne({ email });
     if (!coach) {
       throw new UserInputError("Invalid email or password");
@@ -100,7 +113,24 @@ export const authService = {
   },
 
   async forgotPassword(email: string, emailConfig: EmailConfig) {
-    const normalizedEmail = normalizeEmail(email);
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail) {
+      return {
+        message:
+          "If an account exists for that email, a password reset link has been sent.",
+      };
+    }
+
+    let normalizedEmail: string;
+    try {
+      normalizedEmail = normalizeEmail(trimmedEmail);
+    } catch {
+      return {
+        message:
+          "If an account exists for that email, a password reset link has been sent.",
+      };
+    }
+
     const coach = await Coach.findOne({ email: normalizedEmail });
 
     if (coach) {

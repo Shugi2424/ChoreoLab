@@ -27,6 +27,8 @@ vi.mock("../utils/mappers.js", () => ({
   toGraphQLRoutine: (doc: object) => doc,
 }));
 
+const ROUTINE_ID = "507f1f77bcf86cd799439011";
+
 function buildRoutineDoc(overrides: Record<string, unknown> = {}) {
   const doc = {
     coach: { toString: () => "coach-1" },
@@ -41,7 +43,7 @@ function buildRoutineDoc(overrides: Record<string, unknown> = {}) {
     deleteOne: mockDeleteOne,
     toObject() {
       return {
-        id: "routine-1",
+        id: ROUTINE_ID,
         gymnastName: doc.gymnastName,
         apparatus: doc.apparatus,
         ageCategory: doc.ageCategory,
@@ -65,7 +67,7 @@ describe("routineService.update", () => {
     const routine = buildRoutineDoc();
     mockFindById.mockResolvedValue(routine);
 
-    const result = await routineService.update("coach-1", "routine-1", {
+    const result = await routineService.update("coach-1", ROUTINE_ID, {
       ageCategory: "junior",
     });
 
@@ -76,7 +78,7 @@ describe("routineService.update", () => {
   });
 
   it("rejects empty update payloads", async () => {
-    await expect(routineService.update("coach-1", "routine-1", {})).rejects.toThrow(
+    await expect(routineService.update("coach-1", ROUTINE_ID, {})).rejects.toThrow(
       "No routine fields to update.",
     );
   });

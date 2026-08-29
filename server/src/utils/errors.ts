@@ -25,6 +25,12 @@ export class NotFoundError extends GraphQLError {
   }
 }
 
+export class RateLimitError extends GraphQLError {
+  constructor(message = "Too many attempts. Please try again later.") {
+    super(message, { extensions: { code: "RATE_LIMITED" } });
+  }
+}
+
 export function requireAuth(context: GraphQLContext): string {
   if (!context.coachId) {
     throw new AuthenticationError();

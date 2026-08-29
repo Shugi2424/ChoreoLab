@@ -9,6 +9,13 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:6
+        ports:
+          - 27017:27017
+    env:
+      TEST_MONGODB_URI: mongodb://127.0.0.1:27017/choreolab_test
     steps:
       - uses: actions/checkout@v4
 

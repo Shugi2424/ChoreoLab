@@ -16,6 +16,7 @@ import {
   type UpdateRoutineItemInput,
 } from "../services/routineTimelineService.js";
 import type { GraphQLContext } from "../types/context.js";
+import { assertAuthRateLimit } from "../middleware/authRateLimit.js";
 import { requireAuth } from "../utils/errors.js";
 
 export const mutationResolvers = {
@@ -23,22 +24,37 @@ export const mutationResolvers = {
     _: unknown,
     { input }: { input: SignUpInput },
     context: GraphQLContext,
-  ) => authService.signUp(input, context.jwtSecret),
+  ) => {
+    assertAuthRateLimit(context.clientIp, "signUp");
+    return authService.signUp(input, context.jwtSecret);
+  },
 
   login: (
     _: unknown,
     { input }: { input: LoginInput },
     context: GraphQLContext,
-  ) => authService.login(input, context.jwtSecret),
+  ) => {
+    assertAuthRateLimit(context.clientIp, "login");
+    return authService.login(input, context.jwtSecret);
+  },
 
   forgotPassword: (
     _: unknown,
     { email }: { email: string },
     context: GraphQLContext,
-  ) => authService.forgotPassword(email, context.emailConfig),
+  ) => {
+    assertAuthRateLimit(context.clientIp, "forgotPassword");
+    return authService.forgotPassword(email, context.emailConfig);
+  },
 
-  resetPassword: (_: unknown, { input }: { input: ResetPasswordInput }) =>
-    authService.resetPassword(input),
+  resetPassword: (
+    _: unknown,
+    { input }: { input: ResetPasswordInput },
+    context: GraphQLContext,
+  ) => {
+    assertAuthRateLimit(context.clientIp, "resetPassword");
+    return authService.resetPassword(input);
+  },
 
   updateProfile: (
     _: unknown,
@@ -53,8 +69,14 @@ export const mutationResolvers = {
       newPassword,
     }: { currentPassword: string; newPassword: string },
     context: GraphQLContext,
-  ) =>
-    coachService.changePassword(requireAuth(context), currentPassword, newPassword),
+  ) => {
+    assertAuthRateLimit(context.clientIp, "changePassword");
+    return coachService.changePassword(
+      requireAuth(context),
+      currentPassword,
+      newPassword,
+    );
+  },
 
   createRoutine: (
     _: unknown,
