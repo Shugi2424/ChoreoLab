@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -10,6 +11,7 @@ import { useApolloClient, useQuery } from "@apollo/client";
 import { clearStoredToken, getStoredToken, setStoredToken } from "./tokenStorage";
 import { ME_QUERY } from "../graphql/queries";
 import type { Coach } from "../types/auth";
+import { warmApiConnection } from "../utils/apiWarmup";
 
 interface AuthContextValue {
   coach: Coach | null;
@@ -26,6 +28,12 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const client = useApolloClient();
   const [token, setToken] = useState<string | null>(() => getStoredToken());
+
+  useEffect(() => {
+    if (token) {
+      warmApiConnection();
+    }
+  }, [token]);
 
   const handleSessionError = useCallback(async () => {
     clearStoredToken();

@@ -46,69 +46,71 @@ function CreateRoutineForm() {
   };
 
   return (
-    <Box>
-      <PageHeader
-        title="Create Routine"
-        subtitle="Enter the gymnast details to start building a routine."
-      />
+    <Box sx={{ display: "flex", justifyContent: "center" }}>
+      <Box sx={{ width: "100%", maxWidth: 480 }}>
+        <PageHeader
+          title="Create Routine"
+          subtitle="Enter the gymnast details to start building a routine."
+        />
 
-      <Paper sx={{ p: 3, maxWidth: 480 }}>
-        <form onSubmit={handleSubmit}>
-          {errorMessage && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {errorMessage}
-            </Alert>
-          )}
-          <TextField
-            margin="normal"
-            fullWidth
-            required
-            label="Gymnast name"
-            value={gymnastName}
-            onChange={(event) => setGymnastName(event.target.value)}
-            sx={{ "& .MuiInputBase-input": { fontSize: { xs: "16px", sm: "inherit" } } }}
-          />
-          <TextField
-            margin="normal"
-            fullWidth
-            required
-            select
-            label="Apparatus"
-            value={apparatus}
-            onChange={(event) => setApparatus(event.target.value as Apparatus)}
-          >
-            {APPARATUS_OPTIONS.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            margin="normal"
-            fullWidth
-            required
-            select
-            label="Age category"
-            value={ageCategory}
-            onChange={(event) => setAgeCategory(event.target.value as AgeCategory)}
-          >
-            {AGE_CATEGORY_OPTIONS.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </TextField>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={loading}
-            sx={{ mt: 3 }}
-          >
-            {loading ? "Creating…" : "Start Building"}
-          </Button>
-        </form>
-      </Paper>
+        <Paper sx={{ p: 3 }}>
+          <form onSubmit={handleSubmit}>
+            {errorMessage && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {errorMessage}
+              </Alert>
+            )}
+            <TextField
+              margin="normal"
+              fullWidth
+              required
+              label="Gymnast name"
+              value={gymnastName}
+              onChange={(event) => setGymnastName(event.target.value)}
+              sx={{ "& .MuiInputBase-input": { fontSize: { xs: "16px", sm: "inherit" } } }}
+            />
+            <TextField
+              margin="normal"
+              fullWidth
+              required
+              select
+              label="Apparatus"
+              value={apparatus}
+              onChange={(event) => setApparatus(event.target.value as Apparatus)}
+            >
+              {APPARATUS_OPTIONS.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              margin="normal"
+              fullWidth
+              required
+              select
+              label="Age category"
+              value={ageCategory}
+              onChange={(event) => setAgeCategory(event.target.value as AgeCategory)}
+            >
+              {AGE_CATEGORY_OPTIONS.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={loading}
+              sx={{ mt: 3 }}
+            >
+              {loading ? "Creating…" : "Start Building"}
+            </Button>
+          </form>
+        </Paper>
+      </Box>
     </Box>
   );
 }

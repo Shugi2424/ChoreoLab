@@ -9,11 +9,14 @@ import type { Routine } from "../types/routine";
 
 export function DashboardPage() {
   const { coach } = useAuth();
-  const { data: routinesData, loading, error } = useQuery<{ routines: Routine[] }>(ROUTINES_QUERY);
+  const { data: routinesData, loading, error } = useQuery<{ routines: Routine[] }>(
+    ROUTINES_QUERY,
+    { fetchPolicy: "cache-first" },
+  );
 
   const routineCount = routinesData?.routines.length ?? 0;
 
-  if (loading) {
+  if (loading && !routinesData) {
     return <DashboardSkeleton />;
   }
 
