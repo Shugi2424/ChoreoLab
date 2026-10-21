@@ -6,7 +6,7 @@ import {
   MAX_GYMNAST_NAME_LENGTH,
 } from "../utils/inputValidation.js";
 import type { RoutinePersistTarget } from "../types/routineScoring.js";
-import { toGraphQLRoutine } from "../utils/mappers.js";
+import { toGraphQLRoutine, toGraphQLRoutineSummary } from "../utils/mappers.js";
 import { applyDerivedRoutineFields } from "./routineDerivedFields.js";
 import { getRoutineDocForCoach } from "./routineAccess.js";
 
@@ -117,8 +117,11 @@ export const routineService = {
 
   /** Uses persisted scores/validation; recalculation happens on timeline mutations and getById. */
   async listByCoach(coachId: string) {
-    const docs = await Routine.find({ coach: coachId }).sort({ updatedAt: -1 }).lean();
-    return docs.map((doc) => toGraphQLRoutine(doc));
+    const docs = await Routine.find({ coach: coachId })
+      .select("-timeline")
+      .sort({ updatedAt: -1 })
+      .lean();
+    return docs.map((doc) => toGraphQLRoutineSummary(doc));
   },
 
   /** Fresh scores/validation for the builder; persisted on timeline mutations only. */
