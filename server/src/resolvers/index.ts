@@ -1,9 +1,15 @@
 import { mutationResolvers } from "./mutation.js";
 import { queryResolvers } from "./query.js";
-import { routineItemResolvers } from "./routine.js";
+import {
+  routineItemResolvers,
+  routineResolvers,
+  validationResultResolvers,
+} from "./routine.js";
 
 export const resolvers = {
   Query: queryResolvers,
   Mutation: mutationResolvers,
+  Routine: routineResolvers,
+  ValidationResult: validationResultResolvers,
   RoutineItem: routineItemResolvers,
 };

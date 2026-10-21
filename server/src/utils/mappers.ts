@@ -190,30 +190,55 @@ export function toGraphQLRoutineItem(item: unknown) {
   };
 }
 
-export function toGraphQLRoutine(doc: unknown) {
-  const routine = doc as {
-    _id: { toString(): string };
-    gymnastName: string;
-    apparatus: string;
-    ageCategory: string;
-    timeline?: unknown[];
-    dbScore: number;
-    daScore: number;
-    validation: {
-      isValid: boolean;
-      dbValid: boolean;
-      daValid: boolean;
-      artistryValid: boolean;
-      missingRequirements: Array<{
-        id: string;
-        domain: string;
-        message: string;
-      }>;
-      calculatedAt?: Date;
-    };
-    createdAt?: Date;
-    updatedAt?: Date;
+type RoutineDocShape = {
+  _id: { toString(): string };
+  gymnastName: string;
+  apparatus: string;
+  ageCategory: string;
+  timeline?: unknown[];
+  dbScore: number;
+  daScore: number;
+  validation: {
+    isValid: boolean;
+    dbValid: boolean;
+    daValid: boolean;
+    artistryValid: boolean;
+    missingRequirements: Array<{
+      id: string;
+      domain: string;
+      message: string;
+    }>;
+    warnings?: Array<{
+      id: string;
+      domain: string;
+      severity: string;
+      message: string;
+    }>;
+    calculatedAt?: Date;
   };
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+/** List/dashboard shape — skips timeline mapping (timeline excluded at query time). */
+export function toGraphQLRoutineSummary(doc: unknown) {
+  const routine = doc as RoutineDocShape;
+
+  return {
+    id: routine._id.toString(),
+    gymnastName: routine.gymnastName,
+    apparatus: routine.apparatus,
+    ageCategory: routine.ageCategory,
+    dbScore: routine.dbScore,
+    daScore: routine.daScore,
+    validation: routine.validation,
+    createdAt: routine.createdAt?.toISOString() ?? new Date().toISOString(),
+    updatedAt: routine.updatedAt?.toISOString() ?? new Date().toISOString(),
+  };
+}
+
+export function toGraphQLRoutine(doc: unknown) {
+  const routine = doc as RoutineDocShape;
 
   return {
     id: routine._id.toString(),

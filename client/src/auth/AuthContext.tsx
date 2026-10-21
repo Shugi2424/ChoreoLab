@@ -28,22 +28,26 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const client = useApolloClient();
   const [token, setToken] = useState<string | null>(() => getStoredToken());
+  const [sessionCoach, setSessionCoach] = useState<Coach | null>(null);
 
   useEffect(() => {
-    if (token) {
+    if (getStoredToken()) {
       warmApiConnection();
     }
-  }, [token]);
+  }, []);
 
   const handleSessionError = useCallback(async () => {
     clearStoredToken();
     setToken(null);
+    setSessionCoach(null);
     await client.clearStore();
   }, [client]);
 
   const { data, loading, refetch } = useQuery<{ me: Coach }>(ME_QUERY, {
     skip: !token,
     fetchPolicy: "cache-first",
+    nextFetchPolicy: "cache-first",
+    notifyOnNetworkStatusChange: false,
     onError: () => {
       void handleSessionError();
     },
@@ -54,6 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setStoredToken(newToken);
       setToken(newToken);
       if (coach) {
+        setSessionCoach(coach);
         client.writeQuery({ query: ME_QUERY, data: { me: coach } });
       }
     },
@@ -63,6 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(async () => {
     clearStoredToken();
     setToken(null);
+    setSessionCoach(null);
     await client.clearStore();
   }, [client]);
 
@@ -72,17 +78,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [token, refetch]);
 
+  const coach = data?.me ?? sessionCoach;
+
   const value = useMemo(
     () => ({
-      coach: data?.me ?? null,
+      coach,
       token,
-      bootstrapping: Boolean(token) && loading && !data?.me,
+      bootstrapping: Boolean(token) && loading && !coach,
       isAuthenticated: Boolean(token),
       loginWithToken,
       logout,
       refetchCoach,
     }),
-    [data?.me, token, loading, loginWithToken, logout, refetchCoach],
+    [coach, token, loading, loginWithToken, logout, refetchCoach],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -40,8 +40,8 @@ export function LoginPage() {
         variables: { input: { email, password } },
       });
       loginWithToken(data.login.token, data.login.coach);
-      navigate("/dashboard", { replace: true });
       void client.query({ query: ROUTINES_QUERY, fetchPolicy: "cache-first" });
+      navigate("/dashboard", { replace: true });
     } catch (error) {
       setErrorMessage(getLoginErrorMessage(error));
     }
