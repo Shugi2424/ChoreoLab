@@ -1,4 +1,4 @@
-/** Round to one decimal place (CoP display precision). */
+// Scores show one decimal like on the sheet.
 export function roundCopScore(value: number): number {
   return Math.round(value * 10) / 10;
 }
@@ -12,10 +12,7 @@ export interface DaScoringLimits {
   maxMasteries: number;
 }
 
-/**
- * DB = highest-valued body elements (each id counted once) + highest-valued risks,
- * capped by age-category limits.
- */
+// Routine DB: take the best body values (one per element id) + best risks, up to senior/junior caps.
 export function calculateDBScore(
   bodyElementValues: number[],
   riskValues: number[],
@@ -29,7 +26,7 @@ export function calculateDBScore(
   return roundCopScore(total);
 }
 
-/** DA = highest-valued masteries, capped by age-category maxMasteries. */
+// Routine DA: same idea. Only the highest masteries count, up to the limit for that age.
 export function calculateDAScore(
   masteryValues: number[],
   limits: DaScoringLimits,

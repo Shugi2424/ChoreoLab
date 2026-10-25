@@ -10,6 +10,7 @@ import type { RequirementsDocument } from "./requirementsCache.js";
 import { getRequirementsByAgeCategory } from "./requirementsCache.js";
 import type { TimelineCatalogMaps } from "./timelineCatalogCache.js";
 
+// How many body elements / risks / masteries actually count toward the score for this age.
 function scoringLimitsFromRequirements(requirements: RequirementsDocument): {
   db: DbScoringLimits;
   da: DaScoringLimits;
@@ -25,6 +26,7 @@ function scoringLimitsFromRequirements(requirements: RequirementsDocument): {
   };
 }
 
+// One value per body element id. If the same code appears twice, keep the higher value.
 async function resolveBodyElementValues(
   timeline: readonly ScoringTimelineEntry[],
   catalogValues?: Map<string, number>,
@@ -70,12 +72,14 @@ async function resolveBodyElementValues(
   return [...maxValueByElementId.values()];
 }
 
+// Each risk item already has its value from when it was built.
 function collectRiskValues(timeline: readonly ScoringTimelineEntry[]): number[] {
   return timeline
     .filter((item) => item.type === "risk" && item.risk)
     .map((item) => item.risk!.value);
 }
 
+// Same for masteries. Value was fixed when the coach saved the item.
 function collectMasteryValues(timeline: readonly ScoringTimelineEntry[]): number[] {
   return timeline
     .filter((item) => item.type === "mastery" && item.mastery)
@@ -109,7 +113,7 @@ export const scoringService = {
     return calculateDAScore(masteryValues, limits);
   },
 
-  /** Recalculate and write dbScore / daScore on the routine document (does not save). */
+  // Recompute routine dbScore/daScore from the timeline (caller saves the routine).
   async applyScores(
     routine: RoutinePersistTarget,
     options?: ApplyScoresOptions,

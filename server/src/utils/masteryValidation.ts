@@ -23,6 +23,7 @@ interface MasteryBaseDoc {
   allowedCriteria: string[];
 }
 
+// Runs when adding/updating a mastery: shape (1+2 or 2+1), bases, criteria, apparatus.
 export async function validateMasteryInput(
   input: MasteryInput,
   apparatus: string,
@@ -50,6 +51,7 @@ export async function validateMasteryInput(
     throw new UserInputError(baseCombinationError);
   }
 
+  // Load bases once here; calculateMasteryValue can reuse them.
   const bases = await Base.find({ id: { $in: baseIds } }).lean();
   if (bases.length !== baseIds.length) {
     throw new UserInputError("One or more bases were not found.");
@@ -85,6 +87,7 @@ export async function validateMasteryInput(
   };
 }
 
+// DA value for this mastery. Saved on the item; routine DA score picks top N later.
 export async function calculateMasteryValue(
   baseIds: string[],
   criteriaIds: string[],
@@ -96,10 +99,12 @@ export async function calculateMasteryValue(
     return 0;
   }
 
+  // 1 base + 2 criteria → value is that base.
   if (baseIds.length === 1 && criteriaIds.length === 2) {
     return loaded[0].value;
   }
 
+  // 2 bases + 1 criterion → higher base + 0.1 (CoP combo rule).
   if (baseIds.length === 2 && criteriaIds.length === 1) {
     const highestBase = Math.max(...loaded.map((base) => base.value));
     return highestBase + 0.1;

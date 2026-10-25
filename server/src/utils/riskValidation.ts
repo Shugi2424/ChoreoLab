@@ -42,6 +42,7 @@ export {
 
 export type RiskInput = RiskCompositionInput;
 
+// Server wrapper: shared logic returns a message, we throw so GraphQL gets a clean error.
 export function validateRiskComposition(input: RiskCompositionInput): void {
   const error = getRiskCompositionError(input);
   if (error) {

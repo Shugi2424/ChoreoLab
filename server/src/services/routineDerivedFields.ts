@@ -4,7 +4,7 @@ import { scoringService } from "./scoringService.js";
 import { loadTimelineCatalogMaps } from "./timelineCatalogCache.js";
 import { validationService } from "./validationService.js";
 
-/** Recalculate dbScore, daScore, and validation from the current timeline (does not save). */
+// After any timeline change: refresh scores + validation panel, then persist elsewhere.
 export async function applyDerivedRoutineFields(routine: RoutinePersistTarget): Promise<void> {
   const requirements = await getRequirementsByAgeCategory(routine.ageCategory);
   const catalog = await loadTimelineCatalogMaps(routine.timeline);

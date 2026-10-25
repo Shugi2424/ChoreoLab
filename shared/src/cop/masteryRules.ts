@@ -1,10 +1,7 @@
-/** Regular high-throw catch base (CoP DA). */
+// Standard "catch from high throw" base. Required when you use 2 bases in one mastery.
 export const CATCH_FROM_HIGH_THROW_BASE_ID = "catch-from-high-throw";
 
-/**
- * Alternate catch bases that replace the regular high-throw catch —
- * cannot be combined with `catch-from-high-throw` in the same mastery.
- */
+// Special catch bases. Pick one of these OR regular high throw, not both in the same mastery.
 export const ALTERNATE_CATCH_BASE_IDS = [
   "catch-one-hand-high-throw",
   "catch-one-club-held",
@@ -15,6 +12,7 @@ export function isAlternateCatchBase(id: string): boolean {
   return (ALTERNATE_CATCH_BASE_IDS as readonly string[]).includes(id);
 }
 
+// Shared rule for client preview + server save. null = bases OK together.
 export function getMasteryBaseCombinationError(baseIds: string[]): string | null {
   if (
     baseIds.includes(CATCH_FROM_HIGH_THROW_BASE_ID) &&
